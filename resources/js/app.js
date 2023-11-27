@@ -12,5 +12,7 @@ require('./bootstrap');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+// React Components
 require('./components/Example');
-require('./Counter.js');
+require('./components/HelloReact')
+require('./components/Counter');
