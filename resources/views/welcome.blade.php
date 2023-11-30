@@ -82,7 +82,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    Laravel123
+                    ALO INSAF GDE GIT
                 </div>
 
                 <div id="hello-react"></div>
