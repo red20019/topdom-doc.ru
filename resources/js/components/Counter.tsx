@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import ReactDOM from 'react-dom';
 
-export default function Counter() {
+const Counter: React.FC = () => {
   // Set the initial count state to zero, 0
   const [count, setCount] = useState(0);
 
@@ -18,17 +18,19 @@ export default function Counter() {
   };
   return (
     <div>
-        <button onClick={handleDecrement}>-</button>
-        <span> {count} </span>
-        <button onClick={handleIncrement}>+</button>
+      <button onClick={handleDecrement}>-</button>
+      <span> {count} </span>
+      <button onClick={handleIncrement}>+</button>
     </div>
   );
 }
 
 if (document.getElementById('counter')) {
-    ReactDOM.render(<Counter />, document.getElementById('counter'));
+  ReactDOM.render(<Counter />, document.getElementById('counter'));
 }
 
 if (document.getElementById('counter')) {
-    ReactDOM.render(<Counter />, document.getElementById('counter'));
+  ReactDOM.render(<Counter />, document.getElementById('counter'));
 }
+
+export default Counter
