@@ -82,7 +82,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    ALO INSAF GDE SERVER
+                    ALO INSAF GDE SERVER S GITOM
                 </div>
 
                 <div id="hello-react"></div>
