@@ -82,7 +82,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    ALO INSAF GDE GIT v2
+                    ALO INSAF GDE SERVER
                 </div>
 
                 <div id="hello-react"></div>
