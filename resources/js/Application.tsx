@@ -17,7 +17,7 @@ const App = () => {
     ]);
 
     return (
-        <div>
+        <>
             <h1 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">Users list</h1>
             <ul className="max-w-md space-y-1 text-gray-500 list-disc dark:text-gray-400">
                 {users.map((user: IUser) => {
@@ -28,7 +28,7 @@ const App = () => {
                     );
                 })}
             </ul>
-        </div>
+        </>
     );
 };
 

@@ -1842,7 +1842,7 @@ var App = function App() {
     }]),
     users = _a[0],
     setUsers = _a[1];
-  return react_1["default"].createElement("div", null, react_1["default"].createElement("h1", {
+  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement("h1", {
     className: "mb-2 text-lg font-semibold text-gray-900 dark:text-white"
   }, "Users list"), react_1["default"].createElement("ul", {
     className: "max-w-md space-y-1 text-gray-500 list-disc dark:text-gray-400"
@@ -1905,7 +1905,7 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 var react_dom_1 = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 var Application_1 = __importDefault(__webpack_require__(/*! ./Application */ "./resources/js/Application.tsx"));
 __webpack_require__(/*! ./css/app.css */ "./resources/js/css/app.css");
-(0, react_dom_1.render)(react_1["default"].createElement(Application_1["default"], null), document.getElementById("app"));
+(0, react_dom_1.render)(react_1["default"].createElement(Application_1["default"], null), document.getElementById("application"));
 
 /***/ }),
 

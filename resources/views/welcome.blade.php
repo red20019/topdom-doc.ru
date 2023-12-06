@@ -82,7 +82,7 @@
             @endif
 
             <div class="content">
-                <div id="app"></div>
+                <div id="application"></div>
 
 
                 <!-- <div class="links">
