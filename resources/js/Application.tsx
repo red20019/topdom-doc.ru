@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import Header from "./components/Header";
+import Welcome from "./pages/Welcome";
+import Pending from "./pages/Pending";
 
 export interface IUser {
   name: string;
@@ -22,18 +24,10 @@ const App = () => {
   return (
     <Router>
       <Header />
-      {/* <h1 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-        Users list
-      </h1>
-      <ul className="max-w-md space-y-1 text-gray-500 list-disc dark:text-gray-400">
-        {users.map((user: IUser) => {
-          return (
-            <li key={user.name}>
-              {user.name} is {user.age} years old
-            </li>
-          );
-        })}
-      </ul> */}
+      <Routes>
+        <Route path="/" element={<Welcome />} />
+        <Route path="/pending" element={<Pending />} />
+      </Routes>
     </Router>
   );
 };

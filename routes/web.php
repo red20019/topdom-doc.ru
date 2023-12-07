@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/pending', function () {
+    return view('pending');
+});
+
 Route::get('/react', function () {
     return view('react');
 });
