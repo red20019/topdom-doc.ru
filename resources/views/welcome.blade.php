@@ -42,6 +42,7 @@
             }
 
             .content {
+                width: 100%;
                 text-align: center;
             }
 
@@ -66,8 +67,8 @@
         <script src="{{ asset('js/app.js') }}" defer></script>
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
+        <div class="position-ref full-height">
+            <!-- @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
                         <a href="{{ url('/home') }}">Home</a>
@@ -79,7 +80,7 @@
                         @endif
                     @endauth
                 </div>
-            @endif
+            @endif -->
 
             <div class="content">
                 <div id="application"></div>
