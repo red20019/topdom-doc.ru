@@ -13,6 +13,7 @@ require('./bootstrap');
  */
 
 // React Components
-require('./components/Example');
-require('./components/HelloReact')
-require('./components/Counter');
+// require('./components/Example');
+// require('./components/HelloReact')
+// require('./components/Counter');
+require('./index');
