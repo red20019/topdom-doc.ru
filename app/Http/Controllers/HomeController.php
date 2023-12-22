@@ -25,4 +25,18 @@ class HomeController extends Controller
     {
         return view('home');
     }
+    public function main(Request $request)
+    {
+        $user=$request->user();
+        if($role=$user->role=='no_role'){
+            return view('waiting');
+        }
+        else{
+            return view('user');
+        }
+        //$role=$user->role;
+        //$user::where('id', '1')->firstOrFail();
+        //var_dump($role);
+
+    }
 }
