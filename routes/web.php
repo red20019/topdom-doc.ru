@@ -31,9 +31,15 @@ Route::get('/admin', function () {
 //Route::get('/user', function () {
 //    return view('user');
 //});
+Route::middleware('auth:sanctum')->get('/user', function () {
+  return view('user');
+});
 
 
-Auth::routes();
+
+//Auth::routes();
+
+Route::post('/post', 'PostController@post')->name('post');
 
 //Route::get('/home', 'HomeController@index')->name('home');
 
