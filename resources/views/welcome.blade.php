@@ -43,7 +43,6 @@
 
             .content {
                 width: 100%;
-                text-align: center;
             }
 
             .title {
