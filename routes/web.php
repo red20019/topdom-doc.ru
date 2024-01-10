@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+//use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -31,11 +31,13 @@ Route::get('/admin', function () {
 //Route::get('/user', function () {
 //    return view('user');
 //});
+//Route::middleware('auth:api')->get('/user', function () {
+//  return view('user');
+//});
 Route::middleware('auth:sanctum')->get('/user', function () {
-  return view('user');
+  return 1;
 });
-
-
+Route::get('/login', 'HomeController@main')->name('login');
 
 //Auth::routes();
 
