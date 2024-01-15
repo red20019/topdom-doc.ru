@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('guest')->get('/', 'ReactRouting@NonAuthenticate')->name('home');
-Route::middleware('guest')->get('/login', 'ReactRouting@NonAuthenticate')->name('login');
+Route::get('/', 'HomeController@main')->name('home');
+Route::get('/login', 'HomeController@main')->name('login');
 
-Route::middleware('guest')->get('/register', 'ReactRouting@NonAuthenticate')->name('register');
+Route::get('/register', 'HomeController@main')->name('register');
 
 Route::middleware('auth:sanctum')->get('/{path?}', [
   'uses' => 'ReactRouting@show',

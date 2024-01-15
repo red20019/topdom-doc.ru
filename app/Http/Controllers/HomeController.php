@@ -13,7 +13,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        //$this->middleware('auth');
+        $this->middleware('guest');
     }
 
     /**
@@ -36,7 +36,8 @@ class HomeController extends Controller
         //}
         //$role=$user->role;
         //$user::where('id', '1')->firstOrFail();
-        //var_dump($role);
+        //var_dump  ($role);
+        return view('react',['login' => 'no']);
 
     }
 
@@ -52,7 +53,7 @@ class HomeController extends Controller
         //$role=$user->role;
         //$user::where('id', '1')->firstOrFail();
         //var_dump($role);
-        return view('login');
+        //return view('login');
 
     }
 
