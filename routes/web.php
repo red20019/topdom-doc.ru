@@ -25,6 +25,16 @@ Route::get('/react', function () {
     return view('react');
 });
 
+Route::get('/admin', function () {
+    return view('admin');
+});
+//Route::get('/user', function () {
+//    return view('user');
+//});
+
+
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+//Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/main', 'HomeController@main')->name('main');
