@@ -13,7 +13,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        //$this->middleware('auth');
     }
 
     /**
@@ -27,16 +27,35 @@ class HomeController extends Controller
     }
     public function main(Request $request)
     {
-        $user=$request->user();
-        if($role=$user->role=='no_role'){
-            return view('waiting');
-        }
-        else{
-            return view('user');
-        }
+        //$user=$request->user();
+        //if($user->role=='no_role'){
+        //    return view('waiting');
+        //}
+        //else{
+        //    return view('user');
+        //}
         //$role=$user->role;
         //$user::where('id', '1')->firstOrFail();
         //var_dump($role);
 
     }
+
+    public function login()
+    {
+        //$user=$request->user();
+        //if($user->role=='no_role'){
+        //    return view('waiting');
+        //}
+        //else{
+        //    return view('user');
+        //}
+        //$role=$user->role;
+        //$user::where('id', '1')->firstOrFail();
+        //var_dump($role);
+        return view('login');
+
+    }
+
+
+
 }

@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::post('/register', 'api\RegisterController@register')->name('register_api');
+Route::post('/login', 'api\LoginController@login')->name('login_api');
+//Route::get('/{path?}', [
+//  'uses' => 'ReactRouting@NonAuthenticate',
+//  'as' => 'non_authenticate',
+//  'where' => ['path' => '.*']]);
+
+//Route::post('/user', function (Request $request) {
+  //return $request->user();
+//});

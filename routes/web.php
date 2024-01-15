@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+//use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,28 +13,70 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::middleware('guest')->get('/', 'ReactRouting@NonAuthenticate')->name('home');
+Route::middleware('guest')->get('/login', 'ReactRouting@NonAuthenticate')->name('login');
 
-Route::get('/pending', function () {
-    return view('pending');
-});
+Route::middleware('guest')->get('/register', 'ReactRouting@NonAuthenticate')->name('register');
 
-Route::get('/react', function () {
-    return view('react');
-});
+Route::middleware('auth:sanctum')->get('/{path?}', [
+  'uses' => 'ReactRouting@show',
+  'as' => 'react',
+  'where' => ['path' => '.*']
+])->where('path', '^((?!api).)*$');
 
-Route::get('/admin', function () {
-    return view('admin');
-});
-//Route::get('/user', function () {
-//    return view('user');
+
+
+
+//Route::get('/login', [
+//  'uses' => 'ReactRouting@NonAuthenticate',
+//  'as' => 'non_authenticate',
+//  'where' => ['path' => '.*']]);
+//
+//Route::get('/register', [
+//    'uses' => 'ReactRouting@NonAuthenticate',
+//    'as' => 'non_authenticate',
+//    'where' => ['path' => '.*']]);
+//Route::get('/', [
+//      'uses' => 'ReactRouting@NonAuthenticate',
+//      'as' => 'non_authenticate',
+//      'where' => ['path' => '.*']]);
+//
+
+
+
+
+
+//Route::get('/', function () {
+//    return view('welcome');
 //});
-
-
-Auth::routes();
-
-//Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/main', 'HomeController@main')->name('main');
+//
+//Route::get('/pending', function () {
+//    return view('pending');
+//});
+//
+//Route::get('/react', function () {
+//    return view('react');
+//});
+//
+//Route::get('/admin', function () {
+//    return view('admin');
+//});
+////Route::get('/user', function () {
+////    return view('user');
+////});
+////Route::middleware('auth:api')->get('/user', function () {
+////  return view('user');
+////});
+//Route::middleware('auth:sanctum')->get('/user', function () {
+//  return 1;
+//});
+//Route::get('/login', 'HomeController@main')->name('login');
+//
+////Auth::routes();
+//
+//Route::post('/post', 'PostController@post')->name('post');
+//
+////Route::get('/home', 'HomeController@index')->name('home');
+//
+//Route::get('/main', 'HomeController@main')->name('main');
+//
