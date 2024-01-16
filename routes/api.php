@@ -18,8 +18,9 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::post('/register', 'api\RegisterController@register')->name('register_api');
-Route::post('/login', 'api\LoginController@login')->name('login_api');
+Route::post('/register', 'api\RegisterController@register')->name('registerApi');
+Route::post('/login', 'api\LoginController@login')->name('loginApi');
+Route::get('/user', 'api\UserController@show')->name('ShowUser');
 //Route::get('/{path?}', [
 //  'uses' => 'ReactRouting@NonAuthenticate',
 //  'as' => 'non_authenticate',

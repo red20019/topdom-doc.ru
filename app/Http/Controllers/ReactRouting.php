@@ -29,8 +29,8 @@ class ReactRouting extends Controller
       //return redirect('/main');
     //}
    // else{
-
     return 1;
+    //return view('react',['login' => 'no']);
     //}
   }
 }

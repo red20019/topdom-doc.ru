@@ -13,10 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'HomeController@main')->name('home');
-Route::get('/login', 'HomeController@main')->name('login');
-
-Route::get('/register', 'HomeController@main')->name('register');
+Route::get('/', 'GuestController@main')->name('home');
+Route::get('/login', 'GuestController@main')->name('login');
+Route::get('/register', 'GuestController@main')->name('register');
 
 Route::middleware('auth:sanctum')->get('/{path?}', [
   'uses' => 'ReactRouting@show',

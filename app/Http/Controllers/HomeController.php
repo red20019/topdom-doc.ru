@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
 
+namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Foundation\Auth\RegistersUsers;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
+
     public function __construct()
     {
-        $this->middleware('guest');
+      $this->middleware('guest');
     }
 
     /**
@@ -21,41 +22,21 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        return view('home');
-    }
+
     public function main(Request $request)
     {
-        //$user=$request->user();
-        //if($user->role=='no_role'){
-        //    return view('waiting');
-        //}
-        //else{
-        //    return view('user');
-        //}
-        //$role=$user->role;
-        //$user::where('id', '1')->firstOrFail();
-        //var_dump  ($role);
-        return view('react',['login' => 'no']);
+
+        if (request()->bearerToken() && $user = Auth::guard('sanctum')->user()) {
+            Auth::setUser($user);
+            return redirect(RouteServiceProvider::HOME);
+          //
+          //Auth::setUser($user);
+      }
+
+        return view('react');
 
     }
 
-    public function login()
-    {
-        //$user=$request->user();
-        //if($user->role=='no_role'){
-        //    return view('waiting');
-        //}
-        //else{
-        //    return view('user');
-        //}
-        //$role=$user->role;
-        //$user::where('id', '1')->firstOrFail();
-        //var_dump($role);
-        //return view('login');
-
-    }
 
 
 
