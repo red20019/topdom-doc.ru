@@ -38,11 +38,11 @@ class UserController extends Controller
     public function show(Request $request)
     {
 
-      if (request()->bearerToken() && $user = Auth::guard('sanctum')->user()) {
-        return $this->sendResponse($user,'User data');
+      //if (request()->bearerToken() && $user = Auth::guard('sanctum')->user()) {
+        return $this->sendResponse($request->user(),'User data');
 
-      }
-      return $this->sendError('The token is invalid or missing ',null,401);
+      //}
+      //return $this->sendError('The token is invalid or missing ',null,401);
       //return $user = Auth::guard('sanctum')->user();
     }
 
