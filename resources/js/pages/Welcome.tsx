@@ -13,9 +13,9 @@ const Welcome: React.FC = () => {
   }, [])
 
   return (
-    <div>
+    <section className="flex flex-col items-center justify-center mt-12">
       <h1 className="text-3xl">Welcome!</h1>
-    </div>
+    </section>
   );
 };
 
