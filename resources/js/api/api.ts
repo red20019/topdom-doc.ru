@@ -1,21 +1,52 @@
 import axios, { Cancel } from "axios";
 
+import { UserTypeWithMiddleware } from "../redux/user/types";
+
 const instance = axios.create({
   withCredentials: true,
   baseURL: "http://topdom-doc.ru/",
   headers: {
-    'Content-type': 'application/json',
-    Accept: 'application/json',
-  }
+    "Content-type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 export const authAPI = {
   getToken() {
     return instance.get("sanctum/csrf-cookie");
   },
+  me(token: string) {
+    return instance.get("api/user", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
   async signUp(formData: Record<string, string>) {
     try {
-      const response = await instance.post('api/register', formData);
+      const response = await instance.post("api/register", formData);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
+    }
+  },
+  async signIn(formData: Record<string, string>) {
+    try {
+      const response = await instance.post("api/login", formData);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
+    }
+  },
+  async signOut(token: string): Promise<UserTypeWithMiddleware> {
+    try {
+      const response = await instance.get("/api/logout", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);

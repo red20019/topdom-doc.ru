@@ -1,7 +1,52 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import { authAPI } from "../api/api";
+import { RootState } from "../redux/store";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import {
+  signInSuccess,
+  signOutFailure,
+  signOutStart,
+  signOutSuccess,
+} from "../redux/user/userSlice";
 
 const Header: React.FC = () => {
+  const user = useAppSelector((state: RootState) => state.user);
+  const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await authAPI.getToken();
+      console.log(token);
+    };
+
+    // getToken();
+  }, [user.currentUser]);
+
+  const handleSignOut = async () => {
+    if (user.token) {
+      try {
+        dispatch(signOutStart());
+        // const response = await fetch('/api/auth/sign-out');
+        // const data = await response.json();
+
+        const response = await authAPI.signOut(user.token);
+
+        if (response.success === false) {
+          dispatch(signOutFailure(response.message));
+          return;
+        }
+        dispatch(signOutSuccess());
+        navigate("/login");
+      } catch (error) {
+        dispatch(signOutFailure((error as Record<string, string>).message));
+      }
+    }
+  };
+
   return (
     <header>
       <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
@@ -17,30 +62,29 @@ const Header: React.FC = () => {
             </span>
           </Link>
           <div className="flex items-center lg:order-2">
-            {/* <Link
-              to="/login"
-              className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-            >
-              Log in
-            </Link>
-            <Link
-              to="/register"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            >
-              Get started
-            </Link> */}
-            <Link
-              to="/login"
-              className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
-            >
-              Войти
-            </Link>
-            <Link
-              to="/register"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            >
-              Регистрация
-            </Link>
+            {user.currentUser ? (
+              <button
+                onClick={handleSignOut}
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+              >
+                Выйти
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+                >
+                  Войти
+                </Link>
+                <Link
+                  to="/register"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                >
+                  Регистрация
+                </Link>
+              </>
+            )}
             <button
               data-collapse-toggle="mobile-menu-2"
               type="button"

@@ -10,7 +10,7 @@ const SignUp: React.FC = () => {
       console.log(token);
     };
 
-    getToken();
+    // getToken();
   }, []);
   const [formData, setFormData] = React.useState<Record<string, string>>({});
   const [error, setError] = React.useState<string | null>(null);
@@ -30,7 +30,7 @@ const SignUp: React.FC = () => {
       }
       setLoading(false);
       setError(null);
-      navigate("/");
+      navigate("/login");
     } catch (error: unknown) {
       setLoading(false);
       setError((error as Record<string, string>).message);

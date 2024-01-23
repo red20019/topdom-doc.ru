@@ -1,12 +1,25 @@
-// export type UserType = {
-//   _id: string;
-//   username: string;
-//   email: string;
-//   avatar: string;
-//   createdAt: string;
-//   updatedAt: string;
-//   __v: number;
-// };
+export type UserType = {
+  id: number;
+  name: string;
+  email: string;
+  email_verified_at: string | null;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export interface UserSliceState {
+  currentUser: UserType | null;
+  loading: boolean;
+  error: string | null;
+  token: string | null;
+}
+
+export type Middleware<T> = {
+  success: boolean;
+  data: T;
+  message: string;
+};
 
 // export type ListingData = {
 //   _id?: string;
@@ -25,7 +38,8 @@
 //   userRef?: string;
 // };
 
-// export type UserTypeWithMiddleware = UserType & Middleware;
+export type UserTypeWithMiddleware = UserType &
+  Middleware<Record<string, string>>;
 // export type ListingDataWithMiddleware = ListingData & Middleware;
 
 // export type Middleware = {
@@ -33,9 +47,3 @@
 //   statusCode: number;
 //   message: string;
 // };
-
-// export interface UserSliceState {
-//   currentUser: UserType | null;
-//   loading: boolean;
-//   error: string | null;
-// }
