@@ -2,20 +2,26 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { authAPI } from "../api/api";
+import { useAppSelector } from "../redux/hooks";
+import { RootState } from "../redux/store";
 
 const SignUp: React.FC = () => {
+  const [formData, setFormData] = React.useState<Record<string, string>>({});
+  const { currentUser } = useAppSelector((state: RootState) => state.user);
+  const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const navigate = useNavigate();
+
   React.useEffect(() => {
     const getToken = async () => {
       const token = await authAPI.getToken();
       console.log(token);
     };
-
+    if (currentUser) {
+      navigate("/");
+    }
     // getToken();
   }, []);
-  const [formData, setFormData] = React.useState<Record<string, string>>({});
-  const [error, setError] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

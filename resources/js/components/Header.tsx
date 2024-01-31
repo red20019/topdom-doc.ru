@@ -125,13 +125,13 @@ const Header: React.FC = () => {
           >
             <ul className="flex flex-col font-medium lg:flex-row lg:space-x-8 lg:mt-0">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/create-doc"
                   className="block py-2 pr-4 pl-3 text-white rounded bg-blue-700 lg:bg-transparent lg:text-blue-700 lg:p-0 dark:text-white"
                   aria-current="page"
                 >
-                  Home
-                </a>
+                  Добавить документ
+                </Link>
               </li>
               <li>
                 <a
