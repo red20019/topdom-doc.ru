@@ -13,23 +13,16 @@ import { RootState } from "../redux/store";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = React.useState<Record<string, string>>({});
-  const { currentUser, loading, error } = useAppSelector(
+  const { loading, error } = useAppSelector(
     (state: RootState) => state.user
   );
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  React.useEffect(() => {
-    const getToken = async () => {
-      const token = await authAPI.getToken();
-      console.log(token);
-    };
-
-    if (currentUser) {
-      navigate("/");
-    }
-    // getToken();
-  }, []);
+  const getUser = async (token: string) => {
+    const response = await authAPI.me(token);
+    dispatch(signInSuccess(response.data.data));
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,11 +41,6 @@ const Login: React.FC = () => {
     } catch (error: unknown) {
       dispatch(signInFailure((error as Record<string, string>).message));
     }
-  };
-
-  const getUser = async (token: string) => {
-    const response = await authAPI.me(token);
-    dispatch(signInSuccess(response.data.data));
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
