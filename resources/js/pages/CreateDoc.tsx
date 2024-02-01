@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { authAPI } from "../api/api";
 
 const CreateDoc: React.FC = () => {
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await authAPI.getToken();
+      console.log(token);
+    };
+    getToken();
+  }, []);
   return (
-    <section>
+    <section className="container mx-auto px-4">
       <h2>Загрузка документа</h2>
 
       <label

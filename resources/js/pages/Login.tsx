@@ -48,7 +48,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <section className="flex justify-center items-center mt-12">
+    <section className="container px-4 mx-auto flex justify-center items-center mt-12">
       <div className="w-full max-w-xs mx-auto">
         <form
           onSubmit={handleSubmit}
