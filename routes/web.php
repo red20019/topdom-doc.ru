@@ -17,7 +17,7 @@ Route::get('/', 'GuestController@main')->name('home');
 Route::get('/login', 'GuestController@main')->name('login');
 Route::get('/register', 'GuestController@main')->name('register');
 
-Route::get('/{path?}', [
+Route::middleware('auth:sanctum')->get('/{path?}', [
   'uses' => 'ReactRouting@show',
   'as' => 'react',
   'where' => ['path' => '.*']
