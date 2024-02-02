@@ -11,6 +11,7 @@ import {
   signOutStart,
   signOutSuccess,
 } from "../redux/user/userSlice";
+import { getXsrfToken } from "../utils/getXsrfToken";
 
 const Header: React.FC = () => {
   const user = useAppSelector((state: RootState) => state.user);
@@ -19,12 +20,9 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getToken = async () => {
-      const token = await authAPI.getToken();
-      console.log(token);
-    };
 
-    getToken();
+
+    // getXsrfToken();
   }, []);
 
   const handleSignOut = async () => {

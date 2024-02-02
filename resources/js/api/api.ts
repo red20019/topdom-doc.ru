@@ -15,10 +15,11 @@ export const authAPI = {
   getToken() {
     return instance.get("sanctum/csrf-cookie");
   },
-  me(token: string) {
+  me(token: string, bearer: string) {
     return instance.get("api/user", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${bearer}`,
+        "X-XSRF-TOKEN": token,
       },
     });
   },
@@ -31,9 +32,13 @@ export const authAPI = {
       throw error;
     }
   },
-  async signIn(formData: Record<string, string>) {
+  async signIn(token: string, formData: Record<string, string>) {
     try {
-      const response = await instance.post("api/login", formData);
+      const response = await instance.post("api/login", formData, {
+        headers: {
+          "X-XSRF-TOKEN": token,
+        },
+      });
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);

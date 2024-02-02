@@ -10,6 +10,7 @@ import {
   signInToken,
 } from "../redux/user/userSlice";
 import { RootState } from "../redux/store";
+import { getXsrfToken } from "../utils/getXsrfToken";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = React.useState<Record<string, string>>({});
@@ -20,7 +21,7 @@ const Login: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const getUser = async (token: string) => {
-    const response = await authAPI.me(token);
+    const response = await authAPI.me(await getXsrfToken(), token);
     dispatch(signInSuccess(response.data.data));
   };
 
@@ -28,7 +29,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const response = await authAPI.signIn(formData);
+      const response = await authAPI.signIn(await getXsrfToken(), formData);
       console.log(response.data);
       if (response.success === false) {
         dispatch(signInFailure(response.message));
