@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'GuestController@main')->name('home');
-Route::get('/login', 'GuestController@main')->name('login');
-Route::get('/register', 'GuestController@main')->name('register');
+//Route::get('/', 'GuestController@main')->name('home');
+//Route::get('/login', 'GuestController@main')->name('login');
+//Route::get('/register', 'GuestController@main')->name('register');
 
-Route::middleware('auth:sanctum')->get('/{path?}', [
+Route::get('/{path?}', [
   'uses' => 'ReactRouting@show',
   'as' => 'react',
   'where' => ['path' => '.*']
