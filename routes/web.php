@@ -12,12 +12,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Auth::routes();
 Route::get('/', 'GuestController@main')->name('home');
 Route::get('/login', 'GuestController@main')->name('login');
 Route::get('/register', 'GuestController@main')->name('register');
-
-Route::middleware('auth:sanctum')->get('/{path?}', [
+Route::middleware("auth:sanctum")->get('/{path?}', [
   'uses' => 'ReactRouting@show',
   'as' => 'react',
   'where' => ['path' => '.*']

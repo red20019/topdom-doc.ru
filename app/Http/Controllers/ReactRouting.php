@@ -6,18 +6,18 @@ use Illuminate\Http\Request;
 
 class ReactRouting extends Controller
 {
-  public function show (Request $request, $path) {
+  public function show (Request $request) {
 
      //$path;
-        $login='yes';
-        if ($path=='login')
-          $login='no';
-        elseif ($path=='register')
-          $login='no';
-        elseif ($path=='')
-          $login='no';
+       //$login='yes';
+       //if ($path=='login')
+       //  $login='no';
+       //elseif ($path=='register')
+       //  $login='no';
+       //elseif ($path=='')
+       //  $login='no';
 
-        return view('react',['login' => $login]);
+        return view('react');
 
 
   }

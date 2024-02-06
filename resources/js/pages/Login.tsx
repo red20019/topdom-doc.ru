@@ -29,8 +29,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const response = await authAPI.signIn(await getXsrfToken(), formData);
-      console.log(response.data);
+      const response = await authAPI.signIn(formData);
       if (response.success === false) {
         dispatch(signInFailure(response.message));
         return;

@@ -22,8 +22,8 @@ class GuestController extends Controller
   public function main(Request $request)
   {
 
-      if (request()->bearerToken() && $user = Auth::guard('sanctum')->user()) {
-          Auth::setUser($user);
+      if ($user = Auth::guard('sanctum')->user()) {
+          ///Auth::setUser($user);
           return redirect(RouteServiceProvider::HOME);
         //
         //Auth::setUser($user);

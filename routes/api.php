@@ -17,11 +17,13 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:api')->get('/user', function (Request $request) {
 //    return $request->user();
 //});
-
-Route::post('/register', 'api\RegisterController@register')->name('registerApi');
-Route::post('/login', 'api\LoginController@login')->name('loginApi');
+//Route::middleware('auth:sanctum')->get('/user',function(Request $request){
+//    return 111;
+//})->name('ShowUser');
+//Route::post('/register', 'api\RegisterController@register')->name('registerApi');
+//Route::post('/login', 'api\LoginController@login')->name('loginApi');
 Route::middleware('auth:sanctum')->get('/user', 'api\UserController@show')->name('ShowUser');
-Route::middleware('auth:sanctum')->get('/logout', 'api\LoginController@logout')->name('logout');
+//Route::middleware('auth:sanctum')->get('/logout', 'api\LoginController@logout')->name('logout');
 //Route::get('/{path?}', [
 //  'uses' => 'ReactRouting@NonAuthenticate',
 //  'as' => 'non_authenticate',
