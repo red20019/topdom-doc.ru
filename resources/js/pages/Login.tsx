@@ -10,18 +10,15 @@ import {
   signInToken,
 } from "../redux/user/userSlice";
 import { RootState } from "../redux/store";
-import { getXsrfToken } from "../utils/getXsrfToken";
 
 const Login: React.FC = () => {
   const [formData, setFormData] = React.useState<Record<string, string>>({});
-  const { loading, error } = useAppSelector(
-    (state: RootState) => state.user
-  );
+  const { loading, error } = useAppSelector((state: RootState) => state.user);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const getUser = async (token: string) => {
-    const response = await authAPI.me(await getXsrfToken(), token);
+  const getUser = async () => {
+    const response = await authAPI.me();
     dispatch(signInSuccess(response.data.data));
   };
 
@@ -29,13 +26,14 @@ const Login: React.FC = () => {
     e.preventDefault();
     try {
       dispatch(signInStart());
+      await authAPI.getToken();
       const response = await authAPI.signIn(formData);
       if (response.success === false) {
         dispatch(signInFailure(response.message));
         return;
       }
-      dispatch(signInToken(response.data.token));
-      await getUser(response.data.token);
+      // dispatch(signInToken(response.data.token));
+      await getUser();
 
       navigate("/");
     } catch (error: unknown) {

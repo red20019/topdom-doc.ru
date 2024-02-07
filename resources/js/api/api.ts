@@ -15,23 +15,13 @@ export const authAPI = {
   getToken() {
     return instance.get("sanctum/csrf-cookie");
   },
-  me(token: string, bearer: string) {
-     const response = instance.get("user");
-     return response;
+  me() {
+    return instance.get("api/user");
   },
   async signUp(formData: Record<string, string>) {
     try {
       const response = await instance.post("register", formData);
-      return response.data;
-    } catch (error) {
-      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
-      throw error;
-    }
-  },
-  async signIn( formData: Record<string, string>) {
-    try {
-
-      const response = await instance.post("login", formData);
+      console.log('register');
       console.log(response);
       return response.data;
     } catch (error) {
@@ -39,12 +29,23 @@ export const authAPI = {
       throw error;
     }
   },
-  async signOut(token: string): Promise<UserTypeWithMiddleware> {
+  async signIn(formData: Record<string, string>) {
+    try {
+      const response = await instance.post("login", formData);
+      console.log('login');
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
+    }
+  },
+  async signOut(): Promise<UserTypeWithMiddleware> {
     try {
       const response = await instance.get("logout", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // },
       });
       return response.data;
     } catch (error) {

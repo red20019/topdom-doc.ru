@@ -13,22 +13,17 @@ const SignUp: React.FC = () => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    const getToken = async () => {
-      const token = await authAPI.getToken();
-      console.log(token);
-    };
     if (currentUser) {
       navigate("/");
     }
-    // getToken();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       setLoading(true);
+      await authAPI.getToken();
       const response = await authAPI.signUp(formData);
-      console.log(response.data);
       if (response.success === false) {
         setLoading(false);
         setError(response.message);

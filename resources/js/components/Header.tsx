@@ -20,29 +20,25 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-
-
     // getXsrfToken();
   }, []);
 
   const handleSignOut = async () => {
-    if (user.token) {
-      try {
-        dispatch(signOutStart());
-        // const response = await fetch('/api/auth/sign-out');
-        // const data = await response.json();
+    try {
+      dispatch(signOutStart());
+      // const response = await fetch('/api/auth/sign-out');
+      // const data = await response.json();
 
-        const response = await authAPI.signOut(user.token);
+      const response = await authAPI.signOut();
 
-        if (response.success === false) {
-          dispatch(signOutFailure(response.message));
-          return;
-        }
-        dispatch(signOutSuccess());
-        navigate("/login");
-      } catch (error) {
-        dispatch(signOutFailure((error as Record<string, string>).message));
+      if (response.success === false) {
+        dispatch(signOutFailure(response.message));
+        return;
       }
+      dispatch(signOutSuccess());
+      navigate("/login");
+    } catch (error) {
+      dispatch(signOutFailure((error as Record<string, string>).message));
     }
   };
 
@@ -51,7 +47,11 @@ const Header: React.FC = () => {
       <nav className="bg-white border-gray-200 py-2.5 dark:bg-gray-800">
         <div className="flex flex-wrap justify-between items-center mx-auto">
           <Link to="/" className="flex items-center">
-            <img src='/images/logo.svg' className="mr-3 h-6 sm:h-9" alt="ТопДомДок Logo" />
+            <img
+              src="/images/logo.svg"
+              className="mr-3 h-6 sm:h-9"
+              alt="ТопДомДок Logo"
+            />
             {/* <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               ТопДомДок
             </span> */}
