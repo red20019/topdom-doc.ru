@@ -25,13 +25,14 @@ class LoginController extends Controller
 
     if (! $user || ! Hash::check($request->password, $user->password)) {
 
-        return $this->sendError('Logining Error.', 'error');
+        return $this->sendError('Logining Error.', 'error',401);
         //throw ValidationException::withMessages([
         //    'email' => ['The provided credentials are incorrect.'],
         //]);
     }
     $success['token'] =  $user->createToken($request->email)->plainTextToken;
     $success['name'] =  $user->name;
+    $request->session()->regenerate();
     return $this->sendResponse($success, 'User logining.');
   //$user->createToken($input['email'])->accessToken;
   }

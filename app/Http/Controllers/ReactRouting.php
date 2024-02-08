@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 class ReactRouting extends Controller
 {
   public function show (Request $request) {
+<<<<<<< HEAD
 
      //$path;
        //$login='yes';
@@ -20,17 +21,9 @@ class ReactRouting extends Controller
         return view('react');
 
 
+=======
+        return view('react');
+>>>>>>> back
   }
 
-  public function NonAuthenticate (Request $request) {
-
-    //if(Auth::check()){
-      //return var_dump($request);
-      //return redirect('/main');
-    //}
-   // else{
-    return 1;
-    //return view('react',['login' => 'no']);
-    //}
-  }
 }

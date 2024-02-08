@@ -42,11 +42,12 @@ export const authAPI = {
   },
   async signOut(): Promise<UserTypeWithMiddleware> {
     try {
-      const response = await instance.get("logout", {
+      const response = await instance.post("logout", {
         // headers: {
         //   Authorization: `Bearer ${token}`,
         // },
       });
+      console.log(response);
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);

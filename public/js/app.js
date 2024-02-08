@@ -6386,13 +6386,14 @@ exports.authAPI = {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2,, 3]);
-            return [4 /*yield*/, instance.get("logout", {
+            return [4 /*yield*/, instance.post("logout", {
               // headers: {
               //   Authorization: `Bearer ${token}`,
               // },
             })];
           case 1:
             response = _a.sent();
+            console.log(response);
             return [2 /*return*/, response.data];
           case 2:
             error_3 = _a.sent();
