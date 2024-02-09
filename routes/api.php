@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 //Route::post('/register', 'api\RegisterController@register')->name('registerApi');
 //Route::post('/login', 'api\LoginController@login')->name('loginApi');
 Route::middleware('auth:sanctum')->get('/user', 'api\UserController@show')->name('ShowUser');
+Route::middleware('auth:sanctum')->post('/documents', 'api\DocumentResourceController@create')->name('AddDocument');
 //Route::middleware('auth:sanctum')->get('/logout', 'api\LoginController@logout')->name('logout');
 //Route::get('/{path?}', [
 //  'uses' => 'ReactRouting@NonAuthenticate',
