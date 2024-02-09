@@ -35,7 +35,7 @@ class DocumentResourceController extends Controller
       //  $document->save();
 //
         //$resource = new DocumentResource();
-        foreach($request->file('document') as $file){
+        foreach($request->file('files') as $file){
           $path = $file->store('documents');
           DocumentResource::create([
             'document_id' => $document->id,

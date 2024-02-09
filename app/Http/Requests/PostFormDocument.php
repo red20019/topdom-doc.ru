@@ -26,9 +26,9 @@ class PostFormDocument extends FormRequest
       $rules = [
         'name' => 'required'
       ];
-      $file = count($this->input('file'));
+      $file = count($this->input('files'));
       foreach(range(0, $file) as $index) {
-        $rules['photos.' . $index] = 'file|required';
+        $rules['files.' . $index] = 'file|required';
       }
 
       return $rules;
