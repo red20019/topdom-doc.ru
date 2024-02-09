@@ -1,6 +1,6 @@
 import axios, { Cancel } from "axios";
 
-import { UserTypeWithMiddleware } from "../redux/user/types";
+import { UserTypeWithMiddleware, DocsType } from "../redux/user/types";
 
 const instance = axios.create({
   withCredentials: true,
@@ -21,8 +21,6 @@ export const authAPI = {
   async signUp(formData: Record<string, string>) {
     try {
       const response = await instance.post("register", formData);
-      console.log('register');
-      console.log(response);
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);
@@ -32,21 +30,14 @@ export const authAPI = {
   async signIn(formData: Record<string, string>) {
     try {
       const response = await instance.post("login", formData);
-      console.log('login');
-      console.log(response);
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);
-      throw error;
     }
   },
   async signOut(): Promise<UserTypeWithMiddleware> {
     try {
-      const response = await instance.get("logout", {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // },
-      });
+      const response = await instance.post("logout");
       return response.data;
     } catch (error) {
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);
@@ -66,29 +57,29 @@ export const authAPI = {
   // },
 };
 
-// export const itemsAPI = {
-//   async getItems() {
-//     try {
-//       const response = await instance.get(`items`)
-//       // console.log(response.data)
-//       return response.data
-//     } catch (error) {
-//       if (axios.isCancel(error)) return
-//     }
-//   },
+export const docsAPI = {
+  async sendDocs(formData: DocsType) {
+    try {
+      const response = await instance.post(`api/documents`, formData);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
 
-//   async filter(platform, sort, order) {
-//     const sortBy = sort ? `sortBy=${sort}` : ''
-//     const orderBy = order ? `order=${order}` : ''
-//     try {
-//       const response = await instance.get(`items?${sortBy}${orderBy}`)
-//       // console.log(response.data)
-//       return response.data
-//     } catch (error) {
-//       if (axios.isCancel(error)) return
-//     }
-//   },
-// }
+  // async filter(platform, sort, order) {
+  //   const sortBy = sort ? `sortBy=${sort}` : ''
+  //   const orderBy = order ? `order=${order}` : ''
+  //   try {
+  //     const response = await instance.get(`items?${sortBy}${orderBy}`)
+  //     // console.log(response.data)
+  //     return response.data
+  //   } catch (error) {
+  //     if (axios.isCancel(error)) return
+  //   }
+  // },
+};
 
 // export const settingsAPI = {
 //   getUserInfo(userId = 2) {

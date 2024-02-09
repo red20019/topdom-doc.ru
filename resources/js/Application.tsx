@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import CreateDoc from "./pages/CreateDoc";
 import NotFound from "./pages/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
+import Document from "./pages/Document";
 
 export interface IUser {
   name: string;
@@ -25,11 +26,12 @@ const App: React.FC = () => {
           <Header />
           <Routes>
             <Route path="/" element={<Welcome />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/pending" element={<Pending />} />
+            <Route path="register" element={<Register />} />
+            <Route path="login" element={<Login />} />
+            <Route path="pending" element={<Pending />} />
             <Route element={<PrivateRoute />}>
-              <Route path="/create-doc" element={<CreateDoc />} />
+              <Route path="create-doc" element={<CreateDoc />} />
+              <Route path="create-doc/:id" element={<Document />} />
               {/* <Route path="/profile" element={<Profile />} />
               <Route path="/create-listing" element={<CreateListing />} /> */}
               {/* <Route
