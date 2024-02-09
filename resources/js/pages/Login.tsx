@@ -7,7 +7,6 @@ import {
   signInFailure,
   signInStart,
   signInSuccess,
-  signInToken,
 } from "../redux/user/userSlice";
 import { RootState } from "../redux/store";
 
@@ -29,15 +28,14 @@ const Login: React.FC = () => {
       await authAPI.getToken();
       const response = await authAPI.signIn(formData);
       if (response.success === false) {
-        dispatch(signInFailure(response.message));
+        dispatch(signInFailure(response.data.message));
         return;
       }
-      // dispatch(signInToken(response.data.token));
       await getUser();
 
       navigate("/");
     } catch (error: unknown) {
-      dispatch(signInFailure((error as Record<string, string>).message));
+      dispatch(signInFailure("Неправильный логин или пароль"));
     }
   };
 

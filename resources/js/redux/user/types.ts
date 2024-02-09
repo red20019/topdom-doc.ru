@@ -12,7 +12,6 @@ export interface UserSliceState {
   currentUser: UserType | null;
   loading: boolean;
   error: string | null;
-  token: string | null;
 }
 
 export type Middleware<T> = {
@@ -20,6 +19,11 @@ export type Middleware<T> = {
   data: T;
   message: string;
 };
+
+export type DocsType = {
+  name: string
+  files: File[]
+}
 
 // export type ListingData = {
 //   _id?: string;

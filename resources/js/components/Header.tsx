@@ -43,10 +43,10 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="container mx-auto px-4">
+    <header className="container mx-auto mb-14 px-4">
       <nav className="bg-white border-gray-200 py-2.5 dark:bg-gray-800">
         <div className="flex flex-wrap justify-between items-center mx-auto">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center mr-40">
             <img
               src="/images/logo.svg"
               className="mr-3 h-6 sm:h-9"
@@ -115,7 +115,7 @@ const Header: React.FC = () => {
             </button>
           </div>
           <div
-            className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
+            className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1 flex-grow"
             id="mobile-menu-2"
           >
             <ul className="flex flex-col font-medium lg:flex-row lg:space-x-8 lg:mt-0">
