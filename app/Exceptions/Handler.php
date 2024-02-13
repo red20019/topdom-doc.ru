@@ -6,6 +6,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Validation\ValidationException as ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -41,6 +42,7 @@ class Handler extends ExceptionHandler
         parent::report($exception);
     }
 
+
     /**
      * Render an exception into an HTTP response.
      *
@@ -50,8 +52,14 @@ class Handler extends ExceptionHandler
      *
      * @throws \Throwable
      */
+
     public function render($request, Throwable $exception)
     {
+      if ($exception instanceof ValidationException) {
+
+        return response()->json(['message' => 'data is invalid', 'errors' => $exception->validator->getMessageBag(),'success' => false], 422);
+
+      }
       if ($exception instanceof NotFoundHttpException) { // for 404
         // do stuff
         //abort(404);

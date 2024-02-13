@@ -58,10 +58,10 @@ export const authAPI = {
 };
 
 export const docsAPI = {
-  async sendDocs(formData: DocsType) {
+  async sendDocs(formData: FormData) {
     try {
       console.log(formData);
-      const response = await instance.post(`api/documents`, formData);
+      const response = await instance.post(`api/documents_add`, formData);
       console.log(response.data);
       return response.data;
     } catch (error) {

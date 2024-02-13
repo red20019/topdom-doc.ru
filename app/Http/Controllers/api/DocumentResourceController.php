@@ -8,6 +8,7 @@ use App\Http\Requests\PostFormDocument;
 use App\DocumentResource;
 use App\Document;
 use App\DocumentTracking;
+use Illuminate\Support\Arr;
 
 use Carbon\Carbon;
 
@@ -30,32 +31,33 @@ class DocumentResourceController extends Controller
      */
     public function create(PostFormDocument $request)
     {
-       $document = Document::create($request->all());
-      //$document = new Document();
-      //  $document->name = $request->input('name');
-      //  $document->user_id = $request->user()->id;
-      //  $document->save();
-//
-        //$resource = new DocumentResource();
+      $document = Document::create([
+        'name' => $request->input('name'),
+        'user_id' => $request->user()->id
+      ]);
+
+        $document_files=[];
         foreach($request->file('files') as $file){
+          array_push($document_files,$file->getClientOriginalName());
           $path = $file->store('documents');
           DocumentResource::create([
-            'document_id' => $document->id,
+            'filename' => $file->getClientOriginalName(),
             'path' => $path,
-            'filename' => $file->getClientOriginalName()
+            'document_id' => $document->id
+
           ]);
-          ///$resource = new DocumentResource();
-          ///$resource->path = $file->store('documents');
-          ///$resource->document_id = $document->id;
         }
 
         DocumentTracking::create([
           'document_id' => $document->id,
-          'stage_document' => $document->stage,
-          'date_start_stage' => Carbon::now()->date('d.m.Y H:i:s')
+          'stage_document' => 0,
+          'date_start_stage' => Carbon::now()
 
         ]);
+        $success['document_name'] = $document->name;
+        $success['document_files'] =  $document_files;
 
+        return $this->sendResponse($success, 'documents added');
 
     }
 

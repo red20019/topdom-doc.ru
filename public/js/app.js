@@ -6422,7 +6422,7 @@ exports.docsAPI = {
           case 0:
             _a.trys.push([0, 2,, 3]);
             console.log(formData);
-            return [4 /*yield*/, instance.post("api/documents", formData)];
+            return [4 /*yield*/, instance.post("api/documents_add", formData)];
           case 1:
             response = _a.sent();
             console.log(response.data);
@@ -7019,21 +7019,29 @@ var CreateDoc = function CreateDoc() {
   }, []);
   var handleSubmit = function handleSubmit(e) {
     return __awaiter(void 0, void 0, void 0, function () {
-      var response, error_1;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
+      var data, i, response, error_1;
+      var _a;
+      return __generator(this, function (_b) {
+        switch (_b.label) {
           case 0:
             e.preventDefault();
-            _a.label = 1;
+            data = new FormData();
+            data.append("name", formData.name);
+            if (formData.files) {
+              for (i = 0; i < ((_a = formData.files) === null || _a === void 0 ? void 0 : _a.length); i++) {
+                data.append("files[]", formData.files[i]);
+              }
+            }
+            _b.label = 1;
           case 1:
-            _a.trys.push([1, 4,, 5]);
+            _b.trys.push([1, 4,, 5]);
             setLoading(true);
             return [4 /*yield*/, api_1.authAPI.getToken()];
           case 2:
-            _a.sent();
-            return [4 /*yield*/, api_1.docsAPI.sendDocs(formData)];
+            _b.sent();
+            return [4 /*yield*/, api_1.docsAPI.sendDocs(data)];
           case 3:
-            response = _a.sent();
+            response = _b.sent();
             if (response.success === false) {
               setLoading(false);
               setError(response.message);
@@ -7045,7 +7053,7 @@ var CreateDoc = function CreateDoc() {
             console.log(response);
             return [3 /*break*/, 5];
           case 4:
-            error_1 = _a.sent();
+            error_1 = _b.sent();
             setLoading(false);
             setError(error_1.message);
             return [3 /*break*/, 5];
@@ -7096,7 +7104,7 @@ var CreateDoc = function CreateDoc() {
     onChange: handleChange,
     id: "files",
     type: "file",
-    className: "block w-full text-sm text-slate-500\r\n                        file:mr-4 file:py-2 file:px-4\r\n                        file:rounded-full file:border-0\r\n                        file:text-sm file:font-semibold\r\n                        file:bg-violet-50 file:text-violet-700\r\n                        hover:file:bg-violet-100\r\n                      ",
+    className: "block w-full text-sm text-slate-500\n                        file:mr-4 file:py-2 file:px-4\n                        file:rounded-full file:border-0\n                        file:text-sm file:font-semibold\n                        file:bg-violet-50 file:text-violet-700\n                        hover:file:bg-violet-100\n                      ",
     multiple: true
   }))), react_1["default"].createElement("button", {
     type: "submit",

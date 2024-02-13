@@ -20,19 +20,18 @@ const CreateDoc: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // const data = new FormData();
-    // data.append("name", formData.name);
-
-    // if (formData.files) {
-    //   for (let i = 0; i < formData.files?.length; i++) {
-    //     data.append("files", formData.files[i]);
-    //   }
-    // }
+     const data = new FormData();
+     data.append("name", formData.name);
+     if (formData.files) {
+       for (let i = 0; i < formData.files?.length; i++) {
+         data.append("files[]", formData.files[i]);
+       }
+     }
 
     try {
       setLoading(true);
       await authAPI.getToken();
-      const response = await docsAPI.sendDocs(formData);
+      const response = await docsAPI.sendDocs(data);
       if (response.success === false) {
         setLoading(false);
         setError(response.message);
