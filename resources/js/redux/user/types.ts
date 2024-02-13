@@ -22,7 +22,7 @@ export type Middleware<T> = {
 
 export type DocsType = {
   name: string
-  files: File[]
+  files: FileList | null
 }
 
 // export type ListingData = {

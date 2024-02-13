@@ -6,10 +6,12 @@ import { DocsType } from "../redux/user/types";
 const CreateDoc: React.FC = () => {
   const [formData, setFormData] = React.useState<DocsType>({
     name: "",
-    files: [],
+    files: null,
   });
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
+
+  console.log(formData);
 
   useEffect(() => {
     document.title = "Добавление документа | ТопДомДок";
@@ -17,6 +19,16 @@ const CreateDoc: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // const data = new FormData();
+    // data.append("name", formData.name);
+
+    // if (formData.files) {
+    //   for (let i = 0; i < formData.files?.length; i++) {
+    //     data.append("files", formData.files[i]);
+    //   }
+    // }
+
     try {
       setLoading(true);
       await authAPI.getToken();
@@ -34,6 +46,21 @@ const CreateDoc: React.FC = () => {
       setError((error as Record<string, string>).message);
     }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.type === "text") {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.files,
+      });
+    }
+  };
+
   return (
     <section className="container mx-auto px-4">
       <h2 className="text-3xl font-bold mb-8 text-center">
@@ -53,16 +80,20 @@ const CreateDoc: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block">
+            <label htmlFor="name" className="block">
               <input
+                onChange={handleChange}
+                id="name"
                 type="text"
                 className="block w-full mb-2 p-2 pl-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Название"
                 multiple
               />
             </label>
-            <label className="block mb-3">
+            <label htmlFor="files" className="block mb-3">
               <input
+                onChange={handleChange}
+                id="files"
                 type="file"
                 className="block w-full text-sm text-slate-500
                         file:mr-4 file:py-2 file:px-4
@@ -83,6 +114,7 @@ const CreateDoc: React.FC = () => {
           </button>
         </form>
       </div>
+      {error && <p className="text-red-500 text-xs text-center">{error}</p>}
 
       <div className="items-center w-full px-4 py-4 mx-auto my-10 bg-white rounded-lg shadow-md">
         <div className="mx-auto">
