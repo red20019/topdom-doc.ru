@@ -13,7 +13,7 @@ class PostFormDocument extends FormRequest
      */
     public function authorize()
     {
-        return auth('sanctum')->check;
+        return true;
     }
 
     /**
@@ -26,6 +26,7 @@ class PostFormDocument extends FormRequest
       $rules = [
         'name' => 'required'
       ];
+      dd($this->files);
       $file = count($this->input('files'));
       foreach(range(0, $file) as $index) {
         $rules['files.' . $index] = 'file|required';

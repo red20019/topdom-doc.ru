@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\api;
 
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Http\Requests\PostFormDocument;
 use App\DocumentResource;
 use App\Document;
 use App\DocumentTracking;
-use Illuminate\Http\Request;
+
 use Carbon\Carbon;
 
 class DocumentResourceController extends Controller
