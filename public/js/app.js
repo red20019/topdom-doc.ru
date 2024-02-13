@@ -6421,6 +6421,7 @@ exports.docsAPI = {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2,, 3]);
+            console.log(formData);
             return [4 /*yield*/, instance.post("api/documents", formData)];
           case 1:
             response = _a.sent();
