@@ -28,7 +28,7 @@ class PostFormDocument extends FormRequest
 
       return [
         'name' => 'required',
-        'files'   => 'array',
+        'files'   => 'array|max:10',
         'files.*' => 'file|required|max:512000'
       ];
      // $rules = [
