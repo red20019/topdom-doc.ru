@@ -11,8 +11,6 @@ const CreateDoc: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
-  console.log(formData);
-
   useEffect(() => {
     document.title = "Добавление документа | ТопДомДок";
   }, []);

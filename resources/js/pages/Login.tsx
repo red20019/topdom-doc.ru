@@ -16,11 +16,6 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const getUser = async () => {
-    const response = await authAPI.me();
-    dispatch(signInSuccess(response.data.data));
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -31,7 +26,8 @@ const Login: React.FC = () => {
         dispatch(signInFailure(response.data.message));
         return;
       }
-      await getUser();
+      const userResponse = await authAPI.me();
+      dispatch(signInSuccess(userResponse.data.data));
 
       navigate("/");
     } catch (error: unknown) {

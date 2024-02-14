@@ -6,12 +6,10 @@ import { authAPI } from "../api/api";
 import { RootState } from "../redux/store";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
-  signInSuccess,
   signOutFailure,
   signOutStart,
   signOutSuccess,
 } from "../redux/user/userSlice";
-import { getXsrfToken } from "../utils/getXsrfToken";
 
 const Header: React.FC = () => {
   const user = useAppSelector((state: RootState) => state.user);
@@ -20,15 +18,24 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // getXsrfToken();
+    const getUser = async () => {
+      try {
+        const response = await authAPI.me();
+
+        // if (response.success === false) {
+        //   dispatch(signOutFailure(response.message));
+        //   return;
+        // }
+      } catch (error) {
+        dispatch(signOutSuccess());
+      }
+    };
+    getUser();
   }, []);
 
   const handleSignOut = async () => {
     try {
       dispatch(signOutStart());
-      // const response = await fetch('/api/auth/sign-out');
-      // const data = await response.json();
-
       const response = await authAPI.signOut();
 
       if (response.success === false) {

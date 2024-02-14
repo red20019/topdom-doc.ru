@@ -15,8 +15,15 @@ export const authAPI = {
   getToken() {
     return instance.get("sanctum/csrf-cookie");
   },
-  me() {
-    return instance.get("api/user");
+  async me() {
+    // return instance.get("api/user");
+    try {
+      const response = await instance.get("api/user");
+      return response;
+    } catch (error) {
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
+    }
   },
   async signUp(formData: Record<string, string>) {
     try {

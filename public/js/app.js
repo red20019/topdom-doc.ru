@@ -6333,19 +6333,16 @@ exports.authAPI = {
     return instance.get("sanctum/csrf-cookie");
   },
   me: function me() {
-    return instance.get("api/user");
-  },
-  signUp: function signUp(formData) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_1;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
             _a.trys.push([0, 2,, 3]);
-            return [4 /*yield*/, instance.post("register", formData)];
+            return [4 /*yield*/, instance.get("api/user")];
           case 1:
             response = _a.sent();
-            return [2 /*return*/, response.data];
+            return [2 /*return*/, response];
           case 2:
             error_1 = _a.sent();
             if (axios_1["default"].isCancel(error_1)) return [2 /*return*/, Promise.reject(error_1)];
@@ -6357,9 +6354,31 @@ exports.authAPI = {
     });
   },
 
-  signIn: function signIn(formData) {
+  signUp: function signUp(formData) {
     return __awaiter(this, void 0, void 0, function () {
       var response, error_2;
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            _a.trys.push([0, 2,, 3]);
+            return [4 /*yield*/, instance.post("register", formData)];
+          case 1:
+            response = _a.sent();
+            return [2 /*return*/, response.data];
+          case 2:
+            error_2 = _a.sent();
+            if (axios_1["default"].isCancel(error_2)) return [2 /*return*/, Promise.reject(error_2)];
+            throw error_2;
+          case 3:
+            return [2 /*return*/];
+        }
+      });
+    });
+  },
+
+  signIn: function signIn(formData) {
+    return __awaiter(this, void 0, void 0, function () {
+      var response, error_3;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
@@ -6369,8 +6388,8 @@ exports.authAPI = {
             response = _a.sent();
             return [2 /*return*/, response.data];
           case 2:
-            error_2 = _a.sent();
-            if (axios_1["default"].isCancel(error_2)) return [2 /*return*/, Promise.reject(error_2)];
+            error_3 = _a.sent();
+            if (axios_1["default"].isCancel(error_3)) return [2 /*return*/, Promise.reject(error_3)];
             return [3 /*break*/, 3];
           case 3:
             return [2 /*return*/];
@@ -6381,7 +6400,7 @@ exports.authAPI = {
 
   signOut: function signOut() {
     return __awaiter(this, void 0, void 0, function () {
-      var response, error_3;
+      var response, error_4;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
@@ -6391,9 +6410,9 @@ exports.authAPI = {
             response = _a.sent();
             return [2 /*return*/, response.data];
           case 2:
-            error_3 = _a.sent();
-            if (axios_1["default"].isCancel(error_3)) return [2 /*return*/, Promise.reject(error_3)];
-            throw error_3;
+            error_4 = _a.sent();
+            if (axios_1["default"].isCancel(error_4)) return [2 /*return*/, Promise.reject(error_4)];
+            throw error_4;
           case 3:
             return [2 /*return*/];
         }
@@ -6416,7 +6435,7 @@ exports.authAPI = {
 exports.docsAPI = {
   sendDocs: function sendDocs(formData) {
     return __awaiter(this, void 0, void 0, function () {
-      var response, error_4;
+      var response, error_5;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
@@ -6428,8 +6447,8 @@ exports.docsAPI = {
             console.log(response.data);
             return [2 /*return*/, response.data];
           case 2:
-            error_4 = _a.sent();
-            if (axios_1["default"].isCancel(error_4)) return [2 /*return*/];
+            error_5 = _a.sent();
+            if (axios_1["default"].isCancel(error_5)) return [2 /*return*/];
             return [3 /*break*/, 3];
           case 3:
             return [2 /*return*/];
@@ -6675,11 +6694,33 @@ var Header = function Header() {
   var dispatch = (0, hooks_1.useAppDispatch)();
   var navigate = (0, react_router_dom_1.useNavigate)();
   (0, react_1.useEffect)(function () {
-    // getXsrfToken();
+    var getUser = function getUser() {
+      return __awaiter(void 0, void 0, void 0, function () {
+        var response, error_1;
+        return __generator(this, function (_a) {
+          switch (_a.label) {
+            case 0:
+              _a.trys.push([0, 2,, 3]);
+              return [4 /*yield*/, api_1.authAPI.me()];
+            case 1:
+              response = _a.sent();
+              return [3 /*break*/, 3];
+            case 2:
+              error_1 = _a.sent();
+              dispatch((0, userSlice_1.signOutSuccess)());
+              return [3 /*break*/, 3];
+            case 3:
+              return [2 /*return*/];
+          }
+        });
+      });
+    };
+
+    getUser();
   }, []);
   var handleSignOut = function handleSignOut() {
     return __awaiter(void 0, void 0, void 0, function () {
-      var response, error_1;
+      var response, error_2;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
@@ -6697,8 +6738,8 @@ var Header = function Header() {
             navigate("/login");
             return [3 /*break*/, 3];
           case 2:
-            error_1 = _a.sent();
-            dispatch((0, userSlice_1.signOutFailure)(error_1.message));
+            error_2 = _a.sent();
+            dispatch((0, userSlice_1.signOutFailure)(error_2.message));
             return [3 /*break*/, 3];
           case 3:
             return [2 /*return*/];
@@ -7013,7 +7054,6 @@ var CreateDoc = function CreateDoc() {
   var _c = react_1["default"].useState(false),
     loading = _c[0],
     setLoading = _c[1];
-  console.log(formData);
   (0, react_1.useEffect)(function () {
     document.title = "Добавление документа | ТопДомДок";
   }, []);
@@ -7104,7 +7144,7 @@ var CreateDoc = function CreateDoc() {
     onChange: handleChange,
     id: "files",
     type: "file",
-    className: "block w-full text-sm text-slate-500\n                        file:mr-4 file:py-2 file:px-4\n                        file:rounded-full file:border-0\n                        file:text-sm file:font-semibold\n                        file:bg-violet-50 file:text-violet-700\n                        hover:file:bg-violet-100\n                      ",
+    className: "block w-full text-sm text-slate-500\r\n                        file:mr-4 file:py-2 file:px-4\r\n                        file:rounded-full file:border-0\r\n                        file:text-sm file:font-semibold\r\n                        file:bg-violet-50 file:text-violet-700\r\n                        hover:file:bg-violet-100\r\n                      ",
     multiple: true
   }))), react_1["default"].createElement("button", {
     type: "submit",
@@ -7485,25 +7525,9 @@ var Login = function Login() {
     error = _b.error;
   var navigate = (0, react_router_dom_1.useNavigate)();
   var dispatch = (0, hooks_1.useAppDispatch)();
-  var getUser = function getUser() {
-    return __awaiter(void 0, void 0, void 0, function () {
-      var response;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            return [4 /*yield*/, api_1.authAPI.me()];
-          case 1:
-            response = _a.sent();
-            dispatch((0, userSlice_1.signInSuccess)(response.data.data));
-            return [2 /*return*/];
-        }
-      });
-    });
-  };
-
   var handleSubmit = function handleSubmit(e) {
     return __awaiter(void 0, void 0, void 0, function () {
-      var response, error_1;
+      var response, userResponse, error_1;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
@@ -7523,9 +7547,10 @@ var Login = function Login() {
               return [2 /*return*/];
             }
 
-            return [4 /*yield*/, getUser()];
+            return [4 /*yield*/, api_1.authAPI.me()];
           case 4:
-            _a.sent();
+            userResponse = _a.sent();
+            dispatch((0, userSlice_1.signInSuccess)(userResponse.data.data));
             navigate("/");
             return [3 /*break*/, 6];
           case 5:
@@ -7785,6 +7810,7 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
 var api_1 = __webpack_require__(/*! ../api/api */ "./resources/js/api/api.ts");
 var hooks_1 = __webpack_require__(/*! ../redux/hooks */ "./resources/js/redux/hooks.ts");
+var userSlice_1 = __webpack_require__(/*! ../redux/user/userSlice */ "./resources/js/redux/user/userSlice.ts");
 var SignUp = function SignUp() {
   var _a = react_1["default"].useState({}),
     formData = _a[0],
@@ -7799,6 +7825,7 @@ var SignUp = function SignUp() {
     loading = _c[0],
     setLoading = _c[1];
   var navigate = (0, react_router_dom_1.useNavigate)();
+  var dispatch = (0, hooks_1.useAppDispatch)();
   react_1["default"].useEffect(function () {
     if (currentUser) {
       navigate("/");
@@ -7806,20 +7833,18 @@ var SignUp = function SignUp() {
   }, []);
   var handleSubmit = function handleSubmit(e) {
     return __awaiter(void 0, void 0, void 0, function () {
-      var response, error_1;
+      var response, email, password, loginResponse, userResponse, error_1;
       return __generator(this, function (_a) {
         switch (_a.label) {
           case 0:
             e.preventDefault();
             _a.label = 1;
           case 1:
-            _a.trys.push([1, 4,, 5]);
+            _a.trys.push([1, 6,, 7]);
+            // Sign up
             setLoading(true);
-            return [4 /*yield*/, api_1.authAPI.getToken()];
-          case 2:
-            _a.sent();
             return [4 /*yield*/, api_1.authAPI.signUp(formData)];
-          case 3:
+          case 2:
             response = _a.sent();
             if (response.success === false) {
               setLoading(false);
@@ -7829,14 +7854,35 @@ var SignUp = function SignUp() {
 
             setLoading(false);
             setError(null);
-            navigate("/login");
-            return [3 /*break*/, 5];
+            // Login after sign up
+            dispatch((0, userSlice_1.signInStart)());
+            email = formData.email, password = formData.password;
+            return [4 /*yield*/, api_1.authAPI.getToken()];
+          case 3:
+            _a.sent();
+            return [4 /*yield*/, api_1.authAPI.signIn({
+              email: email,
+              password: password
+            })];
           case 4:
+            loginResponse = _a.sent();
+            if (loginResponse.success === false) {
+              dispatch((0, userSlice_1.signInFailure)(loginResponse.data.message));
+              return [2 /*return*/];
+            }
+
+            return [4 /*yield*/, api_1.authAPI.me()];
+          case 5:
+            userResponse = _a.sent();
+            dispatch((0, userSlice_1.signInSuccess)(userResponse.data.data));
+            navigate("/");
+            return [3 /*break*/, 7];
+          case 6:
             error_1 = _a.sent();
             setLoading(false);
             setError(error_1.message);
-            return [3 /*break*/, 5];
-          case 5:
+            return [3 /*break*/, 7];
+          case 7:
             return [2 /*return*/];
         }
       });
@@ -8048,6 +8094,7 @@ var userSlice = (0, toolkit_1.createSlice)({
       state.error = null;
     },
     signInFailure: function signInFailure(state, action) {
+      state.currentUser = null;
       state.error = action.payload;
       state.loading = false;
     },

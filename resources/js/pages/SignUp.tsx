@@ -2,8 +2,9 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { authAPI } from "../api/api";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
+import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = React.useState<Record<string, string>>({});
@@ -11,6 +12,7 @@ const SignUp: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     if (currentUser) {
@@ -21,8 +23,8 @@ const SignUp: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      // Sign up
       setLoading(true);
-      await authAPI.getToken();
       const response = await authAPI.signUp(formData);
       if (response.success === false) {
         setLoading(false);
@@ -31,7 +33,20 @@ const SignUp: React.FC = () => {
       }
       setLoading(false);
       setError(null);
-      navigate("/login");
+
+      // Login after sign up
+      dispatch(signInStart());
+      const { email, password } = formData;
+      await authAPI.getToken();
+      const loginResponse = await authAPI.signIn({ email, password });
+      if (loginResponse.success === false) {
+        dispatch(signInFailure(loginResponse.data.message));
+        return;
+      }
+      const userResponse = await authAPI.me();
+      dispatch(signInSuccess(userResponse.data.data));
+
+      navigate("/");
     } catch (error: unknown) {
       setLoading(false);
       setError((error as Record<string, string>).message);
