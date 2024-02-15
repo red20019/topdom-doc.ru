@@ -37,9 +37,14 @@ export const authAPI = {
   async signIn(formData: Record<string, string>) {
     try {
       const response = await instance.post("login", formData);
+      console.log(response.data);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response) {
+        console.log(error.response.data); // Access the error response message
+      }
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
     }
   },
   async signOut(): Promise<UserTypeWithMiddleware> {

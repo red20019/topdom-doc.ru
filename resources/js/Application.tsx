@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { Layout } from "antd";
 
 import Header from "./components/Header";
 import Welcome from "./pages/Welcome";
@@ -13,6 +14,14 @@ import CreateDoc from "./pages/CreateDoc";
 import NotFound from "./pages/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
 import Document from "./pages/Document";
+import Sider from "./components/Sider";
+
+const contentStyle: React.CSSProperties = {
+  minHeight: "calc(100vh - 84px)",
+  backgroundColor: "white",
+  color: "#fff",
+  textAlign: "center",
+};
 
 export interface IUser {
   name: string;
@@ -23,24 +32,31 @@ const App: React.FC = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
-          <Header />
-          <Routes>
-            <Route path="/" element={<Welcome />} />
-            <Route path="register" element={<Register />} />
-            <Route path="login" element={<Login />} />
-            <Route path="pending" element={<Pending />} />
-            <Route element={<PrivateRoute />}>
-              <Route path="create-doc" element={<CreateDoc />} />
-              <Route path="create-doc/:id" element={<Document />} />
-              {/* <Route path="/profile" element={<Profile />} />
+          <Layout>
+            <Sider />
+            <Layout>
+              <Header />
+              <Layout.Content style={contentStyle}>
+                <Routes>
+                  <Route path="/" element={<Welcome />} />
+                  <Route path="register" element={<Register />} />
+                  <Route path="login" element={<Login />} />
+                  <Route path="pending" element={<Pending />} />
+                  <Route element={<PrivateRoute />}>
+                    <Route path="create-doc" element={<CreateDoc />} />
+                    <Route path="create-doc/:id" element={<Document />} />
+                    {/* <Route path="/profile" element={<Profile />} />
               <Route path="/create-listing" element={<CreateListing />} /> */}
-              {/* <Route
+                    {/* <Route
                 path="/update-listing/:listingId"
                 element={<UpdateListing />}
               /> */}
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+                  </Route>
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Layout.Content>
+            </Layout>
+          </Layout>
         </BrowserRouter>
       </PersistGate>
     </Provider>
