@@ -19,8 +19,6 @@ import Sider from "./components/Sider";
 const contentStyle: React.CSSProperties = {
   minHeight: "calc(100vh - 84px)",
   backgroundColor: "white",
-  color: "#fff",
-  textAlign: "center",
 };
 
 export interface IUser {

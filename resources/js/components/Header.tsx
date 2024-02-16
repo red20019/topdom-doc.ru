@@ -62,16 +62,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto mb-14 px-4">
         <nav className="bg-white border-gray-200 py-2.5 dark:bg-gray-800">
           <div className="flex flex-wrap justify-between items-center mx-auto">
-            <Link to="/" className="flex items-center mr-40">
-              <img
-                src="/images/logo.svg"
-                className="mr-3 h-6 sm:h-9"
-                alt="ТопДомДок Logo"
-              />
-              {/* <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-              ТопДомДок
-            </span> */}
-            </Link>
+
             <div className="flex items-center lg:order-2">
               {user.currentUser ? (
                 <button
@@ -134,7 +125,7 @@ const Header: React.FC = () => {
               className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1 flex-grow"
               id="mobile-menu-2"
             >
-              <ul className="flex flex-col font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+              {/* <ul className="flex flex-col font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                 <li>
                   <Link
                     to="/create-doc"
@@ -144,7 +135,7 @@ const Header: React.FC = () => {
                     Добавить документ
                   </Link>
                 </li>
-              </ul>
+              </ul> */}
             </div>
           </div>
         </nav>
