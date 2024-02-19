@@ -1,3 +1,5 @@
+import { UploadFile } from "antd";
+
 export type UserType = {
   id: number;
   name: string;
@@ -22,7 +24,7 @@ export type Middleware<T> = {
 
 export type DocsType = {
   name: string
-  files: FileList | null
+  files: UploadFile[] | null
 }
 
 // export type ListingData = {

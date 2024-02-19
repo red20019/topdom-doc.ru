@@ -30,9 +30,9 @@ const App: React.FC = () => {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
-          <Layout>
+          <Layout hasSider style={{ backgroundColor: "white" }}>
             <Sider />
-            <Layout>
+            <Layout style={{ marginLeft: '15%' }}>
               <Header />
               <Layout.Content style={contentStyle}>
                 <Routes>

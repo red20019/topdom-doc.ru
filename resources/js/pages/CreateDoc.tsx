@@ -1,7 +1,13 @@
-import React, { useEffect } from "react";
+import React, { ChangeEvent, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { message, Upload } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
+import type { UploadProps } from "antd";
+
 import { authAPI, docsAPI } from "../api/api";
 import { DocsType } from "../redux/user/types";
+
+const { Dragger } = Upload;
 
 const CreateDoc: React.FC = () => {
   const [formData, setFormData] = React.useState<DocsType>({
@@ -11,6 +17,19 @@ const CreateDoc: React.FC = () => {
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
+  console.log(formData);
+
+  const props: UploadProps = {
+    name: "files",
+    multiple: true,
+    onChange(info) {
+      setFormData({ ...formData, files: info.fileList });
+    },
+    onDrop(e) {
+      console.log("Загруженные файлы", e.dataTransfer.files);
+    },
+  };
+
   useEffect(() => {
     document.title = "Добавление документа | ТопДомДок";
   }, []);
@@ -18,13 +37,13 @@ const CreateDoc: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-     const data = new FormData();
-     data.append("name", formData.name);
-     if (formData.files) {
-       for (let i = 0; i < formData.files?.length; i++) {
-         data.append("files[]", formData.files[i]);
-       }
-     }
+    const data = new FormData();
+    data.append("name", formData.name);
+    if (formData.files) {
+      for (let i = 0; i < formData.files.length; i++) {
+        data.append("files[]", formData.files[i].originFileObj as File);
+      }
+    }
 
     try {
       setLoading(true);
@@ -44,18 +63,11 @@ const CreateDoc: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.type === "text") {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.value,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        [e.target.id]: e.target.files,
-      });
-    }
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
   };
 
   return (
@@ -65,29 +77,35 @@ const CreateDoc: React.FC = () => {
       </h2>
 
       <div className="flex flex-center mx-auto">
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-center space-x-6 mb-8 p-8 shadow-md"
-        >
-          <div className="shrink-0">
+        <form onSubmit={handleSubmit} className="mb-8 p-8 shadow-md text-center">
+          {/* <div className="shrink-0">
             <img
               className="h-16 w-16 object-cover"
               src="https://cdn-icons-png.flaticon.com/512/3375/3375199.png"
               alt="Документы"
             />
-          </div>
-          <div>
-            <label htmlFor="name" className="block">
-              <input
-                onChange={handleChange}
-                id="name"
-                type="text"
-                className="block w-full mb-2 p-2 pl-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                placeholder="Название"
-                multiple
-              />
-            </label>
-            <label htmlFor="files" className="block mb-3">
+          </div> */}
+          <label htmlFor="name" className="block">
+            <input
+              onChange={handleChange}
+              id="name"
+              type="text"
+              className="block w-full mb-2 p-2 pl-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Название"
+              multiple
+              required
+            />
+          </label>
+          <Dragger beforeUpload={() => false} {...props}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              Нажмите или перетащите файлы в эту область для загрузки
+            </p>
+          </Dragger>
+
+          {/* <label htmlFor="files" className="block mb-3">
               <input
                 onChange={handleChange}
                 id="files"
@@ -101,11 +119,11 @@ const CreateDoc: React.FC = () => {
                       "
                 multiple
               />
-            </label>
-          </div>
+            </label> */}
+
           <button
             type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="mt-5 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
             Загрузить
           </button>

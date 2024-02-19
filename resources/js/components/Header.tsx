@@ -13,6 +13,8 @@ import {
 } from "../redux/user/userSlice";
 
 const headerStyle: React.CSSProperties = {
+  paddingTop: "1.75rem",
+  paddingBottom: "1rem",
   minHeight: "84px",
   backgroundColor: "white",
   color: "#fff",
@@ -60,9 +62,8 @@ const Header: React.FC = () => {
   return (
     <Layout.Header style={headerStyle}>
       <div className="container mx-auto mb-14 px-4">
-        <nav className="bg-white border-gray-200 py-2.5 dark:bg-gray-800">
+        <nav className="bg-white border-gray-200 dark:bg-gray-800">
           <div className="flex flex-wrap justify-between items-center mx-auto">
-
             <div className="flex items-center lg:order-2">
               {user.currentUser ? (
                 <button
