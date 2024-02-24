@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { authAPI } from "../api/api";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,10 @@ import {
 import { RootState } from "../redux/store";
 
 const Login: React.FC = () => {
+  useEffect(() => {
+    document.title = "Авторизация | ТопДомДок";
+  }, []);
+
   const [formData, setFormData] = React.useState<Record<string, string>>({});
   const { loading, error } = useAppSelector((state: RootState) => state.user);
   const navigate = useNavigate();

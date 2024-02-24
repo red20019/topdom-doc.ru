@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
 import Document from "./pages/Document";
 import Sider from "./components/Sider";
+import Docs from "./pages/Docs";
 
 const contentStyle: React.CSSProperties = {
   minHeight: "calc(100vh - 84px)",
@@ -43,6 +44,7 @@ const App: React.FC = () => {
                   <Route element={<PrivateRoute />}>
                     <Route path="create-doc" element={<CreateDoc />} />
                     <Route path="create-doc/:id" element={<Document />} />
+                    <Route path="documents" element={<Docs />} />
                     {/* <Route path="/profile" element={<Profile />} />
               <Route path="/create-listing" element={<CreateListing />} /> */}
                     {/* <Route

@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "antd";
 
-// import Logo from "/images/logo.svg";
 import { authAPI } from "../api/api";
 import { RootState } from "../redux/store";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -11,6 +10,7 @@ import {
   signOutStart,
   signOutSuccess,
 } from "../redux/user/userSlice";
+import { changeMenuItem } from "../redux/sider/siderSlice";
 
 const headerStyle: React.CSSProperties = {
   paddingTop: "1.75rem",
@@ -27,16 +27,14 @@ const Header: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const isMounted = useRef(true);
+
   useEffect(() => {
     const getUser = async () => {
       try {
         const response = await authAPI.me();
-
-        // if (response.success === false) {
-        //   dispatch(signOutFailure(response.message));
-        //   return;
-        // }
       } catch (error) {
+        dispatch(changeMenuItem(["0"]));
         dispatch(signOutSuccess());
       }
     };
@@ -48,14 +46,19 @@ const Header: React.FC = () => {
       dispatch(signOutStart());
       const response = await authAPI.signOut();
 
-      if (response.success === false) {
-        dispatch(signOutFailure(response.message));
-        return;
+      if (isMounted.current) {
+        if (response.success === false) {
+          dispatch(signOutFailure(response.message));
+          return;
+        }
+        dispatch(changeMenuItem(["0"]));
+        dispatch(signOutSuccess());
+        navigate("/login");
       }
-      dispatch(signOutSuccess());
-      navigate("/login");
     } catch (error) {
-      dispatch(signOutFailure((error as Record<string, string>).message));
+      if (isMounted.current) {
+        dispatch(signOutFailure((error as Record<string, string>).message));
+      }
     }
   };
 
@@ -125,19 +128,7 @@ const Header: React.FC = () => {
             <div
               className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1 flex-grow"
               id="mobile-menu-2"
-            >
-              {/* <ul className="flex flex-col font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-                <li>
-                  <Link
-                    to="/create-doc"
-                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
-                    aria-current="page"
-                  >
-                    Добавить документ
-                  </Link>
-                </li>
-              </ul> */}
-            </div>
+            ></div>
           </div>
         </nav>
       </div>

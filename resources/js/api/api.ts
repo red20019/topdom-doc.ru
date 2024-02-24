@@ -80,6 +80,24 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
+  async getDocs(page = 1) {
+    try {
+      const response = await instance.get(`api/documents_list?page=${page}`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
+  async updateStage(id: number, status: string) {
+    try {
+      const response = await instance.post(`api/update_stage`, { id, status });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
 
   // async filter(platform, sort, order) {
   //   const sortBy = sort ? `sortBy=${sort}` : ''

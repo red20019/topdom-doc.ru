@@ -33,10 +33,14 @@ type MenuItem = Required<MenuProps>["items"][number];
 const items: MenuItem[] = [
   getItem(
     <Link to="/create-doc">Добавить документ</Link>,
-    "1",
+    "1"
+  ),
+  getItem(
+    <Link to="/documents">Мои документы</Link>,
+    "2",
     <FileOutlined />
   ),
-  getItem(<Link to="/profile">Профиль</Link>, "2", <UserOutlined />),
+  getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
 ];
 
 const Sider = () => {
