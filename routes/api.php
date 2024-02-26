@@ -22,9 +22,15 @@ use Illuminate\Support\Facades\Route;
 //})->name('ShowUser');
 //Route::post('/register', 'api\RegisterController@register')->name('registerApi');
 //Route::post('/login', 'api\LoginController@login')->name('loginApi');
-Route::middleware('auth:sanctum')->get('/user', 'api\UserController@show')->name('ShowUser');
-Route::middleware('auth:sanctum')->get('/documents_list', 'api\DocumentResourceController@show')->name('ShowDocuments');
-Route::middleware('auth:sanctum')->post('/documents_add', 'api\DocumentResourceController@create')->name('AddDocument');
+//Route::middleware('auth:sanctum')->get('/user', 'api\UserController@show')->name('ShowUser');
+//Route::middleware('auth:sanctum')->get('/documents_list', 'api\DocumentResourceController@show')->name('ShowDocuments');
+//Route::middleware('auth:sanctum')->post('/documents_add', 'api\DocumentResourceController@create')->name('AddDocument');
+Route::middleware(['auth:sanctum'])->group(function () {
+  Route::get('/user', 'api\UserController@show')->name('ShowUser');
+  Route::get('/documents_list', 'api\DocumentResourceController@show')->name('ShowDocuments');
+  Route::post('/documents_add', 'api\DocumentResourceController@create')->name('AddDocument');
+  Route::post('/update_stage', 'api\DocumentResourceController@upd')->name('UpdateStage');
+});
 //Route::middleware('auth:sanctum')->get('/logout', 'api\LoginController@logout')->name('logout');
 //Route::get('/{path?}', [
 //  'uses' => 'ReactRouting@NonAuthenticate',

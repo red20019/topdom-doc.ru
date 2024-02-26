@@ -79,9 +79,11 @@ class DocumentResourceController extends Controller
      * @param  \App\DocumentResource  $documentResource
      * @return \Illuminate\Http\Response
      */
-    public function show(Document $document)
+    public function show(Document $document, Request $request)
     {
-      return DocumentCollection::collection(Document::with('user','resources','tracking')->paginate(10));
+      return DocumentCollection::collection(
+        Document::with('user','resources','tracking')->paginate(10)
+      );
 
     //return new DocumentCollection($flight);
      //return Document::find(1)->getData;
@@ -97,6 +99,25 @@ class DocumentResourceController extends Controller
     public function edit(DocumentResource $documentResource)
     {
         //
+    }
+
+        /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\DocumentResource  $documentResource
+     * @return \Illuminate\Http\Response
+     */
+    public function upd(DocumentResource $documentResource, Request $request)
+    {
+      if($request->input('status')=='accepted'){
+        $document = Document::find(1);
+        $document->stage = 1;
+        $document->save();
+
+      }else{
+
+      }
+      //
     }
 
     /**
