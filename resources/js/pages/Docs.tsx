@@ -125,7 +125,7 @@ const Docs: React.FC = () => {
                   current={1}
                   percent={item.status.includes("рассмотрении") ? 50 : 0}
                   status={
-                    item.status.includes("рассмотрении")
+                    item.status.includes("На рассмотрении")
                       ? "process"
                       : item.status.includes("рассмотрен")
                       ? "finish"
