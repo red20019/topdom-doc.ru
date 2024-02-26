@@ -167,22 +167,22 @@ const Docs: React.FC = () => {
                     Согласовать
                   </button>
                 </Popconfirm>
-              </StyleProvider>
-              <Popconfirm
-                title="Подтвердите действие"
-                description="Вы действительно хотите отклонить этот документ?"
-                open={item.openPopCancel}
-                onConfirm={() => handleOk(item.id, "rejected")}
-                okButtonProps={{ loading: confirmLoading }}
-                onCancel={() => handleCancel(item.id)}
-              >
-                <button
-                  onClick={() => handleStageClick(item.id, "rejected")}
-                  className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+                <Popconfirm
+                  title="Подтвердите действие"
+                  description="Вы действительно хотите отклонить этот документ?"
+                  open={item.openPopCancel}
+                  onConfirm={() => handleOk(item.id, "rejected")}
+                  okButtonProps={{ loading: confirmLoading }}
+                  onCancel={() => handleCancel(item.id)}
                 >
-                  Отклонить
-                </button>
-              </Popconfirm>
+                  <button
+                    onClick={() => handleStageClick(item.id, "rejected")}
+                    className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+                  >
+                    Отклонить
+                  </button>
+                </Popconfirm>
+              </StyleProvider>
             </div>
           </Card>
         ))}
