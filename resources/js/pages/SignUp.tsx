@@ -15,6 +15,7 @@ const SignUp: React.FC = () => {
   const dispatch = useAppDispatch();
 
   React.useEffect(() => {
+    document.title = "Регистрация | ТопДомДок";
     if (currentUser) {
       navigate("/");
     }

@@ -4,6 +4,9 @@ import { RootState } from "../redux/store";
 import { useAppSelector } from "../redux/hooks";
 
 const Welcome: React.FC = () => {
+  useEffect(() => {
+    document.title = "Добро пожаловать | ТопДомДок";
+  }, []);
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
 
   return (

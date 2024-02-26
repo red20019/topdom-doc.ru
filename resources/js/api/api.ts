@@ -37,9 +37,14 @@ export const authAPI = {
   async signIn(formData: Record<string, string>) {
     try {
       const response = await instance.post("login", formData);
+      console.log(response.data);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response) {
+        console.log(error.response.data); // Access the error response message
+      }
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
     }
   },
   async signOut(): Promise<UserTypeWithMiddleware> {
@@ -69,6 +74,24 @@ export const docsAPI = {
     try {
       console.log(formData);
       const response = await instance.post(`api/documents_add`, formData);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
+  async getDocs(page = 1) {
+    try {
+      const response = await instance.get(`api/documents_list?page=${page}`);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
+  async updateStage(id: number, status: string) {
+    try {
+      const response = await instance.post(`api/update_stage`, { id, status });
       console.log(response.data);
       return response.data;
     } catch (error) {
