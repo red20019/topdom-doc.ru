@@ -28,11 +28,26 @@ const userSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
-    togglePopconfirm: (state, action: PayloadAction<number>) => {
+    togglePopconfirm: (
+      state,
+      action: PayloadAction<{ id: number; status: string }>
+    ) => {
+      if (state.data) {
+        state.data = state.data.map((item) => {
+          if (item.id === action.payload.id) {
+            if (action.payload.status === "accepted")
+              return { ...item, openPopOk: !item.openPopOk };
+            else return { ...item, openPopCancel: !item.openPopCancel };
+          }
+          return { ...item, openPopOk: false, openPopCancel: false };
+        });
+      }
+    },
+    closePopconfirm: (state, action: PayloadAction<number>) => {
       if (state.data) {
         state.data = state.data.map((item) => {
           if (item.id === action.payload) {
-            return { ...item, openPop: !item.openPop };
+            return { ...item, openPopOk: false, openPopCancel: false };
           }
           return { ...item, openPop: false };
         });
@@ -48,5 +63,6 @@ export const {
   loadDocsSuccess,
   loadDocsFailure,
   togglePopconfirm,
+  closePopconfirm
 } = userSlice.actions;
 export default userSlice.reducer;

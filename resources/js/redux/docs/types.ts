@@ -16,5 +16,6 @@ export type DocsType = {
   date_add: string;
   status: string;
   url: string;
-  openPop: boolean;
+  openPopOk: boolean;
+  openPopCancel: boolean;
 };
