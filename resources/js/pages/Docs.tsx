@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Popconfirm, Skeleton, Steps, Pagination, Result } from "antd";
+import { StyleProvider } from "@ant-design/cssinjs";
 import { Link } from "react-router-dom";
 import {
   ExportOutlined,
@@ -10,6 +11,7 @@ import { docsAPI } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import {
+  closePopconfirm,
   loadDocsFailure,
   loadDocsStart,
   loadDocsSuccess,
@@ -51,15 +53,14 @@ const Docs: React.FC = () => {
 
   const [confirmLoading, setConfirmLoading] = React.useState(false);
 
-  const handleStageClick = (id: number) => {
-    dispatch(togglePopconfirm(id));
+  const handleStageClick = (id: number, status: string) => {
+    dispatch(togglePopconfirm({ id, status }));
   };
 
   const handleOk = async (id: number, status: string) => {
     try {
       setConfirmLoading(true);
       const response = await docsAPI.updateStage(id, status);
-      // console.log(response);
 
       if (response.success === false) {
         console.log(response.message);
@@ -73,7 +74,7 @@ const Docs: React.FC = () => {
   };
 
   const handleCancel = (id: number) => {
-    dispatch(togglePopconfirm(id));
+    dispatch(closePopconfirm(id));
   };
 
   return (
@@ -150,32 +151,33 @@ const Docs: React.FC = () => {
             </div>
 
             <div className="flex justify-end gap-x-3">
-              <Popconfirm
-                title="Подтвердите действие"
-                description="Вы действительно хотите согласовать этот документ?"
-                open={item.openPop}
-                onConfirm={() => handleOk(item.id, "accepted")}
-                okButtonProps={{ loading: confirmLoading }}
-                onCancel={() => handleCancel(item.id)}
-              >
-                <button
-                  onClick={() => handleStageClick(item.id)}
-                  className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+              <StyleProvider hashPriority="high">
+                <Popconfirm
+                  title="Подтвердите действие"
+                  description="Вы действительно хотите согласовать этот документ?"
+                  open={item.openPopOk}
+                  onConfirm={() => handleOk(item.id, "accepted")}
+                  okButtonProps={{ loading: confirmLoading, type: "primary" }}
+                  onCancel={() => handleCancel(item.id)}
                 >
-                  Согласовать
-                </button>
-              </Popconfirm>
-
+                  <button
+                    onClick={() => handleStageClick(item.id, "accepted")}
+                    className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+                  >
+                    Согласовать
+                  </button>
+                </Popconfirm>
+              </StyleProvider>
               <Popconfirm
                 title="Подтвердите действие"
                 description="Вы действительно хотите отклонить этот документ?"
-                open={item.openPop}
+                open={item.openPopCancel}
                 onConfirm={() => handleOk(item.id, "rejected")}
                 okButtonProps={{ loading: confirmLoading }}
                 onCancel={() => handleCancel(item.id)}
               >
                 <button
-                  onClick={() => handleStageClick(item.id)}
+                  onClick={() => handleStageClick(item.id, "rejected")}
                   className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
                 >
                   Отклонить
