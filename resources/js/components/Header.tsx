@@ -11,6 +11,7 @@ import {
   signOutSuccess,
 } from "../redux/user/userSlice";
 import { changeMenuItem } from "../redux/sider/siderSlice";
+import { emptyDocs } from "../redux/docs/docsSlice";
 
 const headerStyle: React.CSSProperties = {
   paddingTop: "1.75rem",
@@ -26,8 +27,6 @@ const Header: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
-
-  const isMounted = useRef(true);
 
   useEffect(() => {
     const getUser = async () => {
@@ -46,19 +45,16 @@ const Header: React.FC = () => {
       dispatch(signOutStart());
       const response = await authAPI.signOut();
 
-      if (isMounted.current) {
-        if (response.success === false) {
-          dispatch(signOutFailure(response.message));
-          return;
-        }
-        dispatch(changeMenuItem(["0"]));
-        dispatch(signOutSuccess());
-        navigate("/login");
+      if (response.success === false) {
+        dispatch(signOutFailure(response.message));
+        return;
       }
+      dispatch(emptyDocs());
+      dispatch(changeMenuItem(["0"]));
+      dispatch(signOutSuccess());
+      navigate("/login");
     } catch (error) {
-      if (isMounted.current) {
-        dispatch(signOutFailure((error as Record<string, string>).message));
-      }
+      dispatch(signOutFailure((error as Record<string, string>).message));
     }
   };
 

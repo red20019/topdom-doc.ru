@@ -24,6 +24,14 @@ const userSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    emptyDocs: (state) => {
+      state.data = null;
+      state.total = 0;
+      state.page = 1;
+      state.limit = 10;
+      state.error = null;
+      state.loading = false;
+    },
     loadDocsFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.loading = false;
@@ -49,7 +57,7 @@ const userSlice = createSlice({
           if (item.id === action.payload) {
             return { ...item, openPopOk: false, openPopCancel: false };
           }
-          return { ...item, openPop: false };
+          return { ...item, openPopOk: false, openPopCancel: false };
         });
       }
     },
@@ -63,6 +71,7 @@ export const {
   loadDocsSuccess,
   loadDocsFailure,
   togglePopconfirm,
-  closePopconfirm
+  closePopconfirm,
+  emptyDocs,
 } = userSlice.actions;
 export default userSlice.reducer;
