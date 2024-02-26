@@ -12,8 +12,8 @@ class DocumentResource extends Model
 
 
 
-  public function product()
-  {
-      return $this->belongsTo('App\Document');
-  }
+  //public function document()
+  //{
+  //    return $this->belongsTo('App\Document');
+  //}
 }

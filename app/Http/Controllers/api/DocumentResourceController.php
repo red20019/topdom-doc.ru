@@ -9,6 +9,7 @@ use App\DocumentResource;
 use App\Document;
 use App\DocumentTracking;
 use Illuminate\Support\Arr;
+use App\Http\Resources\DocumentCollection;
 
 use Carbon\Carbon;
 
@@ -78,9 +79,13 @@ class DocumentResourceController extends Controller
      * @param  \App\DocumentResource  $documentResource
      * @return \Illuminate\Http\Response
      */
-    public function show(DocumentResource $documentResource)
+    public function show(Document $document)
     {
-        //
+      return DocumentCollection::collection(Document::with('user','resources','tracking')->paginate(10));
+
+    //return new DocumentCollection($flight);
+     //return Document::find(1)->getData;
+     //return Document::all();
     }
 
     /**
