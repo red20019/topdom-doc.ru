@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import { MenuClickEventHandler } from "rc-menu/lib/interface"; //
 import type { MenuProps } from "antd";
@@ -16,6 +16,12 @@ import textLogo from "/images/logo-topdom-text-white.svg";
 import { RootState } from "../redux/store";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { changeMenuItem } from "../redux/sider/siderSlice";
+import {
+  signOutFailure,
+  signOutStart,
+  signOutSuccess,
+} from "../redux/user/userSlice";
+import { authAPI } from "../api/api";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -31,20 +37,17 @@ const siderStyle: React.CSSProperties = {
 type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
-  getItem(
-    <Link to="/create-doc">Добавить документ</Link>,
-    "1"
-  ),
-  getItem(
-    <Link to="/documents">Мои документы</Link>,
-    "2",
-    <FileOutlined />
-  ),
+  getItem(<Link to="/create-doc">Добавить документ</Link>, "1"),
+  getItem(<Link to="/documents">Мои документы</Link>, "2", <FileOutlined />),
   getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
 ];
 
 const Sider = () => {
   const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
+  const isMounted = useRef(true);
+
   const user = useAppSelector((state: RootState) => state.user);
   const { selectedKeys } = useAppSelector((state: RootState) => state.sider);
 
@@ -57,6 +60,27 @@ const Sider = () => {
   // TODO: transform into redux state
   const handleMenuClick: MenuClickEventHandler = (e) => {
     dispatch(changeMenuItem([e.key]));
+  };
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutStart());
+      const response = await authAPI.signOut();
+
+      if (isMounted.current) {
+        if (response.success === false) {
+          dispatch(signOutFailure(response.message));
+          return;
+        }
+        dispatch(changeMenuItem(["0"]));
+        dispatch(signOutSuccess());
+        navigate("/login");
+      }
+    } catch (error) {
+      if (isMounted.current) {
+        dispatch(signOutFailure((error as Record<string, string>).message));
+      }
+    }
   };
 
   return (

@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Button,
-  Card,
-  Popconfirm,
-  Skeleton,
-  Steps,
-  Switch,
-} from "antd";
+import { Card, Popconfirm, Skeleton, Steps, Pagination, Result } from "antd";
 import { Link } from "react-router-dom";
 import {
   ExportOutlined,
@@ -48,7 +40,7 @@ const Docs: React.FC = () => {
           dispatch(loadDocsFailure(response.message));
           return;
         }
-        dispatch(loadDocsSuccess(response));
+        dispatch(loadDocsSuccess(response.data));
       } catch (error: unknown) {
         dispatch(loadDocsFailure((error as Record<string, string>).message));
       }
@@ -58,10 +50,6 @@ const Docs: React.FC = () => {
   }, []);
 
   const [confirmLoading, setConfirmLoading] = React.useState(false);
-
-  // const onChange = (checked: boolean) => {
-  //   setLoading(!checked);
-  // };
 
   const handleStageClick = (id: number) => {
     dispatch(togglePopconfirm(id));
@@ -92,16 +80,19 @@ const Docs: React.FC = () => {
     <section className="container mx-auto px-4">
       <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
 
-      <div className="flex justify-between">
-        <span>{total} документов</span>
+      {total > 0 ? (
+        <div className="flex justify-between mb-8">
+          <span>{total} документов</span>
 
-        <div className="flex justify-between w-[200px]">
-          <span>Сортировка по:</span>
-          <span className="text-blue-500 cursor-pointer">дате изменения</span>
+          <div className="flex justify-between w-[200px]">
+            <span>Сортировка по:</span>
+            <span className="text-blue-500 cursor-pointer">дате изменения</span>
+          </div>
         </div>
-      </div>
+      ) : (
+        <Result status="warning" title="Документов не найдено." />
+      )}
 
-      {/* <Switch checked={!loading} onChange={onChange} /> */}
       {data &&
         data.map((item) => (
           <Card key={item.id} style={cardStyle} loading={loading}>
@@ -193,6 +184,14 @@ const Docs: React.FC = () => {
             </div>
           </Card>
         ))}
+
+      {total > 0 && (
+        <Pagination
+          className="mt-8 text-center"
+          defaultCurrent={page}
+          total={total}
+        />
+      )}
     </section>
   );
 };
