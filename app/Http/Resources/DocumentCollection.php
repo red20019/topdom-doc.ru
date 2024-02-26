@@ -32,7 +32,7 @@ class DocumentCollection extends JsonResource
           //$stage = $stage->date_start_stage;
           break;
         case '1':
-          $stage = "На расмотрении у Бухгалтера уже уже {$date_interval} с {$date}";
+          $stage = "На расмотрении у бухгалтера уже {$date_interval} с {$date}";
           break;
         case '2':
           $stage = "Документ Расмотрен {$this->tracking->where('stage_document',$this->stage)[0]->date_end_stage}";
@@ -50,7 +50,7 @@ class DocumentCollection extends JsonResource
         'document_name' => $this->name,
         'date_add' => $date,
         'status' => $stage,
-        'url' => '/document/'.$this->id
+        'url' => '/documents/'.$this->id
     ];
     }
 }
