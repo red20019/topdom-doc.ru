@@ -109,29 +109,30 @@ class DocumentResourceController extends Controller
      */
     public function upd(DocumentResource $documentResource, Request $request)
     {
-      //dd($request);
-      $document = Document::findOrFail($request->input('id'));
+
+      $document = Document::find($request->input('id'));
+      $document->tracking
+      ->where('stage_document', $document->stage)
+      ->first()
+      ->update(['date_end_stage' => Carbon::now()]);
+      //$document->stage=5;
+      //dd($document->stage);
       if($request->input('status')=='accepted'){
-        $document->stage = 1;
-        $document->tracking
-            ->where('stage_document','0')
-            ->first()
-            ->update(['date_stage_end' => Carbon::now()]);
-        $document->save();
 
         DocumentTracking::create([
           'document_id' => $document->id,
-          'stage_document' => 1,
+          'stage_document' => $document->stage+1,
           'date_start_stage' => Carbon::now()
         ]);
 
+        $document->stage = 1;
+
       }elseif($request->input('status')=='rejected'){
         //dd( $document->tracking->where('stage_document','0')->first());
-        $document->stage = 4;
-        $document->tracking->where('stage_document','0')->first()->update(['date_stage_end' => Carbon::now()]);
-        $document->save();
-
+        $document->stage = 3;
       }
+
+      $document->save();
 
       $success['id_document'] = $document->id;
       $success['status'] = $request->input('status');
