@@ -1,22 +1,28 @@
 import React, { ChangeEvent, useEffect } from "react";
-import { Upload } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Upload, notification } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 
 import { authAPI, docsAPI } from "../api/api";
 import { DocsType } from "../redux/user/types";
+import { NotificationType } from "../types/types";
 
 const { Dragger } = Upload;
 
 const CreateDoc: React.FC = () => {
+  useEffect(() => {
+    document.title = "Добавление документа | ТопДомДок";
+  }, []);
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = React.useState<DocsType>({
     name: "",
     files: null,
   });
   const [error, setError] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
-
-  console.log(formData);
 
   const props: UploadProps = {
     name: "files",
@@ -29,9 +35,18 @@ const CreateDoc: React.FC = () => {
     },
   };
 
-  useEffect(() => {
-    document.title = "Добавление документа | ТопДомДок";
-  }, []);
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (
+    type: NotificationType,
+    name: string,
+    text: string
+  ) => {
+    api[type]({
+      message: name,
+      description: text,
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,14 +66,20 @@ const CreateDoc: React.FC = () => {
       if (response.success === false) {
         setLoading(false);
         setError(response.message);
+        openNotificationWithIcon("error", "Ошибка", response.message);
         return;
       }
       setLoading(false);
       setError(null);
-      console.log(response);
+      navigate("/documents");
     } catch (error: unknown) {
       setLoading(false);
       setError((error as Record<string, string>).message);
+      openNotificationWithIcon(
+        "error",
+        "Ошибка",
+        (error as Record<string, string>).message
+      );
     }
   };
 
@@ -71,6 +92,7 @@ const CreateDoc: React.FC = () => {
 
   return (
     <section className="container mx-auto px-4">
+      {contextHolder}
       <h2 className="text-3xl font-bold mb-8 text-center">
         Загрузка документа
       </h2>

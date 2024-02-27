@@ -62,26 +62,26 @@ const Sider = () => {
     dispatch(changeMenuItem([e.key]));
   };
 
-  const handleSignOut = async () => {
-    try {
-      dispatch(signOutStart());
-      const response = await authAPI.signOut();
+  // const handleSignOut = async () => {
+  //   try {
+  //     dispatch(signOutStart());
+  //     const response = await authAPI.signOut();
 
-      if (isMounted.current) {
-        if (response.success === false) {
-          dispatch(signOutFailure(response.message));
-          return;
-        }
-        dispatch(changeMenuItem(["0"]));
-        dispatch(signOutSuccess());
-        navigate("/login");
-      }
-    } catch (error) {
-      if (isMounted.current) {
-        dispatch(signOutFailure((error as Record<string, string>).message));
-      }
-    }
-  };
+  //     if (isMounted.current) {
+  //       if (response.success === false) {
+  //         dispatch(signOutFailure(response.message));
+  //         return;
+  //       }
+  //       dispatch(changeMenuItem(["0"]));
+  //       dispatch(signOutSuccess());
+  //       navigate("/login");
+  //     }
+  //   } catch (error) {
+  //     if (isMounted.current) {
+  //       dispatch(signOutFailure((error as Record<string, string>).message));
+  //     }
+  //   }
+  // };
 
   return (
     <Layout.Sider
