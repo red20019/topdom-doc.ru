@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Card, Popconfirm, Skeleton, Steps, Pagination, Result } from "antd";
+import {
+  Card,
+  Popconfirm,
+  Skeleton,
+  Steps,
+  Pagination,
+  Spin,
+  Empty,
+  Input,
+} from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
 import { Link } from "react-router-dom";
 import {
@@ -77,21 +86,37 @@ const Docs: React.FC = () => {
     dispatch(closePopconfirm(id));
   };
 
+  if (loading) {
+    return <Spin size="large" fullscreen />;
+  }
+
   return (
     <section className="container mx-auto px-4">
       <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
 
       {total > 0 ? (
-        <div className="flex justify-between mb-8">
-          <span>{total} документов</span>
+        <>
+          <Card className="mb-8">
+            <Input.Search
+              placeholder="Поиск документов..."
+              allowClear
+              // onSearch={onSearch}
+              style={{ width: 200 }}
+            />
+          </Card>
+          <div className="flex justify-between mb-8">
+            <span>{total} документов</span>
 
-          <div className="flex justify-between w-[200px]">
-            <span>Сортировка по:</span>
-            <span className="text-blue-500 cursor-pointer">дате изменения</span>
+            <div className="flex justify-between w-[200px]">
+              <span>Сортировка по:</span>
+              <span className="text-blue-500 cursor-pointer">
+                дате изменения
+              </span>
+            </div>
           </div>
-        </div>
+        </>
       ) : (
-        <Result status="warning" title="Документов не найдено." />
+        <Empty description="Документов не найдено." />
       )}
 
       {data &&
@@ -124,13 +149,12 @@ const Docs: React.FC = () => {
                   labelPlacement="vertical"
                   size="small"
                   current={1}
-                  percent={item.status.includes("рассмотрении") ? 50 : 0}
                   status={
                     item.status.includes("На рассмотрении")
                       ? "process"
-                      : item.status.includes("рассмотрен")
+                      : item.status.includes("документ рассмотрен")
                       ? "finish"
-                      : item.status.includes("отклонен")
+                      : item.status.includes("документ отклонен")
                       ? "wait"
                       : "error"
                   }
@@ -140,10 +164,12 @@ const Docs: React.FC = () => {
                     },
                     {
                       title: "Согласование",
-                      subTitle: item.status,
                     },
                     {
-                      title: "Исполнение",
+                      title: "Оплата",
+                    },
+                    {
+                      title: "Готово",
                     },
                   ]}
                 />
