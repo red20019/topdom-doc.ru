@@ -32,9 +32,11 @@ const Header: React.FC = () => {
     const getUser = async () => {
       try {
         const response = await authAPI.me();
+        if (response.data && !user.currentUser) {
+          handleSignOut();
+        }
       } catch (error) {
-        dispatch(changeMenuItem(["0"]));
-        dispatch(signOutSuccess());
+        handleSignOut();
       }
     };
     getUser();
