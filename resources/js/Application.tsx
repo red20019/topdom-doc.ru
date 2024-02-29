@@ -33,8 +33,8 @@ const App: React.FC = () => {
         <BrowserRouter>
           <Layout hasSider style={{ backgroundColor: "white" }}>
             <Sider />
-            <Layout style={{ marginLeft: '15%' }}>
-              <Header />
+            <Layout style={{ marginLeft: "15%" }}>
+              {/* <Header /> */}
               <Layout.Content style={contentStyle}>
                 <Routes>
                   <Route path="/" element={<Welcome />} />
@@ -43,8 +43,8 @@ const App: React.FC = () => {
                   <Route path="pending" element={<Pending />} />
                   <Route element={<PrivateRoute />}>
                     <Route path="create-doc" element={<CreateDoc />} />
-                    <Route path="create-doc/:id" element={<Document />} />
                     <Route path="documents" element={<Docs />} />
+                    <Route path="documents/:id" element={<Document />} />
                     {/* <Route path="/profile" element={<Profile />} />
               <Route path="/create-listing" element={<CreateListing />} /> */}
                     {/* <Route
