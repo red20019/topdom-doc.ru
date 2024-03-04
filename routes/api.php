@@ -27,7 +27,8 @@ use Illuminate\Support\Facades\Route;
 //Route::middleware('auth:sanctum')->post('/documents_add', 'api\DocumentResourceController@create')->name('AddDocument');
 Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('/user', 'api\UserController@show')->name('ShowUser');
-  Route::get('/documents_list', 'api\DocumentResourceController@show')->name('ShowDocuments');
+  Route::get('/documents_list', 'api\DocumentResourceController@docList')->name('ShowDocuments');
+  Route::get('/document', 'api\DocumentResourceController@showDoc')->name('ShowDocument');
   Route::post('/documents_add', 'api\DocumentResourceController@create')->name('AddDocument');
   Route::post('/update_stage', 'api\DocumentResourceController@upd')->name('UpdateStage');
 });

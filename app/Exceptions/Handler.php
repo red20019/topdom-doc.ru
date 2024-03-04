@@ -7,6 +7,7 @@ use Throwable;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Validation\ValidationException as ValidationException;
+use Illuminate\Support\Facades\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -55,6 +56,13 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+
+      if(get_class($exception) == "Illuminate\Database\Eloquent\ModelNotFoundException") {
+        return response()->json(['message' => 'document id not found','success' => false], 422);
+        //return (new Response('Model not found', 400));
+      }
+
+
       if ($exception instanceof ValidationException) {
 
         return response()->json(['message' => 'data is invalid', 'errors' => $exception->validator->getMessageBag(),'success' => false], 422);

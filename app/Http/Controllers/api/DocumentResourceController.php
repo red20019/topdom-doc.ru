@@ -10,7 +10,9 @@ use App\Document;
 use App\DocumentTracking;
 use Illuminate\Support\Arr;
 use App\Http\Resources\DocumentCollection;
-
+use App\Http\Resources\DocumentShow;
+use App\Http\Resources\DocumentTrackerCollection;
+use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 class DocumentResourceController extends Controller
@@ -79,12 +81,48 @@ class DocumentResourceController extends Controller
      * @param  \App\DocumentResource  $documentResource
      * @return \Illuminate\Http\Response
      */
-    public function show(Document $document, Request $request)
+    public function docList(Document $document, Request $request)
     {
       return DocumentCollection::collection(
         Document::with('user','resources','tracking')->paginate(10)
       );
 
+    //return new DocumentCollection($flight);
+     //return Document::find(1)->getData;
+     //return Document::all();
+    }
+
+    public function showDoc(Document $document, Request $request)
+    {
+      //dd(Document::find(1));
+      //return Document::find(3)->get();
+
+      //return DocumentShow::collection(
+      //$document = Document::find(2);
+      //return Storage::path('file.jpg');
+      //return [
+      //  'id' => $document->i
+//
+      //]
+      //);
+      $document = Document::findOrFail(1);
+      //dd($document->traking);
+      return ["id" => $document->id,
+              "name" => $document->name,
+              "stage" => $document->stage,
+              "created_at" => $document->created_at->format('d.m.Y H:i'),
+              "files" => [
+                DocumentShow::collection($document->resources)
+              ],
+              "document_tracking" => [
+
+                DocumentTrackerCollection::collection($document->tracking)
+              ]
+            ];
+     //return DocumentShow::collection(
+     //  $document->with('resources','tracking')->get()
+     //// Document::findOrFail(2)
+     //);
     //return new DocumentCollection($flight);
      //return Document::find(1)->getData;
      //return Document::all();
