@@ -80,6 +80,16 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
+  // TODO: доделать
+  async getDocById(id: number) {
+    try {
+      const response = await instance.post(`api/document`, id);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
   async getDocs(page = 1) {
     try {
       const response = await instance.get(`api/documents_list?page=${page}`);

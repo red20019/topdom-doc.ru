@@ -18,7 +18,9 @@ import Sider from "./components/Sider";
 import Docs from "./pages/Docs";
 
 const contentStyle: React.CSSProperties = {
-  minHeight: "calc(100vh - 84px)",
+  // paddingTop: '40px',
+  // minHeight: "calc(100vh - 84px)",
+  minHeight: "100vh",
   backgroundColor: "white",
 };
 

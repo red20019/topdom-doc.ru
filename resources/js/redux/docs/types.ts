@@ -5,14 +5,15 @@ export interface DocsSliceState {
   total: number;
   error: string | null;
   loading: boolean;
+  confirmLoading: boolean;
 }
 
 export type DocsType = {
   id: number;
+  count_files: number;
   name: string;
   avatar: string;
   document_name: string;
-  files: string[];
   date_add: string;
   stage_number: number;
   stage_text: string;

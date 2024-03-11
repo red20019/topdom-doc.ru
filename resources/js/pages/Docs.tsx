@@ -16,6 +16,7 @@ import {
   PrinterFilled,
   PaperClipOutlined,
 } from "@ant-design/icons";
+
 import { docsAPI } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
@@ -25,6 +26,7 @@ import {
   loadDocsStart,
   loadDocsSuccess,
   togglePopconfirm,
+  updateStage,
 } from "../redux/docs/docsSlice";
 
 const cardStyle: React.CSSProperties = {
@@ -34,9 +36,8 @@ const cardStyle: React.CSSProperties = {
 
 const Docs: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { data, total, page, limit, error, loading } = useAppSelector(
-    (state: RootState) => state.docs
-  );
+  const { data, total, page, limit, error, loading, confirmLoading } =
+    useAppSelector((state: RootState) => state.docs);
 
   useEffect(() => {
     document.title = "Мои документы | ТопДомДок";
@@ -60,26 +61,12 @@ const Docs: React.FC = () => {
     fetchDocs();
   }, []);
 
-  const [confirmLoading, setConfirmLoading] = React.useState(false);
-
   const handleStageClick = (id: number, status: string) => {
     dispatch(togglePopconfirm({ id, status }));
   };
 
   const handleOk = async (id: number, status: string) => {
-    try {
-      setConfirmLoading(true);
-      const response = await docsAPI.updateStage(id, status);
-
-      if (response.success === false) {
-        console.log(response.message);
-        return;
-      }
-      setConfirmLoading(false);
-    } catch (error: unknown) {
-      setConfirmLoading(false);
-      dispatch(loadDocsFailure((error as Record<string, string>).message));
-    }
+    dispatch(updateStage({ id, status }));
   };
 
   const handleCancel = (id: number) => {
@@ -123,10 +110,12 @@ const Docs: React.FC = () => {
         data.map((item) => (
           <Card key={item.id} style={cardStyle} loading={loading}>
             <div className="flex justify-between items-start gap-x-6 mb-6">
-              <h3 className="text-base sm:text-xl">{item.document_name}</h3>
+              <Link to={`/documents/${item.id}`}>
+                <h3 className="text-base sm:text-xl">{item.document_name}</h3>
+              </Link>
 
               <div className="flex flex-wrap gap-5 min-w-[100px] text-right">
-                <Link className="" to={`/documents/${item.id}`}>
+                <Link to={`/documents/${item.id}`}>
                   <ExportOutlined />
                 </Link>
                 <span className="cursor-pointer">
@@ -134,7 +123,7 @@ const Docs: React.FC = () => {
                 </span>
                 <span className="">№ {item.id}</span>
                 <span className="">
-                  <PaperClipOutlined /> {item.files ? item.files : 0}
+                  <PaperClipOutlined /> {item.count_files}
                 </span>
               </div>
             </div>
