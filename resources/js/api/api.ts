@@ -83,7 +83,7 @@ export const docsAPI = {
   // TODO: доделать
   async getDocById(id: number) {
     try {
-      const response = await instance.post(`api/document`, id);
+      const response = await instance.post(`api/document`, { id });
       console.log(response.data);
       return response.data;
     } catch (error) {

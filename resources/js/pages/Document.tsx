@@ -12,6 +12,7 @@ import {
 } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
+import { DocType } from "../types/types";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -29,17 +30,21 @@ const Document: React.FC = () => {
   );
   const { id } = useParams();
 
+  const [docData, setDocData] = useState<DocType | null>(null);
+
   useEffect(() => {
-    document.title = `Документ №${id}  | ТопДомДок`;
-    const getDoc = async () => {
-      if (id) {
+    document.title = `Документ №${id} | ТопДомДок`;
+
+    if (id) {
+      const getDoc = async () => {
         const response = await docsAPI.getDocById(+id);
         console.log(response);
-      }
+        setDocData(response.data);
+      };
 
       getDoc();
-    };
-  }, []);
+    }
+  }, [id]);
 
   const [file, setFile] = useState("");
 
@@ -67,8 +72,6 @@ const Document: React.FC = () => {
     "/docx/docx.docx",
     "/images/sierra_nevada_bg.jpg",
   ];
-  // const file = "/docx/docx.docx";
-  // const type = "docx";
 
   if (id) {
     return (
@@ -115,14 +118,14 @@ const Document: React.FC = () => {
             </StyleProvider>
           </div>
           <div className="flex flex-col gap-y-2 p-4">
-            {docs &&
-              docs.map((item, i) => (
+            {docData &&
+              docData.files.map((item) => (
                 <div
-                  key={i}
-                  onClick={() => setFile(item)}
+                  key={item.id}
+                  onClick={() => setFile(item.path)}
                   className="p-5 bg-white text-black border rounded cursor-pointer"
                 >
-                  {item}
+                  {item.filename}
                 </div>
               ))}
           </div>
