@@ -123,9 +123,17 @@ const Document: React.FC = () => {
                 <div
                   key={item.id}
                   onClick={() => setFile(item.path)}
-                  className="p-5 bg-white text-black border rounded cursor-pointer"
+                  className="p-5 bg-white text-black border rounded cursor-pointer position-relative"
                 >
                   {item.filename}
+                  <div
+                    style={{
+                      backgroundImage: `url(/images/${item.filename
+                        .split(".")
+                        .pop()}-icon.svg)`,
+                    }}
+                    className={`position-absolute bot-0 left-1/2 -translate-x-1/2 bg-contain bg-no-repeat w-5 h-5`}
+                  ></div>
                 </div>
               ))}
           </div>
