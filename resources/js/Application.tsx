@@ -35,7 +35,7 @@ const App: React.FC = () => {
         <BrowserRouter>
           <Layout hasSider style={{ backgroundColor: "white" }}>
             <Sider />
-            <Layout style={{ marginLeft: "15%" }}>
+            <Layout style={{ marginLeft: "15%", marginRight: "15%" }}>
               {/* <Header /> */}
               <Layout.Content style={contentStyle}>
                 <Routes>

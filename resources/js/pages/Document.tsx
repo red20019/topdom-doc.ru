@@ -21,6 +21,8 @@ const siderStyle: React.CSSProperties = {
   right: 0,
   top: 0,
   bottom: 0,
+  height: "100vh",
+  position: "fixed",
 };
 
 const Document: React.FC = () => {
@@ -47,6 +49,7 @@ const Document: React.FC = () => {
   }, [id]);
 
   const [file, setFile] = useState("");
+  console.log(file);
 
   const openPopOk = data?.some((item) => {
     if (id && item.id === +id) return item.openPopOk;
@@ -77,13 +80,22 @@ const Document: React.FC = () => {
     return (
       <Layout>
         <Layout.Content className="min-h-screen">
-          <div style={{ height: "auto" }}>
-            <FileViewer filePath={file} fileType={file.split(".").pop()} />;
-          </div>
-        </Layout.Content>
+          {file.endsWith(".jpg") || file.endsWith(".png") ? (
+            <img
+              src={"/" + file}
+              alt="doc"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div style={{ height: "auto" }}>
+              <FileViewer
+                filePath={"/" + file}
+                fileType={file.split(".").pop()}
+              />
+            </div>
+          )}
 
-        <Layout.Sider width="15%" style={siderStyle}>
-          <div className="flex justify-end gap-x-3 pt-3">
+          <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
             <StyleProvider hashPriority="high">
               <Popconfirm
                 title="Подтвердите действие"
@@ -117,13 +129,17 @@ const Document: React.FC = () => {
               </Popconfirm>
             </StyleProvider>
           </div>
-          <div className="flex flex-col gap-y-2 p-4">
+        </Layout.Content>
+
+        <Layout.Sider width="15%" style={siderStyle}>
+          <div className="flex flex-col gap-y-2 p-4 pt-7">
             {docData &&
               docData.files.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => setFile(item.path)}
-                  className="p-5 bg-white text-black border rounded cursor-pointer position-relative"
+                  title={item.filename}
+                  className="p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
                 >
                   {item.filename}
                   <div
@@ -132,7 +148,7 @@ const Document: React.FC = () => {
                         .split(".")
                         .pop()}-icon.svg)`,
                     }}
-                    className={`position-absolute bot-0 left-1/2 -translate-x-1/2 bg-contain bg-no-repeat w-5 h-5`}
+                    className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
                   ></div>
                 </div>
               ))}
