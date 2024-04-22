@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Popconfirm } from "antd";
+import { Layout, Popconfirm, Result, Spin } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
+import { LoadingOutlined } from "@ant-design/icons";
 import FileViewer from "react-file-viewer";
 import { useParams } from "react-router-dom";
 
@@ -79,61 +80,65 @@ const Document: React.FC = () => {
   if (id) {
     return (
       <Layout>
-        <Layout.Content className="min-h-screen">
+        <Layout.Content className="min-h-screen py-4">
           {file.endsWith(".jpg") || file.endsWith(".png") ? (
             <img
               src={"/" + file}
               alt="doc"
               className="w-full h-full object-cover"
             />
-          ) : (
+          ) : file ? (
             <div style={{ height: "auto" }}>
               <FileViewer
                 filePath={"/" + file}
                 fileType={file.split(".").pop()}
               />
             </div>
+          ) : (
+            <Result title="Выберите документ для предпросмотра" />
           )}
 
-          <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
-            <StyleProvider hashPriority="high">
-              <Popconfirm
-                title="Подтвердите действие"
-                description="Вы действительно хотите согласовать этот документ?"
-                open={openPopOk}
-                onConfirm={() => handleOk(+id, "accepted")}
-                okButtonProps={{ loading: confirmLoading, type: "primary" }}
-                onCancel={() => handleCancel(+id)}
-              >
-                <button
-                  onClick={() => handleStageClick(+id, "accepted")}
-                  className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+          {file && (
+            <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
+              <StyleProvider hashPriority="high">
+                <Popconfirm
+                  title="Подтвердите действие"
+                  description="Вы действительно хотите согласовать этот документ?"
+                  open={openPopOk}
+                  onConfirm={() => handleOk(+id, "accepted")}
+                  okButtonProps={{ loading: confirmLoading, type: "primary" }}
+                  onCancel={() => handleCancel(+id)}
                 >
-                  Согласовать
-                </button>
-              </Popconfirm>
-              <Popconfirm
-                title="Подтвердите действие"
-                description="Вы действительно хотите отклонить этот документ?"
-                open={openPopCancel}
-                onConfirm={() => handleOk(+id, "rejected")}
-                okButtonProps={{ loading: confirmLoading }}
-                onCancel={() => handleCancel(+id)}
-              >
-                <button
-                  onClick={() => handleStageClick(+id, "rejected")}
-                  className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+                  <button
+                    onClick={() => handleStageClick(+id, "accepted")}
+                    className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+                  >
+                    Согласовать
+                  </button>
+                </Popconfirm>
+                <Popconfirm
+                  title="Подтвердите действие"
+                  description="Вы действительно хотите отклонить этот документ?"
+                  open={openPopCancel}
+                  onConfirm={() => handleOk(+id, "rejected")}
+                  okButtonProps={{ loading: confirmLoading }}
+                  onCancel={() => handleCancel(+id)}
                 >
-                  Отклонить
-                </button>
-              </Popconfirm>
-            </StyleProvider>
-          </div>
+                  <button
+                    onClick={() => handleStageClick(+id, "rejected")}
+                    className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+                  >
+                    Отклонить
+                  </button>
+                </Popconfirm>
+              </StyleProvider>
+            </div>
+          )}
         </Layout.Content>
 
         <Layout.Sider width="15%" style={siderStyle}>
           <div className="flex flex-col gap-y-2 p-4 pt-7">
-            {docData &&
+            {docData ? (
               docData.files.map((item) => (
                 <div
                   key={item.id}
@@ -151,7 +156,12 @@ const Document: React.FC = () => {
                     className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
                   ></div>
                 </div>
-              ))}
+              ))
+            ) : (
+              <Spin
+                indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
+              />
+            )}
           </div>
         </Layout.Sider>
       </Layout>
