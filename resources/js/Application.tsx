@@ -18,7 +18,9 @@ import Sider from "./components/Sider";
 import Docs from "./pages/Docs";
 
 const contentStyle: React.CSSProperties = {
-  minHeight: "calc(100vh - 84px)",
+  // paddingTop: '40px',
+  // minHeight: "calc(100vh - 84px)",
+  minHeight: "100vh",
   backgroundColor: "white",
 };
 
@@ -33,7 +35,7 @@ const App: React.FC = () => {
         <BrowserRouter>
           <Layout hasSider style={{ backgroundColor: "white" }}>
             <Sider />
-            <Layout style={{ marginLeft: "15%" }}>
+            <Layout style={{ marginLeft: "15%", marginRight: "15%" }}>
               {/* <Header /> */}
               <Layout.Content style={contentStyle}>
                 <Routes>

@@ -1,6 +1,26 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { DocsSliceState, DocsType } from "./types";
+import { docsAPI } from "../../api/api";
+
+export const updateStage = createAsyncThunk(
+  "docs/updateStage",
+  async ({ id, status }: { id: number; status: string }) => {
+    try {
+      setConfirmLoading(true);
+      const response = await docsAPI.updateStage(id, status);
+
+      if (response.success === false) {
+        console.log(response.message);
+        return;
+      }
+      setConfirmLoading(false);
+    } catch (error: unknown) {
+      setConfirmLoading(false);
+      loadDocsFailure((error as Record<string, string>).message);
+    }
+  }
+);
 
 const initialState: DocsSliceState = {
   data: null,
@@ -9,9 +29,10 @@ const initialState: DocsSliceState = {
   limit: 10,
   error: null,
   loading: false,
+  confirmLoading: false,
 };
 
-const userSlice = createSlice({
+const docsSlice = createSlice({
   name: "docs",
   initialState,
   reducers: {
@@ -44,8 +65,8 @@ const userSlice = createSlice({
         state.data = state.data.map((item) => {
           if (item.id === action.payload.id) {
             if (action.payload.status === "accepted")
-              return { ...item, openPopOk: !item.openPopOk };
-            else return { ...item, openPopCancel: !item.openPopCancel };
+              return { ...item, openPopOk: !item.openPopOk, openPopCancel: false };
+            else return { ...item, openPopCancel: !item.openPopCancel, openPopOk: false };
           }
           return { ...item, openPopOk: false, openPopCancel: false };
         });
@@ -61,6 +82,9 @@ const userSlice = createSlice({
         });
       }
     },
+    setConfirmLoading: (state, action: PayloadAction<boolean>) => {
+      state.confirmLoading = action.payload;
+    },
     // updateStage: (state, action: PayloadAction<number>) => {
     // },
   },
@@ -72,6 +96,7 @@ export const {
   loadDocsFailure,
   togglePopconfirm,
   closePopconfirm,
+  setConfirmLoading,
   emptyDocs,
-} = userSlice.actions;
-export default userSlice.reducer;
+} = docsSlice.actions;
+export default docsSlice.reducer;

@@ -105,16 +105,21 @@ class DocumentResourceController extends Controller
 //
       //]
       //);
-      $document = Document::findOrFail(2);
+
+      $document = Document::findOrFail($request->input('id'));
       //dd($document->traking);
-      return ["id" => $document->id,
+      $success = ["id" => $document->id,
               "name" => $document->name,
               "stage" => $document->stage,
               "created_at" => $document->created_at->format('d.m.Y H:i'),
+
               "files" => DocumentShow::collection($document->resources),
               "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
               "success" => true
+
             ];
+
+          return $this->sendResponse($success, 'document loaded');
      //return DocumentShow::collection(
      //  $document->with('resources','tracking')->get()
      //// Document::findOrFail(2)
