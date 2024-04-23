@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentShow extends JsonResource
 {
@@ -22,7 +23,7 @@ class DocumentShow extends JsonResource
      return [
       "id" => $this->id,
       "filename" => $this->filename,
-      "path" => $this->path
+      "path" => mb_convert_encoding(Storage::get($this->path), 'UTF-8', 'UTF-8')
 
     //    "id" => $this->id,
     //    "name" => $this->name,

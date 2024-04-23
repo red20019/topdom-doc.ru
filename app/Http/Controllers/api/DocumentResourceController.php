@@ -42,7 +42,7 @@ class DocumentResourceController extends Controller
         $document_files=[];
         foreach($request->file('files') as $file){
           array_push($document_files,$file->getClientOriginalName());
-          $path = $file->store('documents');
+          $path = $file->store('public/documents');
           DocumentResource::create([
             'filename' => $file->getClientOriginalName(),
             'path' => $path,
@@ -105,19 +105,15 @@ class DocumentResourceController extends Controller
 //
       //]
       //);
-      $document = Document::findOrFail(1);
+      $document = Document::findOrFail(2);
       //dd($document->traking);
       return ["id" => $document->id,
               "name" => $document->name,
               "stage" => $document->stage,
               "created_at" => $document->created_at->format('d.m.Y H:i'),
-              "files" => [
-                DocumentShow::collection($document->resources)
-              ],
-              "document_tracking" => [
-
-                DocumentTrackerCollection::collection($document->tracking)
-              ]
+              "files" => DocumentShow::collection($document->resources),
+              "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
+              "success" => true
             ];
      //return DocumentShow::collection(
      //  $document->with('resources','tracking')->get()
