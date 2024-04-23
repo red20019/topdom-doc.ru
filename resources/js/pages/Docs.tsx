@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import {
   Card,
   Popconfirm,
-  Skeleton,
   Steps,
   Pagination,
   Spin,
   Empty,
   Input,
+  FloatButton,
+  Upload,
+  message,
+  Button,
 } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
 import { Link } from "react-router-dom";
@@ -15,7 +18,11 @@ import {
   ExportOutlined,
   PrinterFilled,
   PaperClipOutlined,
+  CheckCircleTwoTone,
+  CloseCircleTwoTone,
+  UploadOutlined,
 } from "@ant-design/icons";
+import type { UploadProps } from "antd";
 
 import { docsAPI } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -32,6 +39,21 @@ import {
 const cardStyle: React.CSSProperties = {
   marginTop: 6,
   width: "100%",
+};
+
+const props: UploadProps = {
+  name: "file",
+  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+  onChange(info) {
+    if (info.file.status !== "uploading") {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === "done") {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === "error") {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
 };
 
 const Docs: React.FC = () => {
@@ -163,57 +185,73 @@ const Docs: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-x-3">
-              {currentUser?.role === "Эмиль" ? (
-                <>
-                  <Popconfirm
-                    title="Подтвердите действие"
-                    description="Вы действительно хотите согласовать этот документ?"
-                    open={item.openPopOk}
-                    onConfirm={() => handleOk(item.id, "accepted")}
-                    okButtonProps={{
-                      loading: confirmLoading,
-                      type: "primary",
-                      style: { backgroundColor: "#1677ff", color: "white" },
-                    }}
-                    onCancel={() => handleCancel(item.id)}
-                  >
-                    <button
-                      onClick={() => handleStageClick(item.id, "accepted")}
-                      className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
-                    >
-                      Согласовать
-                    </button>
-                  </Popconfirm>
-                  <Popconfirm
-                    title="Подтвердите действие"
-                    description="Вы действительно хотите отклонить этот документ?"
-                    open={item.openPopCancel}
-                    onConfirm={() => handleOk(item.id, "rejected")}
-                    okButtonProps={{
-                      loading: confirmLoading,
-                      type: "primary",
-                      style: { backgroundColor: "#1677ff", color: "white" },
-                    }}
-                    onCancel={() => handleCancel(item.id)}
-                  >
-                    <button
-                      onClick={() => handleStageClick(item.id, "rejected")}
-                      className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
-                    >
-                      Отклонить
-                    </button>
-                  </Popconfirm>
-                </>
-              ) : (
-                <button
-                  // onClick={() => handleStageClick(item.id, "rejected")}
-                  className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+            {currentUser?.role === "boss" ? (
+              <div className="flex justify-end gap-x-3">
+                <Popconfirm
+                  title="Подтвердите действие"
+                  description="Вы действительно хотите согласовать этот документ?"
+                  open={item.openPopOk}
+                  onConfirm={() => handleOk(item.id, "accepted")}
+                  okButtonProps={{
+                    loading: confirmLoading,
+                    type: "primary",
+                    style: { backgroundColor: "#1677ff", color: "white" },
+                  }}
+                  onCancel={() => handleCancel(item.id)}
                 >
-                  Заглушка
-                </button>
-              )}
-            </div>
+                  <button
+                    onClick={() => handleStageClick(item.id, "accepted")}
+                    className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+                  >
+                    Согласовать
+                  </button>
+                </Popconfirm>
+                <Popconfirm
+                  title="Подтвердите действие"
+                  description="Вы действительно хотите отклонить этот документ?"
+                  open={item.openPopCancel}
+                  onConfirm={() => handleOk(item.id, "rejected")}
+                  okButtonProps={{
+                    loading: confirmLoading,
+                    type: "primary",
+                    style: { backgroundColor: "#1677ff", color: "white" },
+                  }}
+                  onCancel={() => handleCancel(item.id)}
+                >
+                  <button
+                    onClick={() => handleStageClick(item.id, "rejected")}
+                    className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+                  >
+                    Отклонить
+                  </button>
+                </Popconfirm>
+              </div>
+            ) : currentUser?.role === "user" ? (
+              <button
+                // onClick={() => handleStageClick(item.id, "rejected")}
+                className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+              >
+                Заглушка
+              </button>
+            ) : currentUser?.role === "accountant" ? (
+              <div className="">
+                <div className="flex justify-end gap-x-3">
+                  <div className="flex gap-x-3 mb-3">
+                    <span className="text-lg">
+                      <CheckCircleTwoTone twoToneColor="#52c41a" /> Чек загружен
+                    </span>
+                    <span className="text-lg">
+                      <CloseCircleTwoTone twoToneColor="red" /> Чек не загружен
+                    </span>
+                  </div>
+                </div>
+                  <Upload className="block text-right" {...props}>
+                    <Button icon={<UploadOutlined />}>Загрузить чек</Button>
+                  </Upload>
+              </div>
+            ) : (
+              "Кто ты, воин?"
+            )}
           </Card>
         ))
       ) : (
@@ -227,6 +265,7 @@ const Docs: React.FC = () => {
           total={total}
         />
       )}
+      <FloatButton.BackTop />
     </section>
   );
 };

@@ -28,6 +28,9 @@ const siderStyle: React.CSSProperties = {
 
 const Document: React.FC = () => {
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector(
+    (state: RootState) => state.user.currentUser
+  );
   const { data, error, confirmLoading } = useAppSelector(
     (state: RootState) => state.docs
   );
@@ -71,17 +74,11 @@ const Document: React.FC = () => {
     dispatch(closePopconfirm(id));
   };
 
-  const docs = [
-    "/pdf/dummy.pdf",
-    "/docx/docx.docx",
-    "/images/sierra_nevada_bg.jpg",
-  ];
-
   if (id) {
     return (
       <Layout>
         <Layout.Content className="min-h-screen py-4">
-          {file.endsWith(".jpg") || file.endsWith(".png") ? (
+          {file.endsWith(".jpg") || file.endsWith(".png") || file.endsWith(".gif") ? (
             <img
               src={"/" + file}
               alt="doc"
@@ -98,41 +95,32 @@ const Document: React.FC = () => {
             <Result title="Выберите документ для предпросмотра" />
           )}
 
-          {file && (
-            <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
-              <StyleProvider hashPriority="high">
-                <Popconfirm
-                  title="Подтвердите действие"
-                  description="Вы действительно хотите согласовать этот документ?"
-                  open={openPopOk}
-                  onConfirm={() => handleOk(+id, "accepted")}
-                  okButtonProps={{ loading: confirmLoading, type: "primary" }}
-                  onCancel={() => handleCancel(+id)}
-                >
-                  <button
-                    onClick={() => handleStageClick(+id, "accepted")}
-                    className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
-                  >
-                    Согласовать
-                  </button>
-                </Popconfirm>
-                <Popconfirm
-                  title="Подтвердите действие"
-                  description="Вы действительно хотите отклонить этот документ?"
-                  open={openPopCancel}
-                  onConfirm={() => handleOk(+id, "rejected")}
-                  okButtonProps={{ loading: confirmLoading }}
-                  onCancel={() => handleCancel(+id)}
-                >
-                  <button
-                    onClick={() => handleStageClick(+id, "rejected")}
-                    className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
-                  >
-                    Отклонить
-                  </button>
-                </Popconfirm>
-              </StyleProvider>
-            </div>
+          {currentUser?.role === "boss" ? (
+            <EmilDoc
+              {...{
+                file,
+                openPopOk,
+                openPopCancel,
+                handleOk,
+                handleCancel,
+                confirmLoading,
+                handleStageClick,
+              }}
+            />
+          ) : currentUser?.role === "user" ? (
+            <DanisDoc
+              {...{
+                file,
+                openPopOk,
+                openPopCancel,
+                handleOk,
+                handleCancel,
+                confirmLoading,
+                handleStageClick,
+              }}
+            />
+          ) : (
+            "kek"
           )}
         </Layout.Content>
 
@@ -170,3 +158,59 @@ const Document: React.FC = () => {
 };
 
 export default Document;
+
+function EmilDoc(props: any) {
+  return (
+    props.file && (
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
+        <StyleProvider hashPriority="high">
+          <Popconfirm
+            title="Подтвердите действие"
+            description="Вы действительно хотите согласовать этот документ?"
+            open={props.openPopOk}
+            onConfirm={() => props.handleOk(+props.id, "accepted")}
+            okButtonProps={{ loading: props.confirmLoading, type: "primary" }}
+            onCancel={() => props.handleCancel(+props.id)}
+          >
+            <button
+              onClick={() => props.handleStageClick(+props.id, "accepted")}
+              className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+            >
+              Согласовать
+            </button>
+          </Popconfirm>
+          <Popconfirm
+            title="Подтвердите действие"
+            description="Вы действительно хотите отклонить этот документ?"
+            open={props.openPopCancel}
+            onConfirm={() => props.handleOk(+props.id, "rejected")}
+            okButtonProps={{ loading: props.confirmLoading }}
+            onCancel={() => props.handleCancel(+props.id)}
+          >
+            <button
+              onClick={() => props.handleStageClick(+props.id, "rejected")}
+              className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+            >
+              Отклонить
+            </button>
+          </Popconfirm>
+        </StyleProvider>
+      </div>
+    )
+  );
+}
+
+function DanisDoc(props: any) {
+  return (
+    props.file && (
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
+        <button
+          // onClick={() => props.handleStageClick(+props.id, "accepted")}
+          className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+        >
+          Заглушка
+        </button>
+      </div>
+    )
+  );
+}
