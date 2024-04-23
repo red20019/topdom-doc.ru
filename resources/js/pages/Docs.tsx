@@ -148,16 +148,8 @@ const Docs: React.FC = () => {
                 <Steps
                   labelPlacement="vertical"
                   size="small"
-                  current={1}
-                  status={
-                    item.status.includes("На рассмотрении")
-                      ? "process"
-                      : item.status.includes("документ рассмотрен")
-                      ? "finish"
-                      : item.status.includes("документ отклонен")
-                      ? "wait"
-                      : "error"
-                  }
+                  current={item.stage_number}
+                  status={item.stage_number > 3 ? "error" : "finish"}
                   items={[
                     {
                       title: "Черновик",

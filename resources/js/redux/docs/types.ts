@@ -14,7 +14,8 @@ export type DocsType = {
   document_name: string;
   files: string[];
   date_add: string;
-  status: string;
+  stage_number: number;
+  stage_text: string;
   url: string;
   openPopOk: boolean;
   openPopCancel: boolean;
