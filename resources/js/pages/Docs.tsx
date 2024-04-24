@@ -108,7 +108,7 @@ const Docs: React.FC = () => {
   }
 
   return (
-    <section className="container mx-auto px-4 py-4">
+    <section className="container mx-auto ml-8 px-4 py-4">
       <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
 
       {total > 0 && (
@@ -161,7 +161,7 @@ const Docs: React.FC = () => {
                 Создан {item.date_add}, {item.name}
               </span>
 
-              <div className="">
+              <div className="-mr-9">
                 <Steps
                   labelPlacement="vertical"
                   size="small"
