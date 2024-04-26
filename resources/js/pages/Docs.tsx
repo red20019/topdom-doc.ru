@@ -41,21 +41,6 @@ const cardStyle: React.CSSProperties = {
   width: "100%",
 };
 
-const props: UploadProps = {
-  name: "file",
-  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-  onChange(info) {
-    if (info.file.status !== "uploading") {
-      console.log(info.file, info.fileList);
-    }
-    if (info.file.status === "done") {
-      message.success(`${info.file.name} file uploaded successfully`);
-    } else if (info.file.status === "error") {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-};
-
 const Docs: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(
@@ -64,26 +49,68 @@ const Docs: React.FC = () => {
   const { data, total, page, limit, error, loading, confirmLoading } =
     useAppSelector((state: RootState) => state.docs);
 
+  const [checkId, setCheckId] = useState(0);
+  const [checkLoading, setCheckLoading] = useState(false);
+  const [checkError, setCheckError] = useState("");
+  // const [formData, setFormData] = useState<RcFile>();
+
+  const props: UploadProps = {
+    name: "check",
+    maxCount: 1,
+    async onChange(info) {
+      try {
+        setCheckLoading(true);
+        // setFormData(info.file.originFileObj);
+        const formData = new FormData();
+        if (checkId) {
+          formData.append("id", String(checkId));
+          formData.append("check", info.file.originFileObj as File);
+        }
+
+        const response = await docsAPI.uploadCheck(formData);
+        if (response.success === false) {
+          setCheckLoading(false);
+          setCheckError(response.message);
+          return;
+        }
+        setCheckLoading(false);
+        setCheckError("");
+      } catch (error) {
+        setCheckLoading(false);
+        setCheckError((error as Record<string, string>).message);
+      }
+
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
+  const fetchDocs = async (page: number) => {
+    try {
+      dispatch(loadDocsStart());
+      const response = await docsAPI.getDocs(page);
+      // console.log(response);
+
+      if (response.success === false) {
+        dispatch(loadDocsFailure(response.message));
+        return;
+      }
+      dispatch(loadDocsSuccess(response));
+    } catch (error: unknown) {
+      dispatch(loadDocsFailure((error as Record<string, string>).message));
+    }
+  };
   useEffect(() => {
     document.title = "Мои документы | ТопДомДок";
 
-    const fetchDocs = async () => {
-      try {
-        dispatch(loadDocsStart());
-        const response = await docsAPI.getDocs(page);
-        // console.log(response);
 
-        if (response.success === false) {
-          dispatch(loadDocsFailure(response.message));
-          return;
-        }
-        dispatch(loadDocsSuccess(response.data));
-      } catch (error: unknown) {
-        dispatch(loadDocsFailure((error as Record<string, string>).message));
-      }
-    };
-
-    fetchDocs();
+    fetchDocs(page);
   }, []);
 
   const handleStageClick = (id: number, status: string) => {
@@ -245,9 +272,14 @@ const Docs: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                  <Upload className="block text-right" {...props}>
-                    <Button icon={<UploadOutlined />}>Загрузить чек</Button>
-                  </Upload>
+                <Upload className="block ml-auto w-[142px]" {...props}>
+                  <Button
+                    onClick={() => setCheckId(item.id)}
+                    icon={<UploadOutlined />}
+                  >
+                    {checkLoading ? "Чек загружается" : "Загрузить чек"}
+                  </Button>
+                </Upload>
               </div>
             ) : (
               "Кто ты, воин?"
@@ -260,6 +292,7 @@ const Docs: React.FC = () => {
 
       {total > 0 && (
         <Pagination
+          onChange={(page) => fetchDocs(page)}
           className="mt-8 text-center"
           defaultCurrent={page}
           total={total}

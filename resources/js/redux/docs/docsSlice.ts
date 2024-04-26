@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { DocsSliceState, DocsType } from "./types";
+import { DocsResponse, DocsSliceState, DocsType } from "./types";
 import { docsAPI } from "../../api/api";
 
 export const updateStage = createAsyncThunk(
@@ -39,11 +39,15 @@ const docsSlice = createSlice({
     loadDocsStart: (state) => {
       state.loading = true;
     },
-    loadDocsSuccess: (state, action: PayloadAction<DocsType[]>) => {
-      state.data = action.payload;
-      state.total = action.payload.length;
+    loadDocsSuccess: (state, action: PayloadAction<DocsResponse>) => {
+      state.data = action.payload.data;
+      state.total = action.payload.meta.total;
       state.loading = false;
       state.error = null;
+    },
+    loadDocsFailure: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+      state.loading = false;
     },
     emptyDocs: (state) => {
       state.data = null;
@@ -51,10 +55,6 @@ const docsSlice = createSlice({
       state.page = 1;
       state.limit = 10;
       state.error = null;
-      state.loading = false;
-    },
-    loadDocsFailure: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
       state.loading = false;
     },
     togglePopconfirm: (

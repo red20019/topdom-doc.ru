@@ -80,7 +80,6 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
-  // TODO: доделать
   async getDocById(id: number) {
     try {
       const response = await instance.post(`api/document`, { id });
@@ -102,6 +101,17 @@ export const docsAPI = {
   async updateStage(id: number, status: string) {
     try {
       const response = await instance.post(`api/update_stage`, { id, status });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
+  // TODO: доделать
+  async uploadCheck(formData: FormData) {
+    try {
+      console.log(formData);
+      const response = await instance.post(`api/******`, formData);
       console.log(response.data);
       return response.data;
     } catch (error) {

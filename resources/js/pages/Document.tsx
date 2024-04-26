@@ -13,7 +13,7 @@ import {
 } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
-import { DocType } from "../types/types";
+import { DocumentResponse, DocumentType } from "../redux/docs/types";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -26,6 +26,17 @@ const siderStyle: React.CSSProperties = {
   position: "fixed",
 };
 
+type BossDocProps = {
+  id: string
+  file: string
+  openPopOk: boolean | undefined
+  openPopCancel: boolean | undefined
+  confirmLoading: boolean
+  handleOk: (id: number, status: string) => Promise<void>
+  handleCancel: (id: number) => void
+  handleStageClick: (id: number, status: string) => void
+}
+
 const Document: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(
@@ -36,14 +47,14 @@ const Document: React.FC = () => {
   );
   const { id } = useParams();
 
-  const [docData, setDocData] = useState<DocType | null>(null);
+  const [docData, setDocData] = useState<DocumentType | null>(null);
 
   useEffect(() => {
     document.title = `Документ №${id} | ТопДомДок`;
 
     if (id) {
       const getDoc = async () => {
-        const response = await docsAPI.getDocById(+id);
+        const response: DocumentResponse = await docsAPI.getDocById(+id);
         console.log(response);
         setDocData(response.data);
       };
@@ -78,7 +89,9 @@ const Document: React.FC = () => {
     return (
       <Layout>
         <Layout.Content className="min-h-screen py-4">
-          {file.endsWith(".jpg") || file.endsWith(".png") || file.endsWith(".gif") ? (
+          {file.endsWith(".jpg") ||
+          file.endsWith(".png") ||
+          file.endsWith(".gif") ? (
             <img
               src={"/" + file}
               alt="doc"
@@ -96,8 +109,9 @@ const Document: React.FC = () => {
           )}
 
           {currentUser?.role === "boss" ? (
-            <EmilDoc
+            <BossDoc
               {...{
+                id,
                 file,
                 openPopOk,
                 openPopCancel,
@@ -108,19 +122,11 @@ const Document: React.FC = () => {
               }}
             />
           ) : currentUser?.role === "user" ? (
-            <DanisDoc
-              {...{
-                file,
-                openPopOk,
-                openPopCancel,
-                handleOk,
-                handleCancel,
-                confirmLoading,
-                handleStageClick,
-              }}
-            />
+            <UserDoc file={file} />
+          ) : currentUser?.role === "accountant" ? (
+            <AccountantDoc file={file} />
           ) : (
-            "kek"
+            "Кто ты, воин?"
           )}
         </Layout.Content>
 
@@ -157,9 +163,7 @@ const Document: React.FC = () => {
   }
 };
 
-export default Document;
-
-function EmilDoc(props: any) {
+function BossDoc(props: BossDocProps) {
   return (
     props.file && (
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
@@ -200,7 +204,7 @@ function EmilDoc(props: any) {
   );
 }
 
-function DanisDoc(props: any) {
+function UserDoc(props: Record<string, string>) {
   return (
     props.file && (
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
@@ -214,3 +218,20 @@ function DanisDoc(props: any) {
     )
   );
 }
+
+function AccountantDoc(props: Record<string, string>) {
+  return (
+    props.file && (
+      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
+        <button
+          // onClick={() => props.handleStageClick(+props.id, "accepted")}
+          className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+        >
+          Заглушка
+        </button>
+      </div>
+    )
+  );
+}
+
+export default Document;
