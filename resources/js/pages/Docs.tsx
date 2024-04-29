@@ -11,8 +11,9 @@ import {
   Upload,
   message,
   Button,
+  Dropdown,
+  Typography,
 } from "antd";
-import { StyleProvider } from "@ant-design/cssinjs";
 import { Link } from "react-router-dom";
 import {
   ExportOutlined,
@@ -21,8 +22,10 @@ import {
   CheckCircleTwoTone,
   CloseCircleTwoTone,
   UploadOutlined,
+  CaretUpOutlined,
+  CaretDownOutlined,
 } from "@ant-design/icons";
-import type { UploadProps } from "antd";
+import type { MenuProps, UploadProps } from "antd";
 
 import { docsAPI } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -41,18 +44,34 @@ const cardStyle: React.CSSProperties = {
   width: "100%",
 };
 
+const sortItems: MenuProps["items"] = [
+  {
+    key: "1",
+    label: "дате создания",
+  },
+  {
+    key: "2",
+    label: "готовности",
+  },
+  {
+    key: "3",
+    label: "алфавиту",
+  },
+];
+
 const Docs: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(
     (state: RootState) => state.user.currentUser
   );
-  const { data, total, page, limit, error, loading, confirmLoading } =
+  const { data, meta, page, limit, error, loading, confirmLoading } =
     useAppSelector((state: RootState) => state.docs);
 
   const [checkId, setCheckId] = useState(0);
   const [checkLoading, setCheckLoading] = useState(false);
   const [checkError, setCheckError] = useState("");
-  // const [formData, setFormData] = useState<RcFile>();
+  const [order, setOrder] = useState("desc");
+  const [sort, setSort] = useState(0);
 
   const props: UploadProps = {
     name: "check",
@@ -109,7 +128,6 @@ const Docs: React.FC = () => {
   useEffect(() => {
     document.title = "Мои документы | ТопДомДок";
 
-
     fetchDocs(page);
   }, []);
 
@@ -125,6 +143,10 @@ const Docs: React.FC = () => {
     dispatch(closePopconfirm(id));
   };
 
+  const onSearch = (value: string) => {
+    console.log("search:", value);
+  };
+
   if (!data && !loading) {
     return (
       <Empty
@@ -138,24 +160,44 @@ const Docs: React.FC = () => {
     <section className="container mx-auto ml-8 px-4 py-4">
       <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
 
-      {total > 0 && (
+      {meta && meta.total > 0 && (
         <>
           <Card className="mb-8">
             <Input.Search
               placeholder="Поиск документов..."
               allowClear
-              // onSearch={onSearch}
+              // loading
+              onSearch={onSearch}
               style={{ width: 200 }}
             />
           </Card>
           <div className="flex justify-between mb-8">
-            <span>{total} документов</span>
+            <span>
+              Показано {meta.from}-{meta.to} из {meta.total} документов
+            </span>
 
-            <div className="flex justify-between w-[200px]">
-              <span>Сортировка по:</span>
-              <span className="text-blue-500 cursor-pointer">
-                дате изменения
+            <div className="flex justify-between gap-x-1 select-none">
+              <span>Сортировка по: </span>
+              <span
+                onClick={() => setOrder(order === "desc" ? "asc" : "desc")}
+                className="cursor-pointer"
+              >
+                {order === "desc" ? <CaretDownOutlined /> : <CaretUpOutlined />}
               </span>
+              <Dropdown
+                menu={{
+                  items: sortItems,
+                  selectable: true,
+                  defaultSelectedKeys: ["1"],
+                  onSelect: (e) => {
+                    setSort(+e.key - 1);
+                  },
+                }}
+              >
+                <Typography.Link>
+                  {(sortItems as { key: string; label: string }[])[sort].label}
+                </Typography.Link>
+              </Dropdown>
             </div>
           </div>
         </>
@@ -290,12 +332,12 @@ const Docs: React.FC = () => {
         <Spin className="w-full text-center" size="large" />
       )}
 
-      {total > 0 && (
+      {meta && meta.total > 0 && (
         <Pagination
           onChange={(page) => fetchDocs(page)}
           className="mt-8 text-center"
           defaultCurrent={page}
-          total={total}
+          total={meta.total}
         />
       )}
       <FloatButton.BackTop />

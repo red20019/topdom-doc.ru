@@ -24,12 +24,13 @@ export const updateStage = createAsyncThunk(
 
 const initialState: DocsSliceState = {
   data: null,
-  total: 0,
   page: 1,
   limit: 10,
+  meta: null,
   error: null,
   loading: false,
   confirmLoading: false,
+  checkLoading: false
 };
 
 const docsSlice = createSlice({
@@ -41,7 +42,7 @@ const docsSlice = createSlice({
     },
     loadDocsSuccess: (state, action: PayloadAction<DocsResponse>) => {
       state.data = action.payload.data;
-      state.total = action.payload.meta.total;
+      state.meta = action.payload.meta;
       state.loading = false;
       state.error = null;
     },
@@ -50,12 +51,14 @@ const docsSlice = createSlice({
       state.loading = false;
     },
     emptyDocs: (state) => {
-      state.data = null;
-      state.total = 0;
-      state.page = 1;
-      state.limit = 10;
-      state.error = null;
-      state.loading = false;
+      if (state.meta) {
+        state.data = null;
+        state.meta.total = 0;
+        state.page = 1;
+        state.limit = 10;
+        state.error = null;
+        state.loading = false;
+      }
     },
     togglePopconfirm: (
       state,
@@ -65,8 +68,17 @@ const docsSlice = createSlice({
         state.data = state.data.map((item) => {
           if (item.id === action.payload.id) {
             if (action.payload.status === "accepted")
-              return { ...item, openPopOk: !item.openPopOk, openPopCancel: false };
-            else return { ...item, openPopCancel: !item.openPopCancel, openPopOk: false };
+              return {
+                ...item,
+                openPopOk: !item.openPopOk,
+                openPopCancel: false,
+              };
+            else
+              return {
+                ...item,
+                openPopCancel: !item.openPopCancel,
+                openPopOk: false,
+              };
           }
           return { ...item, openPopOk: false, openPopCancel: false };
         });

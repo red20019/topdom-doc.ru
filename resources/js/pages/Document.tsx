@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Popconfirm, Result, Spin } from "antd";
+import { Button, Layout, Popconfirm, Result, Spin, Upload } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
-import { LoadingOutlined } from "@ant-design/icons";
+import {
+  LoadingOutlined,
+  UploadOutlined,
+  CheckCircleTwoTone,
+  CloseCircleTwoTone,
+} from "@ant-design/icons";
 import FileViewer from "react-file-viewer";
 import { useParams } from "react-router-dom";
 
@@ -27,22 +32,22 @@ const siderStyle: React.CSSProperties = {
 };
 
 type BossDocProps = {
-  id: string
-  file: string
-  openPopOk: boolean | undefined
-  openPopCancel: boolean | undefined
-  confirmLoading: boolean
-  handleOk: (id: number, status: string) => Promise<void>
-  handleCancel: (id: number) => void
-  handleStageClick: (id: number, status: string) => void
-}
+  id: string;
+  file: string;
+  openPopOk: boolean | undefined;
+  openPopCancel: boolean | undefined;
+  confirmLoading: boolean;
+  handleOk: (id: number, status: string) => Promise<void>;
+  handleCancel: (id: number) => void;
+  handleStageClick: (id: number, status: string) => void;
+};
 
 const Document: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(
     (state: RootState) => state.user.currentUser
   );
-  const { data, error, confirmLoading } = useAppSelector(
+  const { data, error, confirmLoading, checkLoading } = useAppSelector(
     (state: RootState) => state.docs
   );
   const { id } = useParams();
@@ -124,7 +129,7 @@ const Document: React.FC = () => {
           ) : currentUser?.role === "user" ? (
             <UserDoc file={file} />
           ) : currentUser?.role === "accountant" ? (
-            <AccountantDoc file={file} />
+            <AccountantDoc {...{id, file, checkLoading} }/>
           ) : (
             "Кто ты, воин?"
           )}
@@ -219,16 +224,31 @@ function UserDoc(props: Record<string, string>) {
   );
 }
 
-function AccountantDoc(props: Record<string, string>) {
+function AccountantDoc(props: {
+  id: string;
+  file: string;
+  checkLoading: boolean;
+}) {
   return (
     props.file && (
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
-        <button
-          // onClick={() => props.handleStageClick(+props.id, "accepted")}
-          className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
-        >
-          Заглушка
-        </button>
+      <div className="">
+        <div className="flex justify-end gap-x-3">
+          <div className="flex gap-x-3 mb-3">
+            <span className="text-lg">
+              <CheckCircleTwoTone twoToneColor="#52c41a" /> Чек загружен
+            </span>
+            <span className="text-lg">
+              <CloseCircleTwoTone twoToneColor="red" /> Чек не загружен
+            </span>
+          </div>
+        </div>
+        <Upload className="block ml-auto w-[142px]" {...props}>
+          <Button
+            icon={<UploadOutlined />}
+          >
+            {props.checkLoading ? "Чек загружается" : "Загрузить чек"}
+          </Button>
+        </Upload>
       </div>
     )
   );

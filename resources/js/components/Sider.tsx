@@ -4,10 +4,8 @@ import { Layout, Menu } from "antd";
 import { MenuClickEventHandler } from "rc-menu/lib/interface"; //
 import type { MenuProps } from "antd";
 import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
+  FileAddOutlined,
+  FolderOpenOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
@@ -38,8 +36,8 @@ const siderStyle: React.CSSProperties = {
 type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
-  getItem(<Link to="/create-doc">Добавить документ</Link>, "1"),
-  getItem(<Link to="/documents">Мои документы</Link>, "2", <FileOutlined />),
+  getItem(<Link to="/create-doc">Добавить документ</Link>, "1", <FileAddOutlined />),
+  getItem(<Link to="/documents">Мои документы</Link>, "2", <FolderOpenOutlined />),
   getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
 ];
 
@@ -126,17 +124,45 @@ const Sider = () => {
         {user.currentUser ? (
           <button
             onClick={handleSignOut}
+            title="Выйти"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-            Выйти
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
+              />
+            </svg>
           </button>
         ) : (
           <>
             <Link
               to="/login"
+              title="Войти"
               className="bg-white text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
             >
-              Войти
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
+                />
+              </svg>
             </Link>
             <Link
               to="/register"

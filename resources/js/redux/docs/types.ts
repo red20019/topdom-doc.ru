@@ -2,10 +2,11 @@ export interface DocsSliceState {
   data: DocsType[] | null;
   page: number;
   limit: number;
-  total: number;
+  meta: DocumentMeta | null;
   error: string | null;
   loading: boolean;
   confirmLoading: boolean;
+  checkLoading: boolean;
 }
 
 export type DocsType = {
@@ -25,15 +26,7 @@ export type DocsType = {
 export type DocsResponse = {
   data: DocsType[] | null;
   links: Record<string, string>;
-  meta: {
-    current_page: number;
-    from: number;
-    last_page: number;
-    path: string;
-    per_page: number;
-    to: number;
-    total: number;
-  };
+  meta: DocumentMeta;
 };
 
 export type DocumentResponse = {
@@ -62,4 +55,14 @@ export type DocumentFilesType = {
   filename: string;
   id: number;
   path: string;
+};
+
+export type DocumentMeta = {
+  current_page: number;
+  from: number;
+  last_page: number;
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
 };
