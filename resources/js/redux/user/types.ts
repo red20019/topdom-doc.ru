@@ -5,10 +5,15 @@ export type UserType = {
   name: string;
   email: string;
   email_verified_at: string | null;
+  avatar: string;
   role: string;
   createdAt: string;
   updatedAt: string;
 };
+
+export type FullUserType = {
+  data: UserType
+}
 
 export interface UserSliceState {
   currentUser: UserType | null;
@@ -23,9 +28,9 @@ export type Middleware<T> = {
 };
 
 export type DocsType = {
-  name: string
-  files: UploadFile[] | null
-}
+  name: string;
+  files: UploadFile[] | null;
+};
 
 // export type ListingData = {
 //   _id?: string;
@@ -53,3 +58,10 @@ export type UserTypeWithMiddleware = UserType &
 //   statusCode: number;
 //   message: string;
 // };
+
+export type Extra = {
+  success: boolean;
+  message: string;
+};
+
+export type FullUserTypeWithExtra = FullUserType & Extra;

@@ -114,19 +114,35 @@ const Docs: React.FC = () => {
     try {
       dispatch(loadDocsStart());
       const response = await docsAPI.getDocs(page);
-      // console.log(response);
 
-      if (response.success === false) {
-        dispatch(loadDocsFailure(response.message));
-        return;
-      }
-      dispatch(loadDocsSuccess(response));
+      // if (response.success === false) {
+      //   dispatch(loadDocsFailure(response.message));
+      //   return;
+      // }
+      if (response) dispatch(loadDocsSuccess(response));
     } catch (error: unknown) {
       dispatch(loadDocsFailure((error as Record<string, string>).message));
     }
   };
   useEffect(() => {
     document.title = "Мои документы | ТопДомДок";
+
+    const fet = async () => {
+      const res = await fetch("http://topdom-doc.ru/images/eeqw.jpg");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "downloaded_image.jpg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    };
+
+    fet();
 
     fetchDocs(page);
   }, []);
