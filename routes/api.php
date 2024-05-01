@@ -31,7 +31,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::post('/document', 'api\DocumentResourceController@showDoc')->name('ShowDocument');
   Route::post('/documents_add', 'api\DocumentResourceController@create')->name('AddDocument');
   Route::post('/update_stage', 'api\DocumentResourceController@upd')->name('UpdateStage');
-  Route::post('/del_tmp', 'api\DocumentResourceController@delTmp')->name('UpdateStage');
+  Route::post('/del_tmp', 'api\DocumentResourceController@delTmp')->name('delTmp');
 });
 //Route::middleware('auth:sanctum')->get('/logout', 'api\LoginController@logout')->name('logout');
 //Route::get('/{path?}', [
