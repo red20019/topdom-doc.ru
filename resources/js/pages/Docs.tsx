@@ -127,6 +127,23 @@ const Docs: React.FC = () => {
   useEffect(() => {
     document.title = "Мои документы | ТопДомДок";
 
+    const fet = async () => {
+      const res = await fetch("http://topdom-doc.ru/images/eeqw.jpg");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "downloaded_image.jpg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    };
+
+    // fet();
+
     fetchDocs(page);
   }, []);
 
