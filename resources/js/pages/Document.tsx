@@ -18,7 +18,7 @@ import {
 } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
-import { DocumentResponse, DocumentType } from "../redux/docs/types";
+import { DocumentType } from "../redux/docs/types";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -59,9 +59,11 @@ const Document: React.FC = () => {
 
     if (id) {
       const getDoc = async () => {
-        const response: DocumentResponse = await docsAPI.getDocById(+id);
-        console.log(response);
-        setDocData(response.data);
+        const response = await docsAPI.getDocById(+id);
+        if (response) {
+          console.log(response);
+          setDocData(response.data);
+        }
       };
 
       getDoc();
@@ -129,7 +131,7 @@ const Document: React.FC = () => {
           ) : currentUser?.role === "user" ? (
             <UserDoc file={file} />
           ) : currentUser?.role === "accountant" ? (
-            <AccountantDoc {...{id, file, checkLoading} }/>
+            <AccountantDoc {...{ id, file, checkLoading }} />
           ) : (
             "Кто ты, воин?"
           )}
@@ -231,7 +233,7 @@ function AccountantDoc(props: {
 }) {
   return (
     props.file && (
-      <div className="">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2">
         <div className="flex justify-end gap-x-3">
           <div className="flex gap-x-3 mb-3">
             <span className="text-lg">
@@ -243,9 +245,7 @@ function AccountantDoc(props: {
           </div>
         </div>
         <Upload className="block ml-auto w-[142px]" {...props}>
-          <Button
-            icon={<UploadOutlined />}
-          >
+          <Button icon={<UploadOutlined />}>
             {props.checkLoading ? "Чек загружается" : "Загрузить чек"}
           </Button>
         </Upload>

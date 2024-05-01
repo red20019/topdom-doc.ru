@@ -31,6 +31,7 @@ const Login: React.FC = () => {
         return;
       }
       const userResponse = await authAPI.me();
+      console.log(userResponse)
       dispatch(signInSuccess(userResponse.data.data));
 
       navigate("/");
