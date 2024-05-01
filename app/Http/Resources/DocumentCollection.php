@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use App\Http\Resources\DocumentTracking;
 
+
 class DocumentCollection extends JsonResource
 {
     /**
@@ -55,7 +56,7 @@ class DocumentCollection extends JsonResource
         'date_add' => $date,
         'stage_text' => $stage,
         'count_files'=> $this->resources->count(),
-        'url' => '/documents/'.$this->id
+        'url' => 'documents/'.$this->id
     ];
     }
 }

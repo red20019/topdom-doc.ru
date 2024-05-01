@@ -42,7 +42,9 @@ class DocumentResourceController extends Controller
         $document_files=[];
         foreach($request->file('files') as $file){
           array_push($document_files,$file->getClientOriginalName());
-          $path = $file->store('documents');
+          $path = $file->store('private/documents');
+
+          //dd($path);
           DocumentResource::create([
             'filename' => $file->getClientOriginalName(),
             'path' => $path,
@@ -83,6 +85,21 @@ class DocumentResourceController extends Controller
      */
     public function docList(Document $document, Request $request)
     {
+
+     if($request->user()->role=="user"){
+        return DocumentCollection::collection(
+                  Document::with('user','resources','tracking')
+                            ->where("user_id",$request->user()->id)
+                            ->paginate(10)
+            );
+        }
+        else{
+          return DocumentCollection::collection(
+            Document::with('user','resources','tracking')
+                      ->paginate(10)
+          );
+        }
+
       return DocumentCollection::collection(
         Document::with('user','resources','tracking')->paginate(10)
       );
@@ -105,19 +122,21 @@ class DocumentResourceController extends Controller
 //
       //]
       //);
+
       $document = Document::findOrFail($request->input('id'));
       //dd($document->traking);
       $success = ["id" => $document->id,
               "name" => $document->name,
               "stage" => $document->stage,
               "created_at" => $document->created_at->format('d.m.Y H:i'),
-              "files" => DocumentShow::collection($document->resources)
-              ,
-              "document_tracking" => DocumentTrackerCollection::collection($document->tracking)
+
+              "files" => DocumentShow::collection($document->resources),
+              "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
+              "success" => true
 
             ];
 
-            return $this->sendResponse($success, 'document loaded');
+          return $this->sendResponse($success, 'document loaded');
      //return DocumentShow::collection(
      //  $document->with('resources','tracking')->get()
      //// Document::findOrFail(2)
@@ -138,6 +157,13 @@ class DocumentResourceController extends Controller
         //
     }
 
+    public function delTmp(DocumentResource $documentResource,Request $request)
+    {
+      foreach($request->input('img') as $value){
+        Storage::disk('public')->delete($value);
+      }
+    }
+
         /**
      * Show the form for editing the specified resource.
      *
@@ -148,6 +174,7 @@ class DocumentResourceController extends Controller
     {
 
       $document = Document::find($request->input('id'));
+      //dd($document);
       $document->tracking
       ->where('stage_document', $document->stage)
       ->first()
