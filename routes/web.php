@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 //use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Auth::routes();
+Route::get('local/temp/{path}', function (string $path){
+  return Storage::disk('local')->download($path);
+})->name('local.temp');
 Route::get('/', 'GuestController@main')->name('home');
 Route::get('/login', 'GuestController@main')->name('login');
 Route::get('/register', 'GuestController@main')->name('register');
