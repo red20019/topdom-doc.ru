@@ -23,7 +23,7 @@ class DocumentShow extends JsonResource
     //];
         //return parent::toArray($request);
         Cache::put('/temp/' . $this->path, 300);
-        Storage::copy('private/'.$this->path, 'public/'.$this->path);
+        Storage::copy($this->path, 'public/'.$this->path);
         $url="storage/".$this->path;
         //$url=Storage::disk('private')->path("u30evOBvt0SwYoat4UxcmJhiUqpyWSlkEykX6KSo.jpg");
         //$url = Storage::disk('private')->temporaryUrl(
@@ -34,7 +34,7 @@ class DocumentShow extends JsonResource
      return [
       "id" => $this->id,
       "filename" => $this->filename,
-      "file" => $url
+      "path" => $url
 
     //    "id" => $this->id,
     //    "name" => $this->name,

@@ -42,6 +42,28 @@ type BossDocProps = {
   handleStageClick: (id: number, status: string) => void;
 };
 
+async function urlToFile(url: string, fileName: string): Promise<File> {
+  const response = await fetch(url);
+  const blob = await response.blob();
+  return new File([blob], fileName);
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const base64Data = reader.result?.toString().split(",")[1];
+      if (base64Data) {
+        resolve(`data:${file.type},` + base64Data);
+      } else {
+        reject("Error converting file to base64");
+      }
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
+
 const Document: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(
@@ -53,6 +75,18 @@ const Document: React.FC = () => {
   const { id } = useParams();
 
   const [docData, setDocData] = useState<DocumentType | null>(null);
+  const [test, setTest] = useState<FileList | string | null>(null);
+  console.log(test);
+
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      console.log(e.target.files[0]);
+      const base64 = await fileToBase64(e.target.files[0]);
+      // console.log(base64);
+
+      setTest(base64);
+    }
+  };
 
   useEffect(() => {
     document.title = `Документ №${id} | ТопДомДок`;
@@ -60,8 +94,21 @@ const Document: React.FC = () => {
     if (id) {
       const getDoc = async () => {
         const response = await docsAPI.getDocById(+id);
-        if (response) {
+        if (response?.data) {
           console.log(response);
+
+          const files = response?.data.files;
+          for (const file of files) {
+            try {
+              const url = file.path;
+              const fileName = file.filename;
+              const convertedFile = await urlToFile(url, fileName);
+              const base64Data = await fileToBase64(convertedFile);
+              file.path = base64Data;
+            } catch (error) {
+              console.error(`Error converting file ${file.filename}:`, error);
+            }
+          }
           setDocData(response.data);
         }
       };
@@ -107,8 +154,9 @@ const Document: React.FC = () => {
           ) : file ? (
             <div style={{ height: "auto" }}>
               <FileViewer
-                filePath={"/" + file}
-                fileType={file.split(".").pop()}
+                filePath={file}
+                fileType={}
+                // fileType={file.split(".").pop()}
               />
             </div>
           ) : (
@@ -136,6 +184,8 @@ const Document: React.FC = () => {
             "Кто ты, воин?"
           )}
         </Layout.Content>
+
+        <input onChange={handleChange} id="file" type="file" multiple />
 
         <Layout.Sider width="15%" style={siderStyle}>
           <div className="flex flex-col gap-y-2 p-4 pt-7">
