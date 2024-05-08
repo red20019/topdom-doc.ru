@@ -159,9 +159,12 @@ class DocumentResourceController extends Controller
     public function delTmp(DocumentResource $documentResource,Request $request)
     {
       foreach($request->input('files') as $value){
-        dd($request->input('files'));
-        Storage::disk('public')->delete($value);
+        $path = str_replace('storage/', '', $value);
+        //dd($request->input('files'));
+        Storage::disk('public')->delete($path);
       }
+      return $this->sendResponse($request->input('files'), 'TMP cleared');
+
     }
 
         /**
