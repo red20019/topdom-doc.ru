@@ -129,7 +129,6 @@ class DocumentResourceController extends Controller
               "name" => $document->name,
               "stage" => $document->stage,
               "created_at" => $document->created_at->format('d.m.Y H:i'),
-
               "files" => DocumentShow::collection($document->resources),
               "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
               "success" => true
