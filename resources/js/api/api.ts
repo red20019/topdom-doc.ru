@@ -1,6 +1,7 @@
 import axios, { Cancel } from "axios";
 
 import { UserTypeWithMiddleware, DocsType } from "../redux/user/types";
+import { DocsResponse, DocumentResponse } from "../redux/docs/types";
 
 const instance = axios.create({
   withCredentials: true,
@@ -39,10 +40,10 @@ export const authAPI = {
       const response = await instance.post("login", formData);
       console.log(response.data);
       return response.data;
-    } catch (error: any) {
-      if (error.response) {
-        console.log(error.response.data); // Access the error response message
-      }
+    } catch (error) {
+      // if (error.response) {
+      //   console.log(error.response.data); // Access the error response message
+      // }
       if (axios.isCancel(error)) return Promise.reject(error as Cancel);
       throw error;
     }
@@ -72,7 +73,6 @@ export const authAPI = {
 export const docsAPI = {
   async sendDocs(formData: FormData) {
     try {
-      console.log(formData);
       const response = await instance.post(`api/documents_add`, formData);
       console.log(response.data);
       return response.data;
@@ -80,7 +80,7 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
-  async getDocById(id: number) {
+  async getDocById(id: number): Promise<DocumentResponse | undefined> {
     try {
       const response = await instance.post(`api/document`, { id });
       console.log(response.data);
@@ -89,7 +89,7 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
-  async getDocs(page = 1) {
+  async getDocs(page = 1): Promise<DocsResponse | undefined> {
     try {
       const response = await instance.get(`api/documents_list?page=${page}`);
       console.log(response.data);
@@ -114,6 +114,16 @@ export const docsAPI = {
       const response = await instance.post(`api/******`, formData);
       console.log(response.data);
       return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
+  // TODO: доделать
+  async deleteTempFiles(formData: FormData) {
+    try {
+      const response = await instance.post(`api/del_tmp`, formData);
+      console.log(response);
+      // return response.data;
     } catch (error) {
       if (axios.isCancel(error)) return;
     }

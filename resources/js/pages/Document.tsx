@@ -18,7 +18,7 @@ import {
 } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
-import { DocumentResponse, DocumentType } from "../redux/docs/types";
+import { DocumentFilesType, DocumentType } from "../redux/docs/types";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -33,7 +33,7 @@ const siderStyle: React.CSSProperties = {
 
 type BossDocProps = {
   id: string;
-  file: string;
+  file: DocumentFilesType;
   openPopOk: boolean | undefined;
   openPopCancel: boolean | undefined;
   confirmLoading: boolean;
@@ -41,6 +41,47 @@ type BossDocProps = {
   handleCancel: (id: number) => void;
   handleStageClick: (id: number, status: string) => void;
 };
+
+async function urlToFile(url: string, fileName: string): Promise<File> {
+  const response = await fetch("/" + url);
+  const blob = await response.blob();
+  return new File([blob], fileName);
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const base64Data = reader.result?.toString().split(",")[1];
+      if (base64Data) {
+        const fileExtension = file.name.split(".").pop();
+        let mimeType = "application/octet-stream";
+        if (fileExtension) {
+          const mimeTypes: { [key: string]: string } = {
+            png: "image/png",
+            jpeg: "image/jpeg",
+            jpg: "image/jpeg",
+            gif: "image/gif",
+            bmp: "image/bmp",
+            pdf: "application/pdf",
+            csv: "text/csv",
+            xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            mp4: "video/mp4",
+            webm: "video/webm",
+            mp3: "audio/mpeg",
+          };
+          mimeType = mimeTypes[fileExtension] || mimeType;
+        }
+        resolve(`data:${mimeType};base64, ` + base64Data);
+      } else {
+        reject("Error converting file to base64");
+      }
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}
 
 const Document: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -53,23 +94,50 @@ const Document: React.FC = () => {
   const { id } = useParams();
 
   const [docData, setDocData] = useState<DocumentType | null>(null);
+  const [test, setTest] = useState<FileList | string | null>(null);
+  // console.log(test);
 
   useEffect(() => {
     document.title = `Документ №${id} | ТопДомДок`;
 
     if (id) {
       const getDoc = async () => {
-        const response: DocumentResponse = await docsAPI.getDocById(+id);
-        console.log(response);
-        setDocData(response.data);
+        const response = await docsAPI.getDocById(+id);
+        if (response?.data) {
+          const copiedResponse = JSON.parse(JSON.stringify(response)); // Deep copy of response object
+          const files = copiedResponse.data.files;
+          for (const file of files) {
+            try {
+              const url = file.path;
+              const fileName = file.filename;
+              const convertedFile = await urlToFile(url, fileName);
+              const base64Data = await fileToBase64(convertedFile);
+              file.path = base64Data;
+            } catch (error) {
+              console.error(`Error converting file ${file.filename}:`, error);
+            }
+          }
+
+          setDocData(response.data);
+
+          const formData = new FormData();
+          response.data.files.forEach((file) => {
+            formData.append(`files[]`, file.path);
+          });
+          const res = await docsAPI.deleteTempFiles(formData);
+        }
       };
 
       getDoc();
     }
   }, [id]);
 
-  const [file, setFile] = useState("");
-  console.log(file);
+  const [file, setFile] = useState<DocumentFilesType>({
+    filename: "",
+    id: 0,
+    path: "",
+  });
+  // console.log(file)
 
   const openPopOk = data?.some((item) => {
     if (id && item.id === +id) return item.openPopOk;
@@ -94,19 +162,19 @@ const Document: React.FC = () => {
     return (
       <Layout>
         <Layout.Content className="min-h-screen py-4">
-          {file.endsWith(".jpg") ||
-          file.endsWith(".png") ||
-          file.endsWith(".gif") ? (
+          {file.filename.endsWith(".jpg") ||
+          file.filename.endsWith(".png") ||
+          file.filename.endsWith(".gif") ? (
             <img
-              src={"/" + file}
+              src={file.path}
               alt="doc"
               className="w-full h-full object-cover"
             />
           ) : file ? (
             <div style={{ height: "auto" }}>
               <FileViewer
-                filePath={"/" + file}
-                fileType={file.split(".").pop()}
+                filePath={file.path}
+                fileType={file.filename.split(".").pop()}
               />
             </div>
           ) : (
@@ -127,9 +195,9 @@ const Document: React.FC = () => {
               }}
             />
           ) : currentUser?.role === "user" ? (
-            <UserDoc file={file} />
+            <UserDoc file={file.path} />
           ) : currentUser?.role === "accountant" ? (
-            <AccountantDoc {...{id, file, checkLoading} }/>
+            <AccountantDoc {...{ id, file: file.path, checkLoading }} />
           ) : (
             "Кто ты, воин?"
           )}
@@ -141,7 +209,7 @@ const Document: React.FC = () => {
               docData.files.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => setFile(item.path)}
+                  onClick={() => setFile(item)}
                   title={item.filename}
                   className="p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
                 >
@@ -231,7 +299,7 @@ function AccountantDoc(props: {
 }) {
   return (
     props.file && (
-      <div className="">
+      <div className="absolute bottom-5 left-1/2 -translate-x-1/2">
         <div className="flex justify-end gap-x-3">
           <div className="flex gap-x-3 mb-3">
             <span className="text-lg">
@@ -243,9 +311,7 @@ function AccountantDoc(props: {
           </div>
         </div>
         <Upload className="block ml-auto w-[142px]" {...props}>
-          <Button
-            icon={<UploadOutlined />}
-          >
+          <Button icon={<UploadOutlined />}>
             {props.checkLoading ? "Чек загружается" : "Загрузить чек"}
           </Button>
         </Upload>
