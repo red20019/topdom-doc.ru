@@ -111,7 +111,7 @@ export const docsAPI = {
   async uploadCheck(formData: FormData) {
     try {
       console.log(formData);
-      const response = await instance.post(`api/******`, formData);
+      const response = await instance.post(`api/checks_add`, formData);
       console.log(response.data);
       return response.data;
     } catch (error) {

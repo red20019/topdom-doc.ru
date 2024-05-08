@@ -75,7 +75,7 @@ const Docs: React.FC = () => {
 
   const props: UploadProps = {
     name: "check",
-    maxCount: 1,
+    multiple: true,
     async onChange(info) {
       try {
         setCheckLoading(true);
@@ -83,7 +83,7 @@ const Docs: React.FC = () => {
         const formData = new FormData();
         if (checkId) {
           formData.append("id", String(checkId));
-          formData.append("check", info.file.originFileObj as File);
+          formData.append("files[]", info.file.originFileObj as File);
         }
 
         const response = await docsAPI.uploadCheck(formData);

@@ -164,6 +164,7 @@ const Document: React.FC = () => {
         <Layout.Content className="min-h-screen py-4">
           {file.filename.endsWith(".jpg") ||
           file.filename.endsWith(".png") ||
+          file.filename.endsWith(".svg") ||
           file.filename.endsWith(".gif") ? (
             <img
               src={file.path}
