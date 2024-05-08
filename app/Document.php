@@ -28,4 +28,9 @@ class Document extends Model
   return $this->hasMany('App\DocumentTracking');
 }
 
+public function check() {
+  return $this->hasMany('App\check');
+}
+
+
 }

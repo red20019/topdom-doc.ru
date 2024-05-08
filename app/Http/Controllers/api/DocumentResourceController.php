@@ -5,9 +5,11 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\PostFormDocument;
+use App\Http\Requests\PostFormCheck;
 use App\DocumentResource;
 use App\Document;
 use App\DocumentTracking;
+use App\check;
 use Illuminate\Support\Arr;
 use App\Http\Resources\DocumentCollection;
 use App\Http\Resources\DocumentShow;
@@ -65,6 +67,35 @@ class DocumentResourceController extends Controller
         return $this->sendResponse($success, 'documents added');
 
     }
+
+
+    public function createChecks(PostFormCheck $request)
+    {
+
+        $check_files=[];
+        foreach($request->file('files') as $file){
+          array_push($check_files,$file->getClientOriginalName());
+          $path = $file->store('private/checks');
+          $path = str_replace('private/', '', $path);
+          //dd($path);
+          check::create([
+            'path' => $path,
+            'document_id' => $request->input('id'),
+            'user_id' => $request->user()->id
+
+          ]);
+        }
+
+
+
+        $success['check_files'] =  $check_files;
+
+        return $this->sendResponse($success, 'checks added');
+
+    }
+
+
+
 
     /**
      * Store a newly created resource in storage.
