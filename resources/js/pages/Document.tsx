@@ -118,7 +118,7 @@ const Document: React.FC = () => {
             }
           }
 
-          setDocData(response.data);
+          setDocData(copiedResponse.data);
 
           const formData = new FormData();
           response.data.files.forEach((file) => {
