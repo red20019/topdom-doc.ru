@@ -118,6 +118,16 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
+  // TODO: доделать
+  async deleteTempFiles(formData: FormData) {
+    try {
+      const response = await instance.post(`api/del_tmp`, formData);
+      console.log(response);
+      // return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return;
+    }
+  },
 
   // async filter(platform, sort, order) {
   //   const sortBy = sort ? `sortBy=${sort}` : ''

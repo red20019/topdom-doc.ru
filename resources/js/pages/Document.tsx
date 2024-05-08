@@ -18,7 +18,7 @@ import {
 } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
-import { DocumentType } from "../redux/docs/types";
+import { DocumentFilesType, DocumentType } from "../redux/docs/types";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -33,7 +33,7 @@ const siderStyle: React.CSSProperties = {
 
 type BossDocProps = {
   id: string;
-  file: string;
+  file: DocumentFilesType;
   openPopOk: boolean | undefined;
   openPopCancel: boolean | undefined;
   confirmLoading: boolean;
@@ -43,7 +43,7 @@ type BossDocProps = {
 };
 
 async function urlToFile(url: string, fileName: string): Promise<File> {
-  const response = await fetch(url);
+  const response = await fetch("/" + url);
   const blob = await response.blob();
   return new File([blob], fileName);
 }
@@ -55,7 +55,26 @@ function fileToBase64(file: File): Promise<string> {
     reader.onload = () => {
       const base64Data = reader.result?.toString().split(",")[1];
       if (base64Data) {
-        resolve(`data:${file.type},` + base64Data);
+        const fileExtension = file.name.split(".").pop();
+        let mimeType = "application/octet-stream";
+        if (fileExtension) {
+          const mimeTypes: { [key: string]: string } = {
+            png: "image/png",
+            jpeg: "image/jpeg",
+            jpg: "image/jpeg",
+            gif: "image/gif",
+            bmp: "image/bmp",
+            pdf: "application/pdf",
+            csv: "text/csv",
+            xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            mp4: "video/mp4",
+            webm: "video/webm",
+            mp3: "audio/mpeg",
+          };
+          mimeType = mimeTypes[fileExtension] || mimeType;
+        }
+        resolve(`data:${mimeType};base64, ` + base64Data);
       } else {
         reject("Error converting file to base64");
       }
@@ -76,17 +95,7 @@ const Document: React.FC = () => {
 
   const [docData, setDocData] = useState<DocumentType | null>(null);
   const [test, setTest] = useState<FileList | string | null>(null);
-  console.log(test);
-
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      console.log(e.target.files[0]);
-      const base64 = await fileToBase64(e.target.files[0]);
-      // console.log(base64);
-
-      setTest(base64);
-    }
-  };
+  // console.log(test);
 
   useEffect(() => {
     document.title = `Документ №${id} | ТопДомДок`;
@@ -95,9 +104,8 @@ const Document: React.FC = () => {
       const getDoc = async () => {
         const response = await docsAPI.getDocById(+id);
         if (response?.data) {
-          console.log(response);
-
-          const files = response?.data.files;
+          const copiedResponse = JSON.parse(JSON.stringify(response)); // Deep copy of response object
+          const files = copiedResponse.data.files;
           for (const file of files) {
             try {
               const url = file.path;
@@ -109,7 +117,14 @@ const Document: React.FC = () => {
               console.error(`Error converting file ${file.filename}:`, error);
             }
           }
+
           setDocData(response.data);
+
+          const formData = new FormData();
+          response.data.files.forEach((file) => {
+            formData.append(`files[]`, file.path);
+          });
+          const res = await docsAPI.deleteTempFiles(formData);
         }
       };
 
@@ -117,8 +132,12 @@ const Document: React.FC = () => {
     }
   }, [id]);
 
-  const [file, setFile] = useState("");
-  console.log(file);
+  const [file, setFile] = useState<DocumentFilesType>({
+    filename: "",
+    id: 0,
+    path: "",
+  });
+  // console.log(file)
 
   const openPopOk = data?.some((item) => {
     if (id && item.id === +id) return item.openPopOk;
@@ -143,20 +162,19 @@ const Document: React.FC = () => {
     return (
       <Layout>
         <Layout.Content className="min-h-screen py-4">
-          {file.endsWith(".jpg") ||
-          file.endsWith(".png") ||
-          file.endsWith(".gif") ? (
+          {file.filename.endsWith(".jpg") ||
+          file.filename.endsWith(".png") ||
+          file.filename.endsWith(".gif") ? (
             <img
-              src={"/" + file}
+              src={file.path}
               alt="doc"
               className="w-full h-full object-cover"
             />
           ) : file ? (
             <div style={{ height: "auto" }}>
               <FileViewer
-                filePath={file}
-                fileType={}
-                // fileType={file.split(".").pop()}
+                filePath={file.path}
+                fileType={file.filename.split(".").pop()}
               />
             </div>
           ) : (
@@ -177,15 +195,13 @@ const Document: React.FC = () => {
               }}
             />
           ) : currentUser?.role === "user" ? (
-            <UserDoc file={file} />
+            <UserDoc file={file.path} />
           ) : currentUser?.role === "accountant" ? (
-            <AccountantDoc {...{ id, file, checkLoading }} />
+            <AccountantDoc {...{ id, file: file.path, checkLoading }} />
           ) : (
             "Кто ты, воин?"
           )}
         </Layout.Content>
-
-        <input onChange={handleChange} id="file" type="file" multiple />
 
         <Layout.Sider width="15%" style={siderStyle}>
           <div className="flex flex-col gap-y-2 p-4 pt-7">
@@ -193,7 +209,7 @@ const Document: React.FC = () => {
               docData.files.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => setFile(item.path)}
+                  onClick={() => setFile(item)}
                   title={item.filename}
                   className="p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
                 >

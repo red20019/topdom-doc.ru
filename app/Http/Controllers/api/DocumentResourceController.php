@@ -42,7 +42,7 @@ class DocumentResourceController extends Controller
         $document_files=[];
         foreach($request->file('files') as $file){
           array_push($document_files,$file->getClientOriginalName());
-          $path = $file->store('private/documents');
+          $path = $file->store('documents');
 
           //dd($path);
           DocumentResource::create([
@@ -159,7 +159,7 @@ class DocumentResourceController extends Controller
 
     public function delTmp(DocumentResource $documentResource,Request $request)
     {
-      foreach($request->input('img') as $value){
+      foreach($request->input('files') as $value){
         Storage::disk('public')->delete($value);
       }
     }
