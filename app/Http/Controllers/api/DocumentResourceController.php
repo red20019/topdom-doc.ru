@@ -10,6 +10,7 @@ use App\DocumentResource;
 use App\Document;
 use App\DocumentTracking;
 use App\check;
+use App\Http\Resources\CheckCollection;
 use Illuminate\Support\Arr;
 use App\Http\Resources\DocumentCollection;
 use App\Http\Resources\DocumentShow;
@@ -132,7 +133,7 @@ class DocumentResourceController extends Controller
         }
 
       return DocumentCollection::collection(
-        Document::with('user','resources','tracking')->paginate(10)
+        Document::with('user','resources','tracking','check')->paginate(10)
       );
 
     //return new DocumentCollection($flight);
@@ -156,14 +157,20 @@ class DocumentResourceController extends Controller
 
       $document = Document::findOrFail($request->input('id'));
       //dd($document->traking);
+      //$t=CheckCollection::collection($document->checks);
+      if($document->checks==null)
+        $checks = null;
+      else
+        $checks = CheckCollection::collection($document->checks);
+      //dd($document->checks);
       $success = ["id" => $document->id,
-              "name" => $document->name,
-              "stage" => $document->stage,
-              "created_at" => $document->created_at->format('d.m.Y H:i'),
-              "files" => DocumentShow::collection($document->resources),
-              "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
-              "success" => true
-
+                  "name" => $document->name,
+                  "stage" => $document->stage,
+                  "created_at" => $document->created_at->format('d.m.Y H:i'),
+                  "files" => DocumentShow::collection($document->resources),
+                  "check_files" => $checks,
+                  "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
+                  "success" => true
             ];
 
           return $this->sendResponse($success, 'document loaded');
