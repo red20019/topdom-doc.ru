@@ -73,43 +73,6 @@ const Docs: React.FC = () => {
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState(0);
 
-  const props: UploadProps = {
-    name: "check",
-    multiple: true,
-    async onChange(info) {
-      try {
-        setCheckLoading(true);
-        // setFormData(info.file.originFileObj);
-        const formData = new FormData();
-        if (checkId) {
-          formData.append("id", String(checkId));
-          formData.append("files[]", info.file.originFileObj as File);
-        }
-
-        const response = await docsAPI.uploadCheck(formData);
-        if (response.success === false) {
-          setCheckLoading(false);
-          setCheckError(response.message);
-          return;
-        }
-        setCheckLoading(false);
-        setCheckError("");
-      } catch (error) {
-        setCheckLoading(false);
-        setCheckError((error as Record<string, string>).message);
-      }
-
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
-
   const fetchDocs = async (page: number) => {
     try {
       dispatch(loadDocsStart());
@@ -127,23 +90,6 @@ const Docs: React.FC = () => {
   useEffect(() => {
     document.title = "Мои документы | ТопДомДок";
 
-    const fet = async () => {
-      const res = await fetch("http://topdom-doc.ru/images/eeqw.jpg");
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "downloaded_image.jpg";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      URL.revokeObjectURL(url);
-    };
-
-    // fet();
-
     fetchDocs(page);
   }, []);
 
@@ -157,6 +103,33 @@ const Docs: React.FC = () => {
 
   const handleCancel = (id: number) => {
     dispatch(closePopconfirm(id));
+  };
+
+  const handleCheckUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setCheckLoading(true);
+      // setFormData(info.file.originFileObj);
+      const formData = new FormData();
+      console.log(e.target.files);
+      if (checkId && e.target.files) {
+        formData.append("id", String(checkId));
+        for (let i = 0; i < e.target.files.length; i++) {
+          formData.append("files[]", e.target.files[i]);
+        }
+      }
+
+      const response = await docsAPI.uploadCheck(formData);
+      if (response.success === false) {
+        setCheckLoading(false);
+        setCheckError(response.message);
+        return;
+      }
+      setCheckLoading(false);
+      setCheckError("");
+    } catch (error) {
+      setCheckLoading(false);
+      setCheckError((error as Record<string, string>).message);
+    }
   };
 
   const onSearch = (value: string) => {
@@ -330,14 +303,27 @@ const Docs: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <Upload className="block ml-auto w-[142px]" {...props}>
-                  <Button
-                    onClick={() => setCheckId(item.id)}
-                    icon={<UploadOutlined />}
-                  >
-                    {checkLoading ? "Чек загружается" : "Загрузить чек"}
-                  </Button>
-                </Upload>
+
+                <div className="ml-auto text-right">
+                  <label>
+                    <input
+                      onClick={() => setCheckId(item.id)}
+                      onChange={handleCheckUpload}
+                      type="file"
+                      multiple
+                      className="w-[22%] text-sm text-grey-500
+                                  file:mr-5 file:py-2 file:px-6
+                                  file:rounded-full file:border-0
+                                  file:text-sm file:font-medium
+                                  file:bg-blue-50 file:text-blue-700
+                                  hover:file:cursor-pointer hover:file:bg-amber-50
+                                  hover:file:text-amber-700"
+                    />
+                  </label>
+                  <span className="block ">
+                    {checkLoading && "Чек загружается..."}
+                  </span>
+                </div>
               </div>
             ) : (
               "Кто ты, воин?"

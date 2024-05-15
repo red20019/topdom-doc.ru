@@ -70,7 +70,7 @@ class DocumentResourceController extends Controller
     }
 
 
-    public function createChecks(PostFormCheck $request)
+    public function createChecks(Request $request)
     {
 
         $check_files=[];
