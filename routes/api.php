@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::get('/documents_list', 'api\DocumentResourceController@docList')->name('ShowDocuments');
   Route::post('/document', 'api\DocumentResourceController@showDoc')->name('ShowDocument');
   Route::post('/documents_add', 'api\DocumentResourceController@create')->name('AddDocument');
+  Route::post('/checks_add', 'api\DocumentResourceController@createChecks')->name('AddChecks');
   Route::post('/update_stage', 'api\DocumentResourceController@upd')->name('UpdateStage');
   Route::post('/del_tmp', 'api\DocumentResourceController@delTmp')->name('delTmp');
 });

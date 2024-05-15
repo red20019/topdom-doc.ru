@@ -45,7 +45,12 @@ class DocumentCollection extends JsonResource
           $stage = "Документ Отклонен {$this->tracking->where('stage_document',$this->stage)->date_end_stage}";
           break;
       }
-
+        if($this->check->count()>0){
+          $is_check=true;
+        }
+        else{
+          $is_check=false;
+        }
 
       return [
         'id' => $this->id,
@@ -55,6 +60,7 @@ class DocumentCollection extends JsonResource
         'stage_number' => $this->stage,
         'date_add' => $date,
         'stage_text' => $stage,
+        'is_check' => $is_check,
         'count_files'=> $this->resources->count(),
         'url' => 'documents/'.$this->id
     ];

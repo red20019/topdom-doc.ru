@@ -5,9 +5,12 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\PostFormDocument;
+use App\Http\Requests\PostFormCheck;
 use App\DocumentResource;
 use App\Document;
 use App\DocumentTracking;
+use App\check;
+use App\Http\Resources\CheckCollection;
 use Illuminate\Support\Arr;
 use App\Http\Resources\DocumentCollection;
 use App\Http\Resources\DocumentShow;
@@ -66,6 +69,35 @@ class DocumentResourceController extends Controller
 
     }
 
+
+    public function createChecks(PostFormCheck $request)
+    {
+
+        $check_files=[];
+        foreach($request->file('files') as $file){
+          array_push($check_files,$file->getClientOriginalName());
+          $path = $file->store('private/checks');
+          $path = str_replace('private/', '', $path);
+          //dd($path);
+          check::create([
+            'path' => $path,
+            'document_id' => $request->input('id'),
+            'user_id' => $request->user()->id
+
+          ]);
+        }
+
+
+
+        $success['check_files'] =  $check_files;
+
+        return $this->sendResponse($success, 'checks added');
+
+    }
+
+
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -101,7 +133,7 @@ class DocumentResourceController extends Controller
         }
 
       return DocumentCollection::collection(
-        Document::with('user','resources','tracking')->paginate(10)
+        Document::with('user','resources','tracking','check')->paginate(10)
       );
 
     //return new DocumentCollection($flight);
@@ -125,14 +157,20 @@ class DocumentResourceController extends Controller
 
       $document = Document::findOrFail($request->input('id'));
       //dd($document->traking);
+      //$t=CheckCollection::collection($document->checks);
+      if($document->checks==null)
+        $checks = null;
+      else
+        $checks = CheckCollection::collection($document->checks);
+      //dd($document->checks);
       $success = ["id" => $document->id,
-              "name" => $document->name,
-              "stage" => $document->stage,
-              "created_at" => $document->created_at->format('d.m.Y H:i'),
-              "files" => DocumentShow::collection($document->resources),
-              "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
-              "success" => true
-
+                  "name" => $document->name,
+                  "stage" => $document->stage,
+                  "created_at" => $document->created_at->format('d.m.Y H:i'),
+                  "files" => DocumentShow::collection($document->resources),
+                  "check_files" => $checks,
+                  "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
+                  "success" => true
             ];
 
           return $this->sendResponse($success, 'document loaded');
