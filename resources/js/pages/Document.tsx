@@ -152,6 +152,7 @@ const Document: React.FC = () => {
 
   const handleOk = async (id: number, status: string) => {
     dispatch(updateStage({ id, status }));
+    dispatch(closePopconfirm(id));
   };
 
   const handleCancel = (id: number) => {

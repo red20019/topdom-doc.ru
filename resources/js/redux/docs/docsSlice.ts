@@ -5,19 +5,25 @@ import { docsAPI } from "../../api/api";
 
 export const updateStage = createAsyncThunk(
   "docs/updateStage",
-  async ({ id, status }: { id: number; status: string }) => {
+  async ({ id, status }: { id: number; status: string }, { dispatch }) => {
     try {
-      setConfirmLoading(true);
+      dispatch(setConfirmLoading(true));
       const response = await docsAPI.updateStage(id, status);
-
       if (response.success === false) {
         console.log(response.message);
         return;
       }
-      setConfirmLoading(false);
+
+      if (status === "accepted") {
+        dispatch(setNewStage({ id, stage_number: 1 }));
+      } else {
+        dispatch(setNewStage({ id, stage_number: 3 }));
+      }
+
+      dispatch(setConfirmLoading(false));
     } catch (error: unknown) {
-      setConfirmLoading(false);
-      loadDocsFailure((error as Record<string, string>).message);
+      dispatch(setConfirmLoading(false));
+      dispatch(loadDocsFailure((error as Record<string, string>).message));
     }
   }
 );
@@ -30,7 +36,7 @@ const initialState: DocsSliceState = {
   error: null,
   loading: false,
   confirmLoading: false,
-  checkLoading: false
+  checkLoading: false,
 };
 
 const docsSlice = createSlice({
@@ -97,8 +103,19 @@ const docsSlice = createSlice({
     setConfirmLoading: (state, action: PayloadAction<boolean>) => {
       state.confirmLoading = action.payload;
     },
-    // updateStage: (state, action: PayloadAction<number>) => {
-    // },
+    setNewStage: (
+      state,
+      action: PayloadAction<{ id: number; stage_number: number }>
+    ) => {
+      if (state.data) {
+        state.data = state.data.map((item) => {
+          if (item.id === action.payload.id) {
+            return { ...item, stage_number: action.payload.stage_number };
+          }
+          return { ...item };
+        });
+      }
+    },
   },
 });
 
@@ -109,6 +126,7 @@ export const {
   togglePopconfirm,
   closePopconfirm,
   setConfirmLoading,
+  setNewStage,
   emptyDocs,
 } = docsSlice.actions;
 export default docsSlice.reducer;
