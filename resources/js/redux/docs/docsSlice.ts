@@ -116,6 +116,16 @@ const docsSlice = createSlice({
         });
       }
     },
+    uploadChecks(state, action: PayloadAction<number>) {
+      if (state.data) {
+        state.data = state.data.map((item) => {
+          if (item.id === action.payload) {
+            return { ...item, is_check: true };
+          }
+          return { ...item };
+        });
+      }
+    },
   },
 });
 
@@ -128,5 +138,6 @@ export const {
   setConfirmLoading,
   setNewStage,
   emptyDocs,
+  uploadChecks,
 } = docsSlice.actions;
 export default docsSlice.reducer;

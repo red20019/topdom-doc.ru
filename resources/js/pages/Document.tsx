@@ -106,25 +106,41 @@ const Document: React.FC = () => {
         if (response?.data) {
           const copiedResponse = JSON.parse(JSON.stringify(response)); // Deep copy of response object
           const files = copiedResponse.data.files;
+          const checkFiles = copiedResponse.data.check_files;
+          processFiles(files);
+          processFiles(checkFiles);
+
+          setDocData(copiedResponse.data);
+
+          const formDataDocs = new FormData();
+          const formDataChecks = new FormData();
+          response.data.files.forEach((file) => {
+            formDataDocs.append(`files[]`, file.path);
+          });
+          response.data.check_files.forEach((file) => {
+            formDataChecks.append(`files[]`, file.path);
+          });
+          await docsAPI.deleteTempFiles(formDataDocs);
+          await docsAPI.deleteTempFiles(formDataChecks);
+        }
+
+        async function processFiles(files: DocumentFilesType[]) {
           for (const file of files) {
             try {
               const url = file.path;
-              const fileName = file.filename;
-              const convertedFile = await urlToFile(url, fileName);
+              let filename;
+              if (file.filename) {
+                filename = file.filename;
+              } else {
+                filename = file.path;
+              }
+              const convertedFile = await urlToFile(url, filename);
               const base64Data = await fileToBase64(convertedFile);
               file.path = base64Data;
             } catch (error) {
               console.error(`Error converting file ${file.filename}:`, error);
             }
           }
-
-          setDocData(copiedResponse.data);
-
-          const formData = new FormData();
-          response.data.files.forEach((file) => {
-            formData.append(`files[]`, file.path);
-          });
-          const res = await docsAPI.deleteTempFiles(formData);
         }
       };
 
@@ -163,10 +179,11 @@ const Document: React.FC = () => {
     return (
       <Layout>
         <Layout.Content className="min-h-screen py-4">
-          {file.filename.endsWith(".jpg") ||
-          file.filename.endsWith(".png") ||
-          file.filename.endsWith(".svg") ||
-          file.filename.endsWith(".gif") ? (
+          {file.filename &&
+          (file.filename.endsWith(".jpg") ||
+            file.filename.endsWith(".png") ||
+            file.filename.endsWith(".svg") ||
+            file.filename.endsWith(".gif")) ? (
             <img
               src={file.path}
               alt="doc"
@@ -176,11 +193,11 @@ const Document: React.FC = () => {
             <div style={{ height: "100%" }}>
               <FileViewer
                 filePath={file.path}
-                fileType={file.filename.split(".").pop()}
+                fileType={file.filename.split(".").pop()?.toLowerCase()}
               />
             </div>
           ) : (
-            <Result title="Выберите документ для предпросмотра" />
+            <Result title="Выберите файл для предпросмотра" />
           )}
 
           {currentUser?.role === "boss" ? (
@@ -206,31 +223,62 @@ const Document: React.FC = () => {
         </Layout.Content>
 
         <Layout.Sider width="15%" style={siderStyle}>
-          <div className="flex flex-col gap-y-2 p-4 pt-7">
-            {docData ? (
-              docData.files.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => setFile(item)}
-                  title={item.filename}
-                  className="p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
-                >
-                  {item.filename}
+          <div className="flex flex-col justify-between">
+            <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
+              <h3 className="text-2xl font-semibold mb-3">Документы</h3>
+              {docData ? (
+                docData.files.map((item) => (
                   <div
-                    style={{
-                      backgroundImage: `url(/images/${item.filename
-                        .split(".")
-                        .pop()}-icon.svg)`,
-                    }}
-                    className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
-                  ></div>
-                </div>
-              ))
-            ) : (
-              <Spin
-                indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
-              />
-            )}
+                    key={item.id}
+                    onClick={() => setFile(item)}
+                    title={item.filename}
+                    className="mb-2 p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
+                  >
+                    {item.filename}
+                    <div
+                      style={{
+                        backgroundImage: `url(/images/${item.filename
+                          .split(".")
+                          .pop()}-icon.svg)`,
+                      }}
+                      className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
+                    ></div>
+                  </div>
+                ))
+              ) : (
+                <Spin
+                  indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
+                />
+              )}
+            </div>
+
+            <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
+              <h3 className="text-2xl font-semibold mb-3">Чеки</h3>
+              {docData ? (
+                docData.check_files.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => setFile(item)}
+                    title={item.path}
+                    className="mb-2 p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
+                  >
+                    {item.path}
+                    <div
+                      style={{
+                        backgroundImage: `url(/images/${item.path
+                          .split(".")
+                          .pop()}-icon.svg)`,
+                      }}
+                      className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
+                    ></div>
+                  </div>
+                ))
+              ) : (
+                <Spin
+                  indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
+                />
+              )}
+            </div>
           </div>
         </Layout.Sider>
       </Layout>

@@ -38,6 +38,7 @@ import {
   loadDocsSuccess,
   togglePopconfirm,
   updateStage,
+  uploadChecks,
 } from "../redux/docs/docsSlice";
 
 interface BossProps {
@@ -158,6 +159,7 @@ const Docs: React.FC = () => {
       }
       setCheckLoading(false);
       setCheckError("");
+      dispatch(uploadChecks(checkId))
     } catch (error) {
       setCheckLoading(false);
       setCheckError((error as Record<string, string>).message);

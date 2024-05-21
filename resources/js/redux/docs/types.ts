@@ -43,6 +43,7 @@ export type DocumentType = {
   stage: number;
   document_tracking: DocumentTrackingType[];
   files: DocumentFilesType[];
+  check_files: DocumentFilesType[];
 };
 
 export type DocumentTrackingType = {
@@ -53,9 +54,9 @@ export type DocumentTrackingType = {
 };
 
 export type DocumentFilesType = {
-  filename: string;
   id: number;
   path: string;
+  filename?: string;
 };
 
 export type DocumentMeta = {

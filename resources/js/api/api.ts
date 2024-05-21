@@ -118,7 +118,6 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
-  // TODO: доделать
   async deleteTempFiles(formData: FormData) {
     try {
       const response = await instance.post(`api/del_tmp`, formData);
