@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Card,
   Popconfirm,
@@ -86,6 +86,7 @@ const Docs: React.FC = () => {
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState(0);
 
+  const inputRef = useRef<HTMLInputElement>(null);
   const [api, contextHolder] = notification.useNotification();
 
   const openNotification = (
@@ -101,8 +102,6 @@ const Docs: React.FC = () => {
       placement,
     });
   };
-
-  const contextValue = useMemo(() => ({ name: "TopDomDoc" }), []);
 
   const fetchDocs = async (page: number) => {
     try {
@@ -162,6 +161,13 @@ const Docs: React.FC = () => {
     } catch (error) {
       setCheckLoading(false);
       setCheckError((error as Record<string, string>).message);
+    }
+  };
+
+  const onSetCheckId = (id: number) => {
+    if (inputRef.current) {
+      setCheckId(id);
+      inputRef.current.click();
     }
   };
 
@@ -296,38 +302,47 @@ const Docs: React.FC = () => {
                 Заглушка
               </button>
             ) : currentUser?.role === "accountant" ? (
-              <div className="">
-                <div className="flex justify-end gap-x-3">
-                  <div className="flex gap-x-3 mb-3">
+              <div className="flex justify-end items-center gap-x-3">
+                <div className="flex gap-x-3">
+                  {item.is_check ? (
                     <span className="text-lg">
                       <CheckCircleTwoTone twoToneColor="#52c41a" /> Чек загружен
                     </span>
+                  ) : (
                     <span className="text-lg">
                       <CloseCircleTwoTone twoToneColor="red" /> Чек не загружен
                     </span>
+                  )}
+                </div>
+                {!item.is_check && (
+                  <div className="text-right">
+                    <label>
+                      <button
+                        onClick={() => onSetCheckId(item.id)}
+                        type="button"
+                        className="text-white bg-slate-700 hover:bg-slate-800 focus:ring-4 focus:ring-slate-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-slate-600 dark:hover:bg-slate-700 focus:outline-none dark:focus:ring-slate-800"
+                      >
+                        Выбрать чеки
+                      </button>
+                      <input
+                        ref={inputRef}
+                        onChange={handleCheckUpload}
+                        type="file"
+                        multiple
+                        className="w-[22%] text-sm text-grey-500
+                  file:mr-5 file:py-2 file:px-6
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-medium
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:cursor-pointer hover:file:bg-amber-50
+                  hover:file:text-amber-700 hidden"
+                      />
+                    </label>
+                    <span className="block ">
+                      {checkLoading && "Чек загружается..."}
+                    </span>
                   </div>
-                </div>
-
-                <div className="ml-auto text-right">
-                  <label>
-                    <input
-                      onClick={() => setCheckId(item.id)}
-                      onChange={handleCheckUpload}
-                      type="file"
-                      multiple
-                      className="w-[22%] text-sm text-grey-500
-                                  file:mr-5 file:py-2 file:px-6
-                                  file:rounded-full file:border-0
-                                  file:text-sm file:font-medium
-                                  file:bg-blue-50 file:text-blue-700
-                                  hover:file:cursor-pointer hover:file:bg-amber-50
-                                  hover:file:text-amber-700"
-                    />
-                  </label>
-                  <span className="block ">
-                    {checkLoading && "Чек загружается..."}
-                  </span>
-                </div>
+                )}
               </div>
             ) : (
               "Кто ты, воин?"

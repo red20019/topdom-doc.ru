@@ -137,7 +137,7 @@ const Document: React.FC = () => {
     id: 0,
     path: "",
   });
-  // console.log(file)
+  console.log(file);
 
   const openPopOk = data?.some((item) => {
     if (id && item.id === +id) return item.openPopOk;
@@ -172,8 +172,8 @@ const Document: React.FC = () => {
               alt="doc"
               className="w-full h-full object-cover"
             />
-          ) : file ? (
-            <div style={{ height: "auto" }}>
+          ) : file.path ? (
+            <div style={{ height: "100%" }}>
               <FileViewer
                 filePath={file.path}
                 fileType={file.filename.split(".").pop()}

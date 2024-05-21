@@ -2,7 +2,6 @@ import React from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import { Layout } from "antd";
 
-import Header from "./components/Header";
 import Welcome from "./pages/Welcome";
 import Pending from "./pages/Pending";
 import Login from "./pages/Login";
