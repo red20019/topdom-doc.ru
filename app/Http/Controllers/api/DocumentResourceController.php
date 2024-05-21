@@ -70,10 +70,11 @@ class DocumentResourceController extends Controller
     }
 
 
-    public function createChecks(Request $request)
+    public function createChecks(PostFormCheck $request)
     {
 
         $check_files=[];
+        //dd($request->user()->id);
         foreach($request->file('files') as $file){
           array_push($check_files,$file->getClientOriginalName());
           $path = $file->store('private/checks');
@@ -81,10 +82,12 @@ class DocumentResourceController extends Controller
           //dd($path);
           check::create([
             'path' => $path,
-            'document_id' => $request->input('id'),
-            'user_id' => $request->user()->id
+            'user_id' => $request->user()->id,
+            'document_id' => $request->input('id')
+
 
           ]);
+          //dd($test);
         }
 
 
@@ -158,11 +161,11 @@ class DocumentResourceController extends Controller
       $document = Document::findOrFail($request->input('id'));
       //dd($document->traking);
       //$t=CheckCollection::collection($document->checks);
-      if($document->checks==null)
+      if($document->check==null)
         $checks = null;
       else
-        $checks = CheckCollection::collection($document->checks);
-      //dd($document->checks);
+        $checks = CheckCollection::collection($document->check);
+      //dd($document->check);
       $success = ["id" => $document->id,
                   "name" => $document->name,
                   "stage" => $document->stage,

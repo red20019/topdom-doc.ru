@@ -6,7 +6,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class CheckCollection extends ResourceCollection
+class CheckCollection extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
