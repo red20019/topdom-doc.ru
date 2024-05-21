@@ -21,6 +21,7 @@ export type DocsType = {
   url: string;
   openPopOk: boolean;
   openPopCancel: boolean;
+  is_check: boolean
 };
 
 export type DocsResponse = {

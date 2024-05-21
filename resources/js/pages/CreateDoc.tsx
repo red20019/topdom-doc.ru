@@ -1,12 +1,14 @@
 import React, { ChangeEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Upload, notification } from "antd";
+import { Spin, Upload, notification } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 
 import { authAPI, docsAPI } from "../api/api";
 import { DocsType } from "../redux/user/types";
 import { NotificationType } from "../types/types";
+import { changeMenuItem } from "../redux/sider/siderSlice";
+import { useAppDispatch } from "../redux/hooks";
 
 const { Dragger } = Upload;
 
@@ -15,6 +17,7 @@ const CreateDoc: React.FC = () => {
     document.title = "Добавление документа | ТопДомДок";
   }, []);
 
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [formData, setFormData] = React.useState<DocsType>({
@@ -71,6 +74,7 @@ const CreateDoc: React.FC = () => {
       }
       setLoading(false);
       setError(null);
+      dispatch(changeMenuItem(["2"]));
       navigate("/documents");
     } catch (error: unknown) {
       setLoading(false);
@@ -89,6 +93,10 @@ const CreateDoc: React.FC = () => {
       [e.target.id]: e.target.value,
     });
   };
+
+  if (loading) {
+    return <Spin size="large" spinning={loading} fullscreen />;
+  }
 
   return (
     <section className="container mx-auto ml-8 p-4">

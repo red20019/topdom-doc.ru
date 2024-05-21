@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Card,
   Popconfirm,
@@ -13,6 +13,7 @@ import {
   Button,
   Dropdown,
   Typography,
+  notification,
 } from "antd";
 import { Link } from "react-router-dom";
 import {
@@ -25,7 +26,7 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
 } from "@ant-design/icons";
-import type { MenuProps, UploadProps } from "antd";
+import type { MenuProps, NotificationArgsProps, UploadProps } from "antd";
 
 import { docsAPI } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -38,6 +39,17 @@ import {
   togglePopconfirm,
   updateStage,
 } from "../redux/docs/docsSlice";
+
+interface BossProps {
+  id: number;
+  stage_number: number;
+  confirmLoading: boolean;
+  openPopOk: boolean | undefined;
+  openPopCancel: boolean | undefined;
+  handleOk: (id: number, status: string) => Promise<void>;
+  handleCancel: (id: number) => void;
+  handleStageClick: (id: number, status: string) => void;
+}
 
 const cardStyle: React.CSSProperties = {
   marginTop: 6,
@@ -58,6 +70,7 @@ const sortItems: MenuProps["items"] = [
     label: "алфавиту",
   },
 ];
+type NotificationPlacement = NotificationArgsProps["placement"];
 
 const Docs: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -72,6 +85,23 @@ const Docs: React.FC = () => {
   const [checkError, setCheckError] = useState("");
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState(0);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = (
+    placement: NotificationPlacement,
+    id: number,
+    status: string
+  ) => {
+    api.info({
+      message: `TopDomDoc`,
+      description: `Документ №${id} был ${
+        status === "accepted" ? "согласован" : "отклонён"
+      }.`,
+      placement,
+    });
+  };
 
   const fetchDocs = async (page: number) => {
     try {
@@ -98,7 +128,9 @@ const Docs: React.FC = () => {
   };
 
   const handleOk = async (id: number, status: string) => {
-    dispatch(updateStage({ id, status }));
+    await dispatch(updateStage({ id, status }));
+    dispatch(closePopconfirm(id));
+    openNotification("bottomRight", id, status);
   };
 
   const handleCancel = (id: number) => {
@@ -132,6 +164,13 @@ const Docs: React.FC = () => {
     }
   };
 
+  const onSetCheckId = (id: number) => {
+    if (inputRef.current) {
+      setCheckId(id);
+      inputRef.current.click();
+    }
+  };
+
   const onSearch = (value: string) => {
     console.log("search:", value);
   };
@@ -147,6 +186,7 @@ const Docs: React.FC = () => {
 
   return (
     <section className="container mx-auto ml-8 px-4 py-4">
+      {contextHolder}
       <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
 
       {meta && meta.total > 0 && (
@@ -244,46 +284,16 @@ const Docs: React.FC = () => {
             </div>
 
             {currentUser?.role === "boss" ? (
-              <div className="flex justify-end gap-x-3">
-                <Popconfirm
-                  title="Подтвердите действие"
-                  description="Вы действительно хотите согласовать этот документ?"
-                  open={item.openPopOk}
-                  onConfirm={() => handleOk(item.id, "accepted")}
-                  okButtonProps={{
-                    loading: confirmLoading,
-                    type: "primary",
-                    style: { backgroundColor: "#1677ff", color: "white" },
-                  }}
-                  onCancel={() => handleCancel(item.id)}
-                >
-                  <button
-                    onClick={() => handleStageClick(item.id, "accepted")}
-                    className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
-                  >
-                    Согласовать
-                  </button>
-                </Popconfirm>
-                <Popconfirm
-                  title="Подтвердите действие"
-                  description="Вы действительно хотите отклонить этот документ?"
-                  open={item.openPopCancel}
-                  onConfirm={() => handleOk(item.id, "rejected")}
-                  okButtonProps={{
-                    loading: confirmLoading,
-                    type: "primary",
-                    style: { backgroundColor: "#1677ff", color: "white" },
-                  }}
-                  onCancel={() => handleCancel(item.id)}
-                >
-                  <button
-                    onClick={() => handleStageClick(item.id, "rejected")}
-                    className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
-                  >
-                    Отклонить
-                  </button>
-                </Popconfirm>
-              </div>
+              <Boss
+                id={item.id}
+                stage_number={item.stage_number}
+                openPopOk={item.openPopOk}
+                openPopCancel={item.openPopCancel}
+                confirmLoading={confirmLoading}
+                handleOk={handleOk}
+                handleCancel={handleCancel}
+                handleStageClick={handleStageClick}
+              />
             ) : currentUser?.role === "user" ? (
               <button
                 // onClick={() => handleStageClick(item.id, "rejected")}
@@ -292,38 +302,47 @@ const Docs: React.FC = () => {
                 Заглушка
               </button>
             ) : currentUser?.role === "accountant" ? (
-              <div className="">
-                <div className="flex justify-end gap-x-3">
-                  <div className="flex gap-x-3 mb-3">
+              <div className="flex justify-end items-center gap-x-3">
+                <div className="flex gap-x-3">
+                  {item.is_check ? (
                     <span className="text-lg">
                       <CheckCircleTwoTone twoToneColor="#52c41a" /> Чек загружен
                     </span>
+                  ) : (
                     <span className="text-lg">
                       <CloseCircleTwoTone twoToneColor="red" /> Чек не загружен
                     </span>
+                  )}
+                </div>
+                {!item.is_check && (
+                  <div className="text-right">
+                    <label>
+                      <button
+                        onClick={() => onSetCheckId(item.id)}
+                        type="button"
+                        className="text-white bg-slate-700 hover:bg-slate-800 focus:ring-4 focus:ring-slate-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-slate-600 dark:hover:bg-slate-700 focus:outline-none dark:focus:ring-slate-800"
+                      >
+                        Выбрать чеки
+                      </button>
+                      <input
+                        ref={inputRef}
+                        onChange={handleCheckUpload}
+                        type="file"
+                        multiple
+                        className="w-[22%] text-sm text-grey-500
+                  file:mr-5 file:py-2 file:px-6
+                  file:rounded-full file:border-0
+                  file:text-sm file:font-medium
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:cursor-pointer hover:file:bg-amber-50
+                  hover:file:text-amber-700 hidden"
+                      />
+                    </label>
+                    <span className="block ">
+                      {checkLoading && "Чек загружается..."}
+                    </span>
                   </div>
-                </div>
-
-                <div className="ml-auto text-right">
-                  <label>
-                    <input
-                      onClick={() => setCheckId(item.id)}
-                      onChange={handleCheckUpload}
-                      type="file"
-                      multiple
-                      className="w-[22%] text-sm text-grey-500
-                                  file:mr-5 file:py-2 file:px-6
-                                  file:rounded-full file:border-0
-                                  file:text-sm file:font-medium
-                                  file:bg-blue-50 file:text-blue-700
-                                  hover:file:cursor-pointer hover:file:bg-amber-50
-                                  hover:file:text-amber-700"
-                    />
-                  </label>
-                  <span className="block ">
-                    {checkLoading && "Чек загружается..."}
-                  </span>
-                </div>
+                )}
               </div>
             ) : (
               "Кто ты, воин?"
@@ -345,6 +364,64 @@ const Docs: React.FC = () => {
       <FloatButton.BackTop />
     </section>
   );
+};
+
+const Boss: React.FC<BossProps> = ({
+  id,
+  stage_number,
+  confirmLoading,
+  openPopOk,
+  openPopCancel,
+  handleOk,
+  handleCancel,
+  handleStageClick,
+}) => {
+  if (stage_number === 0) {
+    return (
+      <div className="flex justify-end gap-x-3">
+        <Popconfirm
+          title="Подтвердите действие"
+          description="Вы действительно хотите согласовать этот документ?"
+          open={openPopOk}
+          onConfirm={() => handleOk(id, "accepted")}
+          okButtonProps={{
+            loading: confirmLoading,
+            type: "primary",
+            style: { backgroundColor: "#1677ff", color: "white" },
+          }}
+          onCancel={() => handleCancel(id)}
+        >
+          <button
+            onClick={() => handleStageClick(id, "accepted")}
+            className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
+          >
+            Согласовать
+          </button>
+        </Popconfirm>
+        <Popconfirm
+          title="Подтвердите действие"
+          description="Вы действительно хотите отклонить этот документ?"
+          open={openPopCancel}
+          onConfirm={() => handleOk(id, "rejected")}
+          okButtonProps={{
+            loading: confirmLoading,
+            type: "primary",
+            style: { backgroundColor: "#1677ff", color: "white" },
+          }}
+          onCancel={() => handleCancel(id)}
+        >
+          <button
+            onClick={() => handleStageClick(id, "rejected")}
+            className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
+          >
+            Отклонить
+          </button>
+        </Popconfirm>
+      </div>
+    );
+  } else {
+    return "";
+  }
 };
 
 export default Docs;
