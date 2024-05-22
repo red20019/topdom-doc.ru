@@ -173,7 +173,6 @@ class DocumentResourceController extends Controller
                   "files" => DocumentShow::collection($document->resources),
                   "check_files" => $checks,
                   "document_tracking" =>  DocumentTrackerCollection::collection($document->tracking),
-                  "success" => true
             ];
 
           return $this->sendResponse($success, 'document loaded');

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Layout, Popconfirm, Result, Spin, Upload } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
 import {
@@ -13,12 +13,18 @@ import { useParams } from "react-router-dom";
 import { docsAPI } from "../api/api";
 import {
   closePopconfirm,
+  loadDocsFailure,
+  setCheckError,
+  setCheckLoading,
+  setLoading,
   togglePopconfirm,
   updateStage,
+  uploadChecks,
 } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { DocumentFilesType, DocumentType } from "../redux/docs/types";
+import CheckUpload from "../components/CheckUpload";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -42,86 +48,56 @@ type BossDocProps = {
   handleStageClick: (id: number, status: string) => void;
 };
 
-async function urlToFile(url: string, fileName: string): Promise<File> {
-  const response = await fetch("/" + url);
-  const blob = await response.blob();
-  return new File([blob], fileName);
-}
-
-function fileToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const base64Data = reader.result?.toString().split(",")[1];
-      if (base64Data) {
-        const fileExtension = file.name.split(".").pop();
-        let mimeType = "application/octet-stream";
-        if (fileExtension) {
-          const mimeTypes: { [key: string]: string } = {
-            png: "image/png",
-            jpeg: "image/jpeg",
-            jpg: "image/jpeg",
-            gif: "image/gif",
-            bmp: "image/bmp",
-            pdf: "application/pdf",
-            csv: "text/csv",
-            xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            mp4: "video/mp4",
-            webm: "video/webm",
-            mp3: "audio/mpeg",
-          };
-          mimeType = mimeTypes[fileExtension] || mimeType;
-        }
-        resolve(`data:${mimeType};base64, ` + base64Data);
-      } else {
-        reject("Error converting file to base64");
-      }
-    };
-    reader.onerror = (error) => reject(error);
-  });
-}
-
 const Document: React.FC = () => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(
     (state: RootState) => state.user.currentUser
   );
-  const { data, error, confirmLoading, checkLoading } = useAppSelector(
+  const { data, error, loading, confirmLoading, checkLoading } = useAppSelector(
     (state: RootState) => state.docs
   );
   const { id } = useParams();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const [docData, setDocData] = useState<DocumentType | null>(null);
-  const [test, setTest] = useState<FileList | string | null>(null);
-  // console.log(test);
+  const [docData, setDocData] = useState<DocumentType>({
+    id: 0,
+    name: "",
+    created_at: "",
+    stage: 0,
+    document_tracking: [],
+    files: [],
+    check_files: [],
+  });
 
   useEffect(() => {
     document.title = `Документ №${id} | ТопДомДок`;
 
     if (id) {
       const getDoc = async () => {
-        const response = await docsAPI.getDocById(+id);
-        if (response?.data) {
-          const copiedResponse = JSON.parse(JSON.stringify(response)); // Deep copy of response object
-          const files = copiedResponse.data.files;
-          const checkFiles = copiedResponse.data.check_files;
-          processFiles(files);
-          processFiles(checkFiles);
+        try {
+          dispatch(setLoading(true));
+          const response = await docsAPI.getDocById(+id);
+          if (response?.data) {
+            const copiedResponse = JSON.parse(JSON.stringify(response)); // Deep copy of response object
+            const files = copiedResponse.data.files;
+            const checkFiles = copiedResponse.data.check_files;
+            processFiles(files);
+            processFiles(checkFiles);
 
-          setDocData(copiedResponse.data);
+            setDocData(copiedResponse.data);
 
-          const formDataDocs = new FormData();
-          const formDataChecks = new FormData();
-          response.data.files.forEach((file) => {
-            formDataDocs.append(`files[]`, file.path);
-          });
-          response.data.check_files.forEach((file) => {
-            formDataChecks.append(`files[]`, file.path);
-          });
-          await docsAPI.deleteTempFiles(formDataDocs);
-          await docsAPI.deleteTempFiles(formDataChecks);
+            const formData = new FormData();
+            response.data.files.forEach((file) => {
+              formData.append(`files[]`, file.path);
+            });
+            response.data.check_files.forEach((file) => {
+              formData.append(`files[]`, file.path);
+            });
+            await docsAPI.deleteTempFiles(formData);
+            dispatch(setLoading(false));
+          }
+        } catch (error) {
+          dispatch(loadDocsFailure((error as Record<string, string>).message));
         }
 
         async function processFiles(files: DocumentFilesType[]) {
@@ -153,7 +129,6 @@ const Document: React.FC = () => {
     id: 0,
     path: "",
   });
-  console.log(file);
 
   const openPopOk = data?.some((item) => {
     if (id && item.id === +id) return item.openPopOk;
@@ -175,6 +150,37 @@ const Document: React.FC = () => {
     dispatch(closePopconfirm(id));
   };
 
+  const handleCheckUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      dispatch(setCheckLoading(true));
+      const formData = new FormData();
+      if (e.target.files) {
+        formData.append("id", String(id));
+        for (let i = 0; i < e.target.files.length; i++) {
+          formData.append("files[]", e.target.files[i]);
+        }
+      }
+
+      const response = await docsAPI.uploadCheck(formData);
+      if (response?.success === false) {
+        dispatch(setCheckLoading(false));
+        dispatch(setCheckError(response.message));
+        return;
+      }
+      if (id) {
+        dispatch(setCheckLoading(true));
+        const newResponse = await docsAPI.getDocById(+id);
+        setDocData(newResponse.data);
+        dispatch(uploadChecks(+id));
+        dispatch(setCheckError(""));
+      }
+      dispatch(setCheckLoading(false));
+    } catch (error) {
+      dispatch(setCheckLoading(false));
+      dispatch(setCheckError((error as Record<string, string>).message));
+    }
+  };
+
   if (id) {
     return (
       <Layout>
@@ -193,7 +199,7 @@ const Document: React.FC = () => {
             <div style={{ height: "100%" }}>
               <FileViewer
                 filePath={file.path}
-                fileType={file.filename.split(".").pop()?.toLowerCase()}
+                fileType={file.filename?.split(".").pop()?.toLowerCase()}
               />
             </div>
           ) : (
@@ -215,18 +221,19 @@ const Document: React.FC = () => {
             />
           ) : currentUser?.role === "user" ? (
             <UserDoc file={file.path} />
-          ) : currentUser?.role === "accountant" ? (
-            <AccountantDoc {...{ id, file: file.path, checkLoading }} />
           ) : (
-            "Кто ты, воин?"
+            ""
           )}
         </Layout.Content>
 
         <Layout.Sider width="15%" style={siderStyle}>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col gap-y-16 h-full">
             <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
               <h3 className="text-2xl font-semibold mb-3">Документы</h3>
-              {docData ? (
+              {loading ? (
+                <Spin size={"large"} indicator={<LoadingOutlined spin />} />
+              ) : (
+                docData &&
                 docData.files.map((item) => (
                   <div
                     key={item.id}
@@ -238,23 +245,39 @@ const Document: React.FC = () => {
                     <div
                       style={{
                         backgroundImage: `url(/images/${item.filename
-                          .split(".")
-                          .pop()}-icon.svg)`,
+                          ?.split(".")
+                          .pop()
+                          ?.toLowerCase()}-icon.svg)`,
                       }}
                       className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
                     ></div>
                   </div>
                 ))
-              ) : (
-                <Spin
-                  indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
-                />
               )}
             </div>
 
             <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
               <h3 className="text-2xl font-semibold mb-3">Чеки</h3>
-              {docData ? (
+              {loading ? (
+                <Spin size={"large"} indicator={<LoadingOutlined spin />} />
+              ) : (
+                currentUser?.role === "accountant" &&
+                docData &&
+                docData.check_files.length === 0 && (
+                  <CheckUpload
+                    id={+id}
+                    ref={inputRef}
+                    handleCheckUpload={handleCheckUpload}
+                    handleUploadClick={() => inputRef.current?.click()}
+                  />
+                )
+              )}
+              {checkLoading ? (
+                <Spin size={"large"} indicator={<LoadingOutlined spin />} />
+              ) : (
+                docData &&
+                docData.check_files.length > 0 &&
+                !loading &&
                 docData.check_files.map((item) => (
                   <div
                     key={item.id}
@@ -273,10 +296,6 @@ const Document: React.FC = () => {
                     ></div>
                   </div>
                 ))
-              ) : (
-                <Spin
-                  indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
-                />
               )}
             </div>
           </div>
@@ -342,32 +361,57 @@ function UserDoc(props: Record<string, string>) {
   );
 }
 
-function AccountantDoc(props: {
-  id: string;
-  file: string;
-  checkLoading: boolean;
-}) {
-  return (
-    props.file && (
-      <div className="absolute bottom-5 left-1/2 -translate-x-1/2">
-        <div className="flex justify-end gap-x-3">
-          <div className="flex gap-x-3 mb-3">
-            <span className="text-lg">
-              <CheckCircleTwoTone twoToneColor="#52c41a" /> Чек загружен
-            </span>
-            <span className="text-lg">
-              <CloseCircleTwoTone twoToneColor="red" /> Чек не загружен
-            </span>
-          </div>
-        </div>
-        <Upload className="block ml-auto w-[142px]" {...props}>
-          <Button icon={<UploadOutlined />}>
-            {props.checkLoading ? "Чек загружается" : "Загрузить чек"}
-          </Button>
-        </Upload>
-      </div>
-    )
-  );
-}
+// function AccountantDoc(props: {
+//   id: string;
+//   file: string;
+//   checkLoading: boolean;
+// }) {
+//   return (
+//     props.file && (
+//       <CheckUpload {...props} />
+//     )
+//   );
+// }
 
 export default Document;
+
+async function urlToFile(url: string, fileName: string): Promise<File> {
+  const response = await fetch("/" + url);
+  const blob = await response.blob();
+  return new File([blob], fileName);
+}
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      const base64Data = reader.result?.toString().split(",")[1];
+      if (base64Data) {
+        const fileExtension = file.name.split(".").pop();
+        let mimeType = "application/octet-stream";
+        if (fileExtension) {
+          const mimeTypes: { [key: string]: string } = {
+            png: "image/png",
+            jpeg: "image/jpeg",
+            jpg: "image/jpeg",
+            gif: "image/gif",
+            bmp: "image/bmp",
+            pdf: "application/pdf",
+            csv: "text/csv",
+            xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            mp4: "video/mp4",
+            webm: "video/webm",
+            mp3: "audio/mpeg",
+          };
+          mimeType = mimeTypes[fileExtension] || mimeType;
+        }
+        resolve(`data:${mimeType};base64, ` + base64Data);
+      } else {
+        reject("Error converting file to base64");
+      }
+    };
+    reader.onerror = (error) => reject(error);
+  });
+}

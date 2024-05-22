@@ -34,12 +34,15 @@ import { RootState } from "../redux/store";
 import {
   closePopconfirm,
   loadDocsFailure,
-  loadDocsStart,
+  setLoading,
   loadDocsSuccess,
   togglePopconfirm,
   updateStage,
   uploadChecks,
+  setCheckLoading,
+  setCheckError,
 } from "../redux/docs/docsSlice";
+import CheckUpload from "../components/CheckUpload";
 
 interface BossProps {
   id: number;
@@ -78,12 +81,10 @@ const Docs: React.FC = () => {
   const currentUser = useAppSelector(
     (state: RootState) => state.user.currentUser
   );
-  const { data, meta, page, limit, error, loading, confirmLoading } =
+  const { data, meta, page, limit, error, loading, confirmLoading, checkLoading } =
     useAppSelector((state: RootState) => state.docs);
 
   const [checkId, setCheckId] = useState(0);
-  const [checkLoading, setCheckLoading] = useState(false);
-  const [checkError, setCheckError] = useState("");
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState(0);
 
@@ -106,7 +107,7 @@ const Docs: React.FC = () => {
 
   const fetchDocs = async (page: number) => {
     try {
-      dispatch(loadDocsStart());
+      dispatch(setLoading(true));
       const response = await docsAPI.getDocs(page);
 
       // if (response.success === false) {
@@ -140,7 +141,7 @@ const Docs: React.FC = () => {
 
   const handleCheckUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      setCheckLoading(true);
+      dispatch(setCheckLoading(true));
       // setFormData(info.file.originFileObj);
       const formData = new FormData();
       console.log(e.target.files);
@@ -152,21 +153,21 @@ const Docs: React.FC = () => {
       }
 
       const response = await docsAPI.uploadCheck(formData);
-      if (response.success === false) {
-        setCheckLoading(false);
-        setCheckError(response.message);
+      if (response?.success === false) {
+        dispatch(setCheckLoading(false));
+        dispatch(setCheckError(response.message));
         return;
       }
-      setCheckLoading(false);
-      setCheckError("");
-      dispatch(uploadChecks(checkId))
+      dispatch(setCheckLoading(false));
+      dispatch(setCheckError(""));
+      dispatch(uploadChecks(checkId));
     } catch (error) {
-      setCheckLoading(false);
-      setCheckError((error as Record<string, string>).message);
+      dispatch(setCheckLoading(false));
+      dispatch(setCheckError((error as Record<string, string>).message));
     }
   };
 
-  const onSetCheckId = (id: number) => {
+  const handleUploadClick = (id: number) => {
     if (inputRef.current) {
       setCheckId(id);
       inputRef.current.click();
@@ -318,28 +319,12 @@ const Docs: React.FC = () => {
                 </div>
                 {!item.is_check && (
                   <div className="text-right">
-                    <label>
-                      <button
-                        onClick={() => onSetCheckId(item.id)}
-                        type="button"
-                        className="text-white bg-slate-700 hover:bg-slate-800 focus:ring-4 focus:ring-slate-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-slate-600 dark:hover:bg-slate-700 focus:outline-none dark:focus:ring-slate-800"
-                      >
-                        Выбрать чеки
-                      </button>
-                      <input
-                        ref={inputRef}
-                        onChange={handleCheckUpload}
-                        type="file"
-                        multiple
-                        className="w-[22%] text-sm text-grey-500
-                  file:mr-5 file:py-2 file:px-6
-                  file:rounded-full file:border-0
-                  file:text-sm file:font-medium
-                  file:bg-blue-50 file:text-blue-700
-                  hover:file:cursor-pointer hover:file:bg-amber-50
-                  hover:file:text-amber-700 hidden"
-                      />
-                    </label>
+                    <CheckUpload
+                      id={item.id}
+                      ref={inputRef}
+                      handleUploadClick={handleUploadClick}
+                      handleCheckUpload={handleCheckUpload}
+                    />
                     <span className="block ">
                       {checkLoading && "Чек загружается..."}
                     </span>

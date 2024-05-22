@@ -7,6 +7,7 @@ export interface DocsSliceState {
   loading: boolean;
   confirmLoading: boolean;
   checkLoading: boolean;
+  checkError: string | null;
 }
 
 export type DocsType = {
@@ -21,7 +22,7 @@ export type DocsType = {
   url: string;
   openPopOk: boolean;
   openPopCancel: boolean;
-  is_check: boolean
+  is_check: boolean;
 };
 
 export type DocsResponse = {
@@ -29,9 +30,16 @@ export type DocsResponse = {
   links: Record<string, string>;
   meta: DocumentMeta;
 };
+export type CheckUploadResponse = {
+  data: {
+    check_files: string[];
+  };
+  message: string;
+  success: boolean;
+};
 
 export type DocumentResponse = {
-  data: DocumentType | null;
+  data: DocumentType;
   message: string;
   success: boolean;
 };

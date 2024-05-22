@@ -1,7 +1,7 @@
 import axios, { Cancel } from "axios";
 
-import { UserTypeWithMiddleware, DocsType } from "../redux/user/types";
-import { DocsResponse, DocumentResponse } from "../redux/docs/types";
+import { UserTypeWithMiddleware } from "../redux/user/types";
+import { CheckUploadResponse, DocsResponse, DocumentResponse } from "../redux/docs/types";
 
 const instance = axios.create({
   withCredentials: true,
@@ -80,22 +80,24 @@ export const docsAPI = {
       if (axios.isCancel(error)) return;
     }
   },
-  async getDocById(id: number): Promise<DocumentResponse | undefined> {
+  async getDocById(id: number): Promise<DocumentResponse> {
     try {
       const response = await instance.post(`api/document`, { id });
       console.log(response.data);
       return response.data;
     } catch (error) {
-      if (axios.isCancel(error)) return;
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
     }
   },
-  async getDocs(page = 1): Promise<DocsResponse | undefined> {
+  async getDocs(page = 1): Promise<DocsResponse> {
     try {
       const response = await instance.get(`api/documents_list?page=${page}`);
       console.log(response.data);
       return response.data;
     } catch (error) {
-      if (axios.isCancel(error)) return;
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
     }
   },
   async updateStage(id: number, status: string) {
@@ -108,14 +110,15 @@ export const docsAPI = {
     }
   },
   // TODO: доделать
-  async uploadCheck(formData: FormData) {
+  async uploadCheck(formData: FormData): Promise<CheckUploadResponse> {
     try {
       console.log(formData);
       const response = await instance.post(`api/checks_add`, formData);
       console.log(response.data);
       return response.data;
     } catch (error) {
-      if (axios.isCancel(error)) return;
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
     }
   },
   async deleteTempFiles(formData: FormData) {

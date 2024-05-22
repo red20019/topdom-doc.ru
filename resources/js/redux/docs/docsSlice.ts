@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { DocsResponse, DocsSliceState, DocsType } from "./types";
+import { DocsResponse, DocsSliceState } from "./types";
 import { docsAPI } from "../../api/api";
 
 export const updateStage = createAsyncThunk(
@@ -37,14 +37,15 @@ const initialState: DocsSliceState = {
   loading: false,
   confirmLoading: false,
   checkLoading: false,
+  checkError: null,
 };
 
 const docsSlice = createSlice({
   name: "docs",
   initialState,
   reducers: {
-    loadDocsStart: (state) => {
-      state.loading = true;
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
     },
     loadDocsSuccess: (state, action: PayloadAction<DocsResponse>) => {
       state.data = action.payload.data;
@@ -126,11 +127,17 @@ const docsSlice = createSlice({
         });
       }
     },
+    setCheckLoading(state, action: PayloadAction<boolean>) {
+      state.checkLoading = action.payload;
+    },
+    setCheckError(state, action: PayloadAction<string>) {
+      state.checkError = action.payload;
+    },
   },
 });
 
 export const {
-  loadDocsStart,
+  setLoading,
   loadDocsSuccess,
   loadDocsFailure,
   togglePopconfirm,
@@ -139,5 +146,7 @@ export const {
   setNewStage,
   emptyDocs,
   uploadChecks,
+  setCheckLoading,
+  setCheckError,
 } = docsSlice.actions;
 export default docsSlice.reducer;
