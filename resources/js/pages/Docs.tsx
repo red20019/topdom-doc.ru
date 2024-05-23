@@ -96,10 +96,12 @@ const Docs: React.FC = () => {
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState(0);
 
+  console.log(checkId)
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [api, contextHolder] = notification.useNotification();
 
-  const openNotification = (
+  const stageNotification = (
     placement: NotificationPlacement,
     id: number,
     status: string
@@ -140,7 +142,7 @@ const Docs: React.FC = () => {
   const handleOk = async (id: number, status: string) => {
     await dispatch(updateStage({ id, status }));
     dispatch(closePopconfirm(id));
-    openNotification("bottomRight", id, status);
+    stageNotification("bottomRight", id, status);
   };
 
   const handleCancel = (id: number) => {
@@ -166,6 +168,7 @@ const Docs: React.FC = () => {
         dispatch(setCheckError(response.message));
         return;
       }
+      await dispatch(updateStage({ id: checkId, status: "accepted" }));
       dispatch(setCheckLoading(false));
       dispatch(setCheckError(""));
       dispatch(uploadChecks(checkId));

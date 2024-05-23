@@ -8,7 +8,7 @@ import {
   CloseCircleTwoTone,
 } from "@ant-design/icons";
 import FileViewer from "react-file-viewer";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { docsAPI } from "../api/api";
 import {
@@ -40,7 +40,7 @@ const siderStyle: React.CSSProperties = {
 
 type BossDocProps = {
   id: string;
-  file: DocumentFilesType;
+  stage: number;
   openPopOk: boolean | undefined;
   openPopCancel: boolean | undefined;
   confirmLoading: boolean;
@@ -57,6 +57,7 @@ const Document: React.FC = () => {
   const { data, error, loading, confirmLoading, checkLoading } = useAppSelector(
     (state: RootState) => state.docs
   );
+  const navigate = useNavigate();
   const { id } = useParams();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -64,7 +65,7 @@ const Document: React.FC = () => {
     id: 0,
     name: "",
     created_at: "",
-    stage: 0,
+    stage: -1,
     document_tracking: [],
     files: [],
     check_files: [],
@@ -100,8 +101,6 @@ const Document: React.FC = () => {
         } catch (error) {
           dispatch(loadDocsFailure((error as Record<string, string>).message));
         }
-
-
       };
 
       getDoc();
@@ -114,7 +113,7 @@ const Document: React.FC = () => {
     path: "",
   });
 
-  console.log(file)
+  console.log(file);
 
   const openPopOk = data?.some((item) => {
     if (id && item.id === +id) return item.openPopOk;
@@ -128,8 +127,9 @@ const Document: React.FC = () => {
   };
 
   const handleOk = async (id: number, status: string) => {
-    dispatch(updateStage({ id, status }));
+    await dispatch(updateStage({ id, status }));
     dispatch(closePopconfirm(id));
+    navigate("/documents");
   };
 
   const handleCancel = (id: number) => {
@@ -154,6 +154,7 @@ const Document: React.FC = () => {
         return;
       }
       if (id) {
+        await dispatch(updateStage({ id: +id, status: "accepted" }));
         dispatch(setCheckLoading(true));
         const newResponse = await docsAPI.getDocById(+id);
         dispatch(uploadChecks(+id));
@@ -161,6 +162,7 @@ const Document: React.FC = () => {
         processFiles(newResponse.data.check_files);
         setDocData(newResponse.data);
 
+        // Удаление временных файлов
         const FilesData = new FormData();
         newResponse.data.files.forEach((file) => {
           FilesData.append(`files[]`, file.path);
@@ -184,9 +186,9 @@ const Document: React.FC = () => {
       <Layout>
         <Layout.Content className="min-h-screen py-4">
           {file.filename.endsWith(".jpg") ||
-            file.filename.endsWith(".png") ||
-            file.filename.endsWith(".svg") ||
-            file.filename.endsWith(".gif") ? (
+          file.filename.endsWith(".png") ||
+          file.filename.endsWith(".svg") ||
+          file.filename.endsWith(".gif") ? (
             <img
               src={file.path}
               alt="doc"
@@ -207,6 +209,7 @@ const Document: React.FC = () => {
             <BossDoc
               {...{
                 id,
+                stage: docData.stage,
                 file,
                 openPopOk,
                 openPopCancel,
@@ -306,7 +309,7 @@ const Document: React.FC = () => {
 
 function BossDoc(props: BossDocProps) {
   return (
-    props.file && (
+    props.stage === 0 && (
       <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
         <StyleProvider hashPriority="high">
           <Popconfirm

@@ -233,7 +233,7 @@ class DocumentResourceController extends Controller
           'date_start_stage' => Carbon::now()
         ]);
 
-        $document->stage = 1;
+        $document->stage = $document->stage + 1;
 
       }elseif($request->input('status')=='rejected'){
         //dd( $document->tracking->where('stage_document','0')->first());
