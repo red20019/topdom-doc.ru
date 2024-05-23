@@ -18,6 +18,7 @@ class CreateChecksTable extends Migration
             $table->foreignId('document_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('path');
+            $table->string('filename');
             $table->timestamps();
         });
     }

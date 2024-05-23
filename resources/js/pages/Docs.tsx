@@ -81,8 +81,16 @@ const Docs: React.FC = () => {
   const currentUser = useAppSelector(
     (state: RootState) => state.user.currentUser
   );
-  const { data, meta, page, limit, error, loading, confirmLoading, checkLoading } =
-    useAppSelector((state: RootState) => state.docs);
+  const {
+    data,
+    meta,
+    page,
+    limit,
+    error,
+    loading,
+    confirmLoading,
+    checkLoading,
+  } = useAppSelector((state: RootState) => state.docs);
 
   const [checkId, setCheckId] = useState(0);
   const [order, setOrder] = useState("desc");
@@ -178,7 +186,7 @@ const Docs: React.FC = () => {
     console.log("search:", value);
   };
 
-  if (!data && !loading) {
+  if (data?.length === 0) {
     return (
       <Empty
         className="container mx-auto px-4 py-4"
@@ -190,7 +198,9 @@ const Docs: React.FC = () => {
   return (
     <section className="container mx-auto ml-8 px-4 py-4">
       {contextHolder}
-      <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
+      {data?.length === 0 && (
+        <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
+      )}
 
       {meta && meta.total > 0 && (
         <>

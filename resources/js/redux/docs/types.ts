@@ -64,7 +64,7 @@ export type DocumentTrackingType = {
 export type DocumentFilesType = {
   id: number;
   path: string;
-  filename?: string;
+  filename: string;
 };
 
 export type DocumentMeta = {

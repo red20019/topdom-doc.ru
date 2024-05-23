@@ -22,7 +22,8 @@ class CheckCollection extends JsonResource
         $url="storage/".$this->path;
         return [
           "id" => $this->id,
-          "path" => $url
+          "path" => $url,
+          "filename" => $this->filename
         ];
     }
 }

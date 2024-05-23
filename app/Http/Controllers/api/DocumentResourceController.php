@@ -82,6 +82,7 @@ class DocumentResourceController extends Controller
           //dd($path);
           check::create([
             'path' => $path,
+            'filename' => $file->getClientOriginalName(),
             'user_id' => $request->user()->id,
             'document_id' => $request->input('id')
 

@@ -25,6 +25,7 @@ import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { DocumentFilesType, DocumentType } from "../redux/docs/types";
 import CheckUpload from "../components/CheckUpload";
+import { mimeTypes } from "../utils/mimeTypes";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -100,24 +101,7 @@ const Document: React.FC = () => {
           dispatch(loadDocsFailure((error as Record<string, string>).message));
         }
 
-        async function processFiles(files: DocumentFilesType[]) {
-          for (const file of files) {
-            try {
-              const url = file.path;
-              let filename;
-              if (file.filename) {
-                filename = file.filename;
-              } else {
-                filename = file.path;
-              }
-              const convertedFile = await urlToFile(url, filename);
-              const base64Data = await fileToBase64(convertedFile);
-              file.path = base64Data;
-            } catch (error) {
-              console.error(`Error converting file ${file.filename}:`, error);
-            }
-          }
-        }
+
       };
 
       getDoc();
@@ -129,6 +113,8 @@ const Document: React.FC = () => {
     id: 0,
     path: "",
   });
+
+  console.log(file)
 
   const openPopOk = data?.some((item) => {
     if (id && item.id === +id) return item.openPopOk;
@@ -170,11 +156,23 @@ const Document: React.FC = () => {
       if (id) {
         dispatch(setCheckLoading(true));
         const newResponse = await docsAPI.getDocById(+id);
-        setDocData(newResponse.data);
         dispatch(uploadChecks(+id));
+        processFiles(newResponse.data.files);
+        processFiles(newResponse.data.check_files);
+        setDocData(newResponse.data);
+
+        const FilesData = new FormData();
+        newResponse.data.files.forEach((file) => {
+          FilesData.append(`files[]`, file.path);
+        });
+        newResponse.data.check_files.forEach((file) => {
+          FilesData.append(`files[]`, file.path);
+        });
+        await docsAPI.deleteTempFiles(FilesData);
+
         dispatch(setCheckError(""));
+        dispatch(setCheckLoading(false));
       }
-      dispatch(setCheckLoading(false));
     } catch (error) {
       dispatch(setCheckLoading(false));
       dispatch(setCheckError((error as Record<string, string>).message));
@@ -185,11 +183,10 @@ const Document: React.FC = () => {
     return (
       <Layout>
         <Layout.Content className="min-h-screen py-4">
-          {file.filename &&
-          (file.filename.endsWith(".jpg") ||
+          {file.filename.endsWith(".jpg") ||
             file.filename.endsWith(".png") ||
             file.filename.endsWith(".svg") ||
-            file.filename.endsWith(".gif")) ? (
+            file.filename.endsWith(".gif") ? (
             <img
               src={file.path}
               alt="doc"
@@ -263,7 +260,8 @@ const Document: React.FC = () => {
               ) : (
                 currentUser?.role === "accountant" &&
                 docData &&
-                docData.check_files.length === 0 && (
+                docData.check_files.length === 0 &&
+                !checkLoading && (
                   <CheckUpload
                     id={+id}
                     ref={inputRef}
@@ -278,19 +276,20 @@ const Document: React.FC = () => {
                 docData &&
                 docData.check_files.length > 0 &&
                 !loading &&
-                docData.check_files.map((item) => (
+                docData.check_files.map((item, idx) => (
                   <div
                     key={item.id}
                     onClick={() => setFile(item)}
-                    title={item.path}
+                    title={`Чек №${idx + 1}`}
                     className="mb-2 p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
                   >
-                    {item.path}
+                    {`Чек №${idx + 1}`}
                     <div
                       style={{
-                        backgroundImage: `url(/images/${item.path
-                          .split(".")
-                          .pop()}-icon.svg)`,
+                        backgroundImage: `url(/images/${item.filename
+                          ?.split(".")
+                          .pop()
+                          ?.toLowerCase()}-icon.svg)`,
                       }}
                       className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
                     ></div>
@@ -391,20 +390,6 @@ function fileToBase64(file: File): Promise<string> {
         const fileExtension = file.name.split(".").pop();
         let mimeType = "application/octet-stream";
         if (fileExtension) {
-          const mimeTypes: { [key: string]: string } = {
-            png: "image/png",
-            jpeg: "image/jpeg",
-            jpg: "image/jpeg",
-            gif: "image/gif",
-            bmp: "image/bmp",
-            pdf: "application/pdf",
-            csv: "text/csv",
-            xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            mp4: "video/mp4",
-            webm: "video/webm",
-            mp3: "audio/mpeg",
-          };
           mimeType = mimeTypes[fileExtension] || mimeType;
         }
         resolve(`data:${mimeType};base64, ` + base64Data);
@@ -414,4 +399,18 @@ function fileToBase64(file: File): Promise<string> {
     };
     reader.onerror = (error) => reject(error);
   });
+}
+
+async function processFiles(files: DocumentFilesType[]) {
+  for (const file of files) {
+    try {
+      const url = file.path;
+      const filename = file.filename;
+      const convertedFile = await urlToFile(url, filename);
+      const base64Data = await fileToBase64(convertedFile);
+      file.path = base64Data;
+    } catch (error) {
+      console.error(`Error converting file ${file.filename}:`, error);
+    }
+  }
 }
