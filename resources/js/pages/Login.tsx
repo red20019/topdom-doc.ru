@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 
 import { authAPI } from "../api/api";
 import { useNavigate } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
+
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import {
   signInFailure,
@@ -31,7 +33,7 @@ const Login: React.FC = () => {
         return;
       }
       const userResponse = await authAPI.me();
-      console.log(userResponse)
+      console.log(userResponse);
       dispatch(signInSuccess(userResponse.data.data));
 
       navigate("/");
@@ -87,7 +89,7 @@ const Login: React.FC = () => {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              {loading ? "Подождите..." : "Войти"}
+              {loading ? <LoadingOutlined /> : "Войти"}
             </button>
             <a
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"

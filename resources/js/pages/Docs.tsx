@@ -96,8 +96,6 @@ const Docs: React.FC = () => {
   const [order, setOrder] = useState("desc");
   const [sort, setSort] = useState(0);
 
-  console.log(checkId)
-
   const inputRef = useRef<HTMLInputElement>(null);
   const [api, contextHolder] = notification.useNotification();
 

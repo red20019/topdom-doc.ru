@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Spin, Upload, notification } from "antd";
+import { Alert, Spin, Upload, notification } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 
@@ -60,30 +60,32 @@ const CreateDoc: React.FC = () => {
       for (let i = 0; i < formData.files.length; i++) {
         data.append("files[]", formData.files[i].originFileObj as File);
       }
-    }
 
-    try {
-      setLoading(true);
-      await authAPI.getToken();
-      const response = await docsAPI.sendDocs(data);
-      if (response.success === false) {
+      try {
+        setLoading(true);
+        await authAPI.getToken();
+        const response = await docsAPI.sendDocs(data);
+        if (response.success === false) {
+          setLoading(false);
+          setError(response.message);
+          openNotificationWithIcon("error", "Ошибка", response.message);
+          return;
+        }
         setLoading(false);
-        setError(response.message);
-        openNotificationWithIcon("error", "Ошибка", response.message);
-        return;
+        setError(null);
+        dispatch(changeMenuItem(["2"]));
+        navigate("/documents");
+      } catch (error: unknown) {
+        setLoading(false);
+        setError((error as Record<string, string>).message);
+        openNotificationWithIcon(
+          "error",
+          "Ошибка",
+          (error as Record<string, string>).message
+        );
       }
-      setLoading(false);
-      setError(null);
-      dispatch(changeMenuItem(["2"]));
-      navigate("/documents");
-    } catch (error: unknown) {
-      setLoading(false);
-      setError((error as Record<string, string>).message);
-      openNotificationWithIcon(
-        "error",
-        "Ошибка",
-        (error as Record<string, string>).message
-      );
+    } else {
+      setError('Загрузите хотя бы один файл.');
     }
   };
 
@@ -99,7 +101,7 @@ const CreateDoc: React.FC = () => {
   }
 
   return (
-    <section className="container mx-auto ml-8 p-4">
+    <section className="container mx-auto">
       {contextHolder}
       <h2 className="text-3xl font-bold mb-8 text-center">
         Загрузка документа
@@ -161,7 +163,13 @@ const CreateDoc: React.FC = () => {
           </button>
         </form>
       </div>
-      {error && <p className="text-red-500 text-xs text-center">{error}</p>}
+      {error && (
+        <Alert
+          className="mx-auto w-[30%] text-center"
+          message={error}
+          type="error"
+        />
+      )}
     </section>
   );
 };
