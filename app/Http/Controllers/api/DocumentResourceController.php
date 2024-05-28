@@ -237,6 +237,12 @@ class DocumentResourceController extends Controller
 
       }elseif($request->input('status')=='rejected'){
         //dd( $document->tracking->where('stage_document','0')->first());
+        DocumentTracking::create([
+          'document_id' => $document->id,
+          'stage_document' => 3,
+          'date_start_stage' => Carbon::now(),
+          'date_end_stage' => Carbon::now(),
+        ]);
         $document->stage = 3;
       }
 

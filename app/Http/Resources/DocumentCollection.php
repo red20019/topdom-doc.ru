@@ -42,7 +42,8 @@ class DocumentCollection extends JsonResource
           $stage = "Документ Расcмотрен {$this->tracking->where('stage_document',$this->stage)->date_end_stage}";
           break;
         case '3':
-          $stage = "Документ Отклонен {$this->tracking->where('stage_document',$this->stage)->date_end_stage}";
+          //dd($this->tracking->where('stage_document',$this->stage)->first()->date_end_stage);
+          $stage = "Документ Отклонен {$this->tracking->where('stage_document',$this->stage)->first()->date_end_stage}";
           break;
       }
         if($this->check->count()>0){
