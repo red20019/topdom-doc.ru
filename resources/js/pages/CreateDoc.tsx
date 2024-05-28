@@ -101,7 +101,7 @@ const CreateDoc: React.FC = () => {
   }
 
   return (
-    <section className="container mx-auto ml-8 p-4">
+    <section className="container mx-auto">
       {contextHolder}
       <h2 className="text-3xl font-bold mb-8 text-center">
         Загрузка документа

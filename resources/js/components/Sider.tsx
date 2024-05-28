@@ -8,6 +8,7 @@ import {
   UserOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
+import { useMediaQuery } from "usehooks-ts";
 
 import picLogo from "/images/logo-topdom-pic-white.svg";
 import textLogo from "/images/logo-topdom-text-white.svg";
@@ -49,7 +50,11 @@ const items: MenuItem[] = [
   getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
 ];
 
-const Sider = () => {
+const Sider: React.FC<Record<string, boolean>> = ({
+  matchesMax1270,
+  matchesMax1000,
+  matchesMax790,
+}) => {
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -101,10 +106,18 @@ const Sider = () => {
 
   return (
     <Layout.Sider
-      width="15%"
+      width={`${
+        matchesMax790
+          ? "80px"
+          : matchesMax1270
+          ? "20%"
+          : matchesMax1000
+          ? "25%"
+          : "15%"
+      }`}
       style={siderStyle}
       // collapsible
-      // collapsed={collapsed}
+      collapsed={matchesMax790}
       // onCollapse={() => setCollapsed(!collapsed)}
     >
       <div className="demo-logo-vertical" />
@@ -127,7 +140,11 @@ const Sider = () => {
           onClick={handleMenuClick}
         />
       )}
-      <div className="flex justify-center w-[15%] lg:order-2 fixed bottom-5">
+      <div
+        className={`flex justify-center lg:order-2 fixed bottom-5 ${
+          matchesMax790 ? "left-3" : "left-6"
+        }`}
+      >
         {user.currentUser ? (
           <button
             onClick={handleSignOut}
