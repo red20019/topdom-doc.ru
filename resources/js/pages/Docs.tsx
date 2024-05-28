@@ -308,13 +308,6 @@ const Docs: React.FC = () => {
                 handleCancel={handleCancel}
                 handleStageClick={handleStageClick}
               />
-            ) : currentUser?.role === "user" ? (
-              <button
-                // onClick={() => handleStageClick(item.id, "rejected")}
-                className="px-5 py-2 bg-red-700 rounded hover:bg-red-600 transition-colors font-normal text-white"
-              >
-                Заглушка
-              </button>
             ) : currentUser?.role === "accountant" ? (
               <div className="flex justify-end items-center gap-x-3">
                 <div className="flex gap-x-3">
@@ -342,6 +335,8 @@ const Docs: React.FC = () => {
                   </div>
                 )}
               </div>
+            ) : currentUser?.role === "user" ? (
+              ""
             ) : (
               "Кто ты, воин?"
             )}

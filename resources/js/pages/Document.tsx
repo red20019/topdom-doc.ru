@@ -49,7 +49,11 @@ type BossDocProps = {
   handleStageClick: (id: number, status: string) => void;
 };
 
-const Document: React.FC = () => {
+const Document: React.FC<Record<string, boolean>> = ({
+  matchesMax1270,
+  matchesMax1000,
+  matchesMax790,
+}) => {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector(
     (state: RootState) => state.user.currentUser
@@ -187,6 +191,8 @@ const Document: React.FC = () => {
         <Layout.Content className="min-h-screen py-4">
           {file.filename.endsWith(".jpg") ||
           file.filename.endsWith(".png") ||
+          file.filename.endsWith(".webp") ||
+          file.filename.endsWith(".avif") ||
           file.filename.endsWith(".svg") ||
           file.filename.endsWith(".gif") ? (
             <img
@@ -220,7 +226,7 @@ const Document: React.FC = () => {
               }}
             />
           ) : currentUser?.role === "user" ? (
-            <UserDoc file={file.path} />
+            ""
           ) : (
             ""
           )}
@@ -229,7 +235,9 @@ const Document: React.FC = () => {
         <Layout.Sider width="15%" style={siderStyle}>
           <div className="flex flex-col gap-y-16 h-full">
             <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
-              <h3 className="text-2xl font-semibold mb-3">Документы</h3>
+              <h3 className="text-lg font-semibold mb-3 lg:text-2xl">
+                Документы
+              </h3>
               {loading ? (
                 <Spin size={"large"} indicator={<LoadingOutlined spin />} />
               ) : (
@@ -257,7 +265,7 @@ const Document: React.FC = () => {
             </div>
 
             <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
-              <h3 className="text-2xl font-semibold mb-3">Чеки</h3>
+              <h3 className="text-lg font-semibold mb-3 lg:text-2xl">Чеки</h3>
               {loading ? (
                 <Spin size={"large"} indicator={<LoadingOutlined spin />} />
               ) : (
@@ -343,21 +351,6 @@ function BossDoc(props: BossDocProps) {
             </button>
           </Popconfirm>
         </StyleProvider>
-      </div>
-    )
-  );
-}
-
-function UserDoc(props: Record<string, string>) {
-  return (
-    props.file && (
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
-        <button
-          // onClick={() => props.handleStageClick(+props.id, "accepted")}
-          className="px-5 py-2 bg-green-700 rounded hover:bg-green-600 transition-colors font-normal text-white"
-        >
-          Заглушка
-        </button>
       </div>
     )
   );

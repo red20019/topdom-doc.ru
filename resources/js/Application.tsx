@@ -61,7 +61,7 @@ const App: React.FC = () => {
                   <Route element={<PrivateRoute />}>
                     <Route path="create-doc" element={<CreateDoc />} />
                     <Route path="documents" element={<Docs />} />
-                    <Route path="documents/:id" element={<Document />} />
+                    <Route path="documents/:id" element={<Document {...{ matchesMax1270, matchesMax1000, matchesMax790 }} />} />
                     {/* <Route path="/profile" element={<Profile />} />
               <Route path="/create-listing" element={<CreateListing />} /> */}
                     {/* <Route
