@@ -27,7 +27,6 @@ const siderStyle: React.CSSProperties = {
   textAlign: "left",
   color: "white",
   overflow: "auto",
-  height: "100vh",
   position: "fixed",
   left: 0,
   top: 0,

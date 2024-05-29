@@ -6,6 +6,10 @@
   overflow-y: auto;
 }
 
+.pg-viewer-wrapper .document-container {
+  width: auto;
+}
+
 .react-grid-HeaderCell-sortable {
   cursor: none !important;
   pointer-events: none !important;

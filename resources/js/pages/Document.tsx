@@ -188,7 +188,7 @@ const Document: React.FC<Record<string, boolean>> = ({
   if (id) {
     return (
       <Layout>
-        <Layout.Content className="min-h-screen py-4">
+        <Layout.Content className="min-h-screen py-4 bg-white">
           {file.filename.endsWith(".jpg") ||
           file.filename.endsWith(".png") ||
           file.filename.endsWith(".webp") ||
@@ -232,7 +232,18 @@ const Document: React.FC<Record<string, boolean>> = ({
           )}
         </Layout.Content>
 
-        <Layout.Sider width="15%" style={siderStyle}>
+        <Layout.Sider
+          width={`${
+            matchesMax790
+              ? "80px"
+              : matchesMax1270
+              ? "20%"
+              : matchesMax1000
+              ? "25%"
+              : "15%"
+          }`}
+          style={siderStyle}
+        >
           <div className="flex flex-col gap-y-16 h-full">
             <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
               <h3 className="text-lg font-semibold mb-3 lg:text-2xl">
