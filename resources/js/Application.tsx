@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 import { Layout } from "antd";
+import { useMediaQuery } from "usehooks-ts";
 
 import Welcome from "./pages/Welcome";
 import Pending from "./pages/Pending";
@@ -28,15 +29,30 @@ export interface IUser {
   age: number;
 }
 const App: React.FC = () => {
+  const matchesMax1270 = useMediaQuery("(max-width: 1270px)");
+  const matchesMax1000 = useMediaQuery("(max-width: 1000px)");
+  const matchesMax790 = useMediaQuery("(max-width: 790px)");
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <BrowserRouter>
           <Layout hasSider style={{ backgroundColor: "white" }}>
-            <Sider />
-            <Layout style={{ marginLeft: "15%", marginRight: "15%" }}>
+            <Sider {...{ matchesMax1270, matchesMax1000, matchesMax790 }} />
+            <Layout className="bg-white">
               {/* <Header /> */}
-              <Layout.Content style={contentStyle}>
+              <Layout.Content
+                style={{
+                  ...contentStyle,
+                  marginLeft: matchesMax790
+                    ? "80px"
+                    : matchesMax1270
+                    ? "20%"
+                    : matchesMax790
+                    ? "25%"
+                    : "15%",
+                }}
+              >
                 <Routes>
                   <Route path="/" element={<Welcome />} />
                   <Route path="register" element={<Register />} />
