@@ -10,8 +10,8 @@ const Welcome: React.FC = () => {
   const currentUser = useAppSelector((state: RootState) => state.user.currentUser);
 
   return (
-    <section className="flex flex-col items-center justify-center mt-12">
-      <h1 className="text-3xl">Добро пожаловать, {currentUser?.name ? currentUser.name : `гость. Войдите, чтобы пользоваться сервисом.`}</h1>
+    <section className="flex flex-col items-center justify-center mt-12 px-5 sm:px-10">
+      <h1 className="text-md sm:text-3xl">Добро пожаловать, {currentUser?.name ? currentUser.name : `гость. Войдите, чтобы пользоваться сервисом.`}</h1>
     </section>
   );
 };

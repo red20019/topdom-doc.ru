@@ -63,7 +63,7 @@
     <script src="{{ asset('js/app.js') . "?v=" . time() }}" defer></script>
 </head>
 
-<body>
+<body class="min-w-[350px]">
 
     <div class="content">
         <div id="application"></div>

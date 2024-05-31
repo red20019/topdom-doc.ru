@@ -1,10 +1,16 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Alert } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import { authAPI } from "../api/api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
-import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
 
 const SignUp: React.FC = () => {
   const [formData, setFormData] = React.useState<Record<string, string>>({});
@@ -67,14 +73,14 @@ const SignUp: React.FC = () => {
         >
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-[12px] sm:text-sm font-bold mb-2"
               htmlFor="name"
             >
               Имя
             </label>
             <input
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-[12px] placeholder:text-[12px] sm:text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="name"
               type="text"
               placeholder="Имя"
@@ -82,14 +88,14 @@ const SignUp: React.FC = () => {
           </div>
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-[12px] sm:text-sm font-bold mb-2"
               htmlFor="email"
             >
               Email
             </label>
             <input
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-[12px] placeholder:text-[12px] sm:text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="email"
               type="text"
               placeholder="Email"
@@ -97,14 +103,14 @@ const SignUp: React.FC = () => {
           </div>
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-[12px] sm:text-sm font-bold mb-2"
               htmlFor="password"
             >
               Пароль
             </label>
             <input
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-[12px] placeholder:text-[12px] sm:text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
               placeholder="********"
@@ -112,29 +118,29 @@ const SignUp: React.FC = () => {
           </div>
           <div className="mb-6">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-[12px] sm:text-sm font-bold mb-2"
               htmlFor="password_confirmation"
             >
               Подтвердите пароль
             </label>
             <input
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-[12px] placeholder:text-[12px] sm:text-sm text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
               id="password_confirmation"
               type="password"
               placeholder="********"
             />
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-x-5 text-[10px] sm:text-sm">
             <button
               disabled={loading}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hover:opacity-95 disabled:opacity-80 focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              {loading ? "Подождите..." : "Зарегистрироваться"}
+              {loading ? <LoadingOutlined /> : "Зарегистрироваться"}
             </button>
           </div>
-          <div className="flex gap-2 mt-5">
+          <div className="flex gap-2 mt-4 text-[10px] sm:text-sm">
             <p>Уже есть аккаунт?</p>
             <Link to={"/login"}>
               <span className="text-blue-500">Войти</span>
@@ -142,7 +148,9 @@ const SignUp: React.FC = () => {
           </div>
         </form>
 
-        {error && <p className="text-red-500 text-xs mt-5">{error}</p>}
+        {error && (
+          <Alert message="Ошибка" description={error} type="error" closable />
+        )}
       </div>
     </section>
   );

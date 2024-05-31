@@ -141,7 +141,7 @@ const Sider: React.FC<Record<string, boolean>> = ({
       )}
       <div
         className={`flex justify-center lg:order-2 fixed bottom-5 ${
-          matchesMax790 ? "left-3" : "left-6"
+          matchesMax790 ? "left-3 flex-col gap-y-2" : "left-6 gap-x-2"
         }`}
       >
         {user.currentUser ? (
@@ -174,7 +174,7 @@ const Sider: React.FC<Record<string, boolean>> = ({
             <Link
               to="/login"
               title="Войти"
-              className="bg-white text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+              className="bg-white text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -193,9 +193,75 @@ const Sider: React.FC<Record<string, boolean>> = ({
             </Link>
             <Link
               to="/register"
+              title="Регистрация"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
-              Регистрация
+              <svg
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="#FFF"
+                className="w-6 h-6"
+              >
+                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  {" "}
+                  <title>i</title>{" "}
+                  <g id="Complete">
+                    {" "}
+                    <g id="user-add">
+                      {" "}
+                      <g>
+                        {" "}
+                        <path
+                          d="M17,21V19a4,4,0,0,0-4-4H5a4,4,0,0,0-4,4v2"
+                          fill="none"
+                          stroke="#FFF"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                        ></path>{" "}
+                        <circle
+                          cx="9"
+                          cy="7"
+                          r="4"
+                          fill="none"
+                          stroke="#FFF"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                        ></circle>{" "}
+                        <line
+                          x1="17"
+                          y1="11"
+                          x2="23"
+                          y2="11"
+                          fill="none"
+                          stroke="#FFF"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                        ></line>{" "}
+                        <line
+                          x1="20"
+                          y1="8"
+                          x2="20"
+                          y2="14"
+                          fill="none"
+                          stroke="#FFF"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                        ></line>{" "}
+                      </g>{" "}
+                    </g>{" "}
+                  </g>{" "}
+                </g>
+              </svg>
             </Link>
           </>
         )}

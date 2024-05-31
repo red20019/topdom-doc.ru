@@ -1,13 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Button, Layout, Popconfirm, Result, Spin, Upload } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
-import {
-  LoadingOutlined,
-  UploadOutlined,
-  CheckCircleTwoTone,
-  CloseCircleTwoTone,
-} from "@ant-design/icons";
-import FileViewer from "react-file-viewer";
+import { LoadingOutlined } from "@ant-design/icons";
+// import FileViewer from "react-file-viewer-extended";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { docsAPI } from "../api/api";
@@ -26,6 +21,8 @@ import { RootState } from "../redux/store";
 import { DocumentFilesType, DocumentType } from "../redux/docs/types";
 import CheckUpload from "../components/CheckUpload";
 import { mimeTypes } from "../utils/mimeTypes";
+
+const FileViewer = lazy(() => import("react-file-viewer-extended"));
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -202,10 +199,12 @@ const Document: React.FC<Record<string, boolean>> = ({
             />
           ) : file.path ? (
             <div style={{ height: "100%" }}>
-              <FileViewer
-                filePath={file.path}
-                fileType={file.filename?.split(".").pop()?.toLowerCase()}
-              />
+              <Suspense fallback={<Result title="Загрузка файла..." />}>
+                <FileViewer
+                  filePath={file.path}
+                  fileType={file.filename?.split(".").pop()?.toLowerCase()}
+                />
+              </Suspense>
             </div>
           ) : (
             <Result title="Выберите файл для предпросмотра" />

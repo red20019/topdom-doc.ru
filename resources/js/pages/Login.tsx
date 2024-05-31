@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Alert } from "antd";
 
 import { authAPI } from "../api/api";
 import { useNavigate } from "react-router-dom";
@@ -55,14 +56,14 @@ const Login: React.FC = () => {
         >
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-[12px] sm:text-sm font-bold mb-2"
               htmlFor="email"
             >
               Email
             </label>
             <input
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-[12px] placeholder:text-[12px] sm:text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="email"
               type="text"
               placeholder="Email"
@@ -70,36 +71,38 @@ const Login: React.FC = () => {
           </div>
           <div className="mb-6">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-[12px] sm:text-sm font-bold mb-2"
               htmlFor="password"
             >
               Пароль
             </label>
             <input
               onChange={handleChange}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-[12px] placeholder:text-[12px] sm:text-sm text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
               id="password"
               type="password"
               placeholder="******************"
             />
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-x-5 text-[10px] sm:text-sm">
             <button
               disabled={loading}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
               {loading ? <LoadingOutlined /> : "Войти"}
             </button>
             <a
-              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+              className="inline-block align-baseline font-medium text-blue-500 hover:text-blue-800"
               href="#"
             >
               Забыли пароль?
             </a>
           </div>
         </form>
-        {error && <p className="text-red-500 text-xs mt-5">{error}</p>}
+        {error && (
+          <Alert message="Ошибка" description={error} type="error" closable />
+        )}
       </div>
     </section>
   );
