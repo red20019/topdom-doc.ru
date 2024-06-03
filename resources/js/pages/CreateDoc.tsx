@@ -139,22 +139,6 @@ const CreateDoc: React.FC = () => {
             </p>
           </Dragger>
 
-          {/* <label htmlFor="files" className="block mb-3">
-              <input
-                onChange={handleChange}
-                id="files"
-                type="file"
-                className="block w-full text-sm text-slate-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-full file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-violet-50 file:text-violet-700
-                        hover:file:bg-violet-100
-                      "
-                multiple
-              />
-            </label> */}
-
           <button
             type="submit"
             className="mt-5 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"

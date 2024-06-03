@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   CaretDownOutlined,
   CaretUpOutlined,
@@ -13,10 +14,9 @@ import {
   Spin,
   Typography,
 } from "antd";
-import React, { useEffect, useState } from "react";
 
 import { docsAPI } from "../api/api";
-import DocItem from "../components/DocItem";
+import DocItem from "../components/Docs/DocItem";
 import {
   loadDocsFailure,
   loadDocsSuccess,
