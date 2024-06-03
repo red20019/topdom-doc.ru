@@ -1,11 +1,12 @@
 import React, { lazy, Suspense, useEffect, useRef, useState } from "react";
-import { Button, Layout, Popconfirm, Result, Spin, Upload } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
 import { LoadingOutlined } from "@ant-design/icons";
+import { Layout, Popconfirm, Result, Spin } from "antd";
 // import FileViewer from "react-file-viewer-extended";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { docsAPI } from "../api/api";
+import CheckUpload from "../components/CheckUpload";
 import {
   closePopconfirm,
   loadDocsFailure,
@@ -16,10 +17,9 @@ import {
   updateStage,
   uploadChecks,
 } from "../redux/docs/docsSlice";
+import { DocumentFilesType, DocumentType } from "../redux/docs/types";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
-import { DocumentFilesType, DocumentType } from "../redux/docs/types";
-import CheckUpload from "../components/CheckUpload";
 import { mimeTypes } from "../utils/mimeTypes";
 
 const FileViewer = lazy(() => import("react-file-viewer-extended"));
