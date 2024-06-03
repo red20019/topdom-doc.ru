@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  CaretDownOutlined,
-  CaretUpOutlined,
-} from "@ant-design/icons";
+import { CaretDownOutlined, CaretUpOutlined } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import {
   Card,
@@ -20,7 +17,7 @@ import DocItem from "../components/Docs/DocItem";
 import {
   loadDocsFailure,
   loadDocsSuccess,
-  setLoading
+  setLoading,
 } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
@@ -40,7 +37,11 @@ const sortItems: MenuProps["items"] = [
   },
 ];
 
-const Docs: React.FC = () => {
+const Docs: React.FC<Record<string, boolean>> = ({
+  matchesMax1270,
+  matchesMax1000,
+  matchesMax790,
+}) => {
   const dispatch = useAppDispatch();
 
   const { data, meta, page } = useAppSelector((state: RootState) => state.docs);
@@ -82,7 +83,7 @@ const Docs: React.FC = () => {
   }
 
   return (
-    <section className="container mx-auto ml-8 px-4 py-4">
+    <section className="container mx-auto px-4 py-4">
       {data?.length === 0 && (
         <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
       )}
