@@ -3,12 +3,7 @@ import {
   PaperClipOutlined,
   PrinterFilled,
 } from "@ant-design/icons";
-import {
-  Card,
-  NotificationArgsProps,
-  Steps,
-  notification
-} from "antd";
+import { Card, NotificationArgsProps, Steps, notification } from "antd";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -30,7 +25,12 @@ const cardStyle: React.CSSProperties = {
 
 type NotificationPlacement = NotificationArgsProps["placement"];
 
-const DocItem: React.FC<DocsType> = (item) => {
+const DocItem: React.FC<{
+  item: DocsType;
+  matchesMax1270: boolean;
+  matchesMax1000: boolean;
+  matchesMax790: boolean;
+}> = ({ item, matchesMax1270, matchesMax1000, matchesMax790 }) => {
   const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector(
@@ -73,12 +73,16 @@ const DocItem: React.FC<DocsType> = (item) => {
   return (
     <Card style={cardStyle} loading={loading}>
       {contextHolder}
-      <div className="flex justify-between items-start gap-x-6 mb-6">
+      <div
+        className={`flex items-center flex-col gap-x-8 gap-y-4 mb-6 sm:flex-row sm:gap-y-0 ${
+          matchesMax790 ? "justify-center" : "justify-between"
+        }`}
+      >
         <Link to={`/documents/${item.id}`}>
-          <h3 className="text-base sm:text-xl">{item.document_name}</h3>
+          <h3 className="text-sm sm:text-xl">{item.document_name}</h3>
         </Link>
 
-        <div className="flex flex-wrap gap-5 min-w-[100px] text-right">
+        <div className="flex gap-x-2 gap-y-8 min-w-[110px] text-right sm:gap-x-5">
           <Link to={`/documents/${item.id}`}>
             <ExportOutlined />
           </Link>
@@ -92,14 +96,19 @@ const DocItem: React.FC<DocsType> = (item) => {
         </div>
       </div>
 
-      <div className="flex justify-between items-start mb-3">
+      <div
+        className={`flex justify-between items-start mb-3 text-center ${
+          matchesMax790 && "flex-col gap-y-6 items-center text-left"
+        }`}
+      >
         <span>
           Создан {item.date_add}, {item.name}
         </span>
 
-        <div className="-mr-9">
+        <div className={`${matchesMax790 ? "" : "-mr-9"}`}>
           <Steps
             labelPlacement="vertical"
+            direction="horizontal"
             size="small"
             current={item.stage_number}
             status={item.stage_number > 3 ? "error" : "finish"}
@@ -131,6 +140,9 @@ const DocItem: React.FC<DocsType> = (item) => {
           handleOk={handleOk}
           handleCancel={handleCancel}
           handleStageClick={handleStageClick}
+          matchesMax1270={matchesMax1270}
+          matchesMax1000={matchesMax1000}
+          matchesMax790={matchesMax790}
         />
       ) : currentUser?.role === "accountant" ? (
         <Accountant key={item.id} {...item} />

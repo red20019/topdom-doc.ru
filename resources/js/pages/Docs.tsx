@@ -84,7 +84,7 @@ const Docs: React.FC<Record<string, boolean>> = ({
 
   return (
     <section className="container mx-auto px-4 py-4">
-      {data?.length === 0 && (
+      {data && data.length > 0 && (
         <h2 className="text-3xl font-bold mb-8 text-center">Мои документы</h2>
       )}
 
@@ -96,15 +96,15 @@ const Docs: React.FC<Record<string, boolean>> = ({
               allowClear
               // loading
               onSearch={onSearch}
-              style={{ width: 200 }}
+              style={{ width: matchesMax790 ? '100%' : '300px' }}
             />
           </Card>
-          <div className="flex justify-between mb-8">
-            <span>
+          <div className="flex flex-col justify-between gap-y-3 items-center mb-8 sm:flex-row sm:gap-x-5 sm:gap-y-0">
+            <span className="text-sm sm:text-base">
               Показано {meta.from}-{meta.to} из {meta.total} документов
             </span>
 
-            <div className="flex justify-between gap-x-1 select-none">
+            <div className="flex justify-between items-center gap-x-1 select-none text-sm sm:text-base">
               <span>Сортировка по: </span>
               <span
                 onClick={() => setOrder(order === "desc" ? "asc" : "desc")}
@@ -132,7 +132,15 @@ const Docs: React.FC<Record<string, boolean>> = ({
       )}
 
       {data ? (
-        data.map((item) => <DocItem key={item.id} {...item} />)
+        data.map((item) => (
+          <DocItem
+            key={item.id}
+            item={item}
+            matchesMax1270={matchesMax1270}
+            matchesMax1000={matchesMax1000}
+            matchesMax790={matchesMax790}
+          />
+        ))
       ) : (
         <Spin className="w-full text-center" size="large" />
       )}

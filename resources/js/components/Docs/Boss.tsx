@@ -7,6 +7,9 @@ interface BossProps {
   confirmLoading: boolean;
   openPopOk: boolean | undefined;
   openPopCancel: boolean | undefined;
+  matchesMax1270: boolean;
+  matchesMax1000: boolean;
+  matchesMax790: boolean;
   handleOk: (id: number, status: string) => Promise<void>;
   handleCancel: (id: number) => void;
   handleStageClick: (id: number, status: string) => void;
@@ -21,10 +24,17 @@ const Boss: React.FC<BossProps> = ({
   handleOk,
   handleCancel,
   handleStageClick,
+  matchesMax1270,
+  matchesMax1000,
+  matchesMax790,
 }) => {
   if (stage_number === 0) {
     return (
-      <div className="flex justify-end gap-x-3">
+      <div
+        className={`flex gap-x-3 ${
+          matchesMax790 ? "justify-center mt-7 flex-col gap-y-3" : "justify-end flex-row gap-y-0"
+        }`}
+      >
         <Popconfirm
           title="Подтвердите действие"
           description="Вы действительно хотите согласовать этот документ?"

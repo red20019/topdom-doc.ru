@@ -35,8 +35,6 @@ const App: React.FC = () => {
   const matchesMax1000 = useMediaQuery("(max-width: 1000px)");
   const matchesMax790 = useMediaQuery("(max-width: 790px)");
 
-
-
   return (
     <Layout hasSider style={{ backgroundColor: "white" }}>
       <Sider {...{ matchesMax1270, matchesMax1000, matchesMax790 }} />
