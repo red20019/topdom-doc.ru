@@ -32,7 +32,9 @@ const Boss: React.FC<BossProps> = ({
     return (
       <div
         className={`flex gap-x-3 ${
-          matchesMax790 ? "justify-center mt-7 flex-col gap-y-3" : "justify-end flex-row gap-y-0"
+          matchesMax790
+            ? "justify-center mt-7 flex-col gap-y-3"
+            : "justify-end flex-row gap-y-0"
         }`}
       >
         <Popconfirm
@@ -75,9 +77,8 @@ const Boss: React.FC<BossProps> = ({
         </Popconfirm>
       </div>
     );
-  } else {
-    return "";
   }
+  return '';
 };
 
 export default Boss;

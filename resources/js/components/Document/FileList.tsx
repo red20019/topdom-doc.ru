@@ -21,10 +21,10 @@ type FileListProps = {
   matchesMax1270: boolean;
   id: number;
   docData: DocumentType;
-  setDocData: (value: React.SetStateAction<DocumentType>) => void
+  setDocData: (value: React.SetStateAction<DocumentType>) => void;
   setFile: (value: React.SetStateAction<DocumentFilesType>) => void;
   dispatch: AppDispatch;
-}
+};
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -48,7 +48,9 @@ const FileList: React.FC<FileListProps> = ({
   dispatch,
 }) => {
   const { currentUser } = useAppSelector((state: RootState) => state.user);
-  const { loading, checkLoading } = useAppSelector((state: RootState) => state.docs);
+  const { loading, checkLoading } = useAppSelector(
+    (state: RootState) => state.docs
+  );
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -101,87 +103,137 @@ const FileList: React.FC<FileListProps> = ({
     <Layout.Sider
       width={`${
         matchesMax790
-          ? "80px"
+          ? "100%"
           : matchesMax1270
           ? "20%"
           : matchesMax1000
           ? "25%"
           : "15%"
       }`}
-      style={siderStyle}
+      style={{
+        ...siderStyle,
+        height: matchesMax790 ? "105px" : "100vh",
+        top: matchesMax790 ? "auto" : 0,
+        overflowX: matchesMax790 ? "auto" : "hidden",
+        overflowY: matchesMax790 ? "hidden" : "auto",
+      }}
     >
-      <div className="flex flex-col gap-y-16 h-full">
-        <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
-          <h3 className="text-lg font-semibold mb-3 lg:text-2xl">Документы</h3>
-          {loading ? (
-            <Spin size={"large"} indicator={<LoadingOutlined spin />} />
-          ) : (
-            docData &&
-            docData.files.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => setFile(item)}
-                title={item.filename}
-                className="mb-2 p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
-              >
-                {item.filename}
+      <div
+        className={`flex gap-y-16 h-full ${
+          matchesMax790 ? "flex-row" : "flex-col"
+        }`}
+      >
+        <div
+          className={`p-4 max-h-[380px] ${
+            matchesMax790 ? "pt-2 w-1/2" : "pt-7"
+          }`}
+        >
+          <h3 className="text-lg font-semibold mb-3 lg:text-2xl sm:text-xs">
+            Документы ({docData.files.length > 0 ? docData.files.length : '-'})
+          </h3>
+          <div
+            className={`flex ${
+              matchesMax790
+                ? "flex-row gap-x-2 overflow-x-auto overflow-y-hidden"
+                : "flex-col"
+            }`}
+          >
+            {loading ? (
+              <Spin size={"large"} indicator={<LoadingOutlined spin />} />
+            ) : (
+              docData &&
+              docData.files.map((item) => (
                 <div
-                  style={{
-                    backgroundImage: `url(/images/${item.filename
-                      ?.split(".")
-                      .pop()
-                      ?.toLowerCase()}-icon.svg)`,
-                  }}
-                  className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
-                ></div>
-              </div>
-            ))
-          )}
+                  key={item.id}
+                  onClick={() => setFile(item)}
+                  title={item.filename}
+                  className={`bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative ${
+                    matchesMax790
+                      ? "mb-0 p-2 pl-7 text-xs min-w-[93px]"
+                      : "mb-2 p-5 pl-11"
+                  }`}
+                >
+                  {item.filename}
+                  <div
+                    style={{
+                      backgroundImage: `url(/images/${item.filename
+                        ?.split(".")
+                        .pop()
+                        ?.toLowerCase()}-icon.svg)`,
+                    }}
+                    className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat ${
+                      matchesMax790 ? "w-4 h-4" : "w-7 h-7"
+                    }`}
+                  ></div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
-        <div className="p-4 pt-7 max-h-[380px] overflowy-auto">
-          <h3 className="text-lg font-semibold mb-3 lg:text-2xl">Чеки</h3>
-          {loading ? (
-            <Spin size={"large"} indicator={<LoadingOutlined spin />} />
-          ) : (
-            currentUser?.role === "accountant" &&
-            docData &&
-            docData.check_files.length === 0 &&
-            !checkLoading && (
-              <CheckUpload
-                id={id}
-                ref={inputRef}
-                handleCheckUpload={handleCheckUpload}
-                handleUploadClick={() => inputRef.current?.click()}
-              />
-            )
-          )}
-          {checkLoading ? (
-            <Spin size={"large"} indicator={<LoadingOutlined spin />} />
-          ) : (
-            docData &&
-            docData.check_files.length > 0 &&
-            !loading &&
-            docData.check_files.map((item, idx) => (
-              <div
-                key={item.id}
-                onClick={() => setFile(item)}
-                title={`Чек №${idx + 1}`}
-                className="mb-2 p-5 pl-11 bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative"
-              >
-                {`Чек №${idx + 1}`}
+        <div
+          className={`p-4 max-h-[380px] ${
+            matchesMax790 ? "pt-2 w-1/2" : "pt-7"
+          }`}
+        >
+          <h3 className="text-lg font-semibold mb-3 lg:text-2xl sm:text-xs">
+            Чеки ({docData.check_files.length > 0 ? docData.check_files.length : '-'})
+          </h3>
+          <div
+            className={`flex ${
+              matchesMax790
+                ? "flex-row gap-x-2 overflow-x-auto overflow-y-hidden"
+                : "flex-col"
+            }`}
+          >
+            {loading ? (
+              <Spin size={"large"} indicator={<LoadingOutlined spin />} />
+            ) : (
+              currentUser?.role === "accountant" &&
+              docData &&
+              docData.check_files.length === 0 &&
+              !checkLoading && (
+                <CheckUpload
+                  id={id}
+                  ref={inputRef}
+                  handleCheckUpload={handleCheckUpload}
+                  handleUploadClick={() => inputRef.current?.click()}
+                />
+              )
+            )}
+            {checkLoading ? (
+              <Spin size={"large"} indicator={<LoadingOutlined spin />} />
+            ) : (
+              docData &&
+              docData.check_files.length > 0 &&
+              !loading &&
+              docData.check_files.map((item, idx) => (
                 <div
-                  style={{
-                    backgroundImage: `url(/images/${item.filename
-                      ?.split(".")
-                      .pop()
-                      ?.toLowerCase()}-icon.svg)`,
-                  }}
-                  className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat w-7 h-7`}
-                ></div>
-              </div>
-            ))
-          )}
+                  key={item.id}
+                  onClick={() => setFile(item)}
+                  title={`Чек №${idx + 1}`}
+                  className={`bg-white text-black font-semibold break-words truncate border rounded cursor-pointer relative ${
+                    matchesMax790
+                      ? "mb-0 p-2 pl-7 text-xs min-w-[90px]"
+                      : "mb-2 p-5 pl-11"
+                  }`}
+                >
+                  {`Чек №${idx + 1}`}
+                  <div
+                    style={{
+                      backgroundImage: `url(/images/${item.filename
+                        ?.split(".")
+                        .pop()
+                        ?.toLowerCase()}-icon.svg)`,
+                    }}
+                    className={`absolute -translate-y-1/2 top-1/2 left-2 bg-contain bg-no-repeat ${
+                      matchesMax790 ? "w-4 h-4" : "w-7 h-7"
+                    }`}
+                  ></div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </Layout.Sider>

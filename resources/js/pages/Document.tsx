@@ -11,7 +11,7 @@ import {
   loadDocsFailure,
   setLoading,
   togglePopconfirm,
-  updateStage
+  updateStage,
 } from "../redux/docs/docsSlice";
 import { DocumentFilesType, DocumentType } from "../redux/docs/types";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
@@ -153,11 +153,7 @@ const Document: React.FC<Record<string, boolean>> = ({
                 handleStageClick,
               }}
             />
-          ) : currentUser?.role === "user" ? (
-            ""
-          ) : (
-            ""
-          )}
+          ) : ""}
         </Layout.Content>
 
         <FileList

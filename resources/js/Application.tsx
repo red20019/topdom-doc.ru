@@ -37,7 +37,7 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider style={{ backgroundColor: "white" }}>
-      <Sider {...{ matchesMax1270, matchesMax1000, matchesMax790 }} />
+      <Sider {...{ matchesMax1270, matchesMax1000, matchesMax790, isOnDocumentPage }} />
       <Layout className="bg-white">
         <Layout.Content
           style={{
@@ -51,7 +51,7 @@ const App: React.FC = () => {
               : "15%",
             marginRight:
               isOnDocumentPage && matchesMax790
-                ? "80px"
+                ? "0"
                 : isOnDocumentPage && matchesMax1270
                 ? "20%"
                 : isOnDocumentPage && matchesMax790

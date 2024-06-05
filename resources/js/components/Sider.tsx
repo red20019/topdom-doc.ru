@@ -53,6 +53,7 @@ const Sider: React.FC<Record<string, boolean>> = ({
   matchesMax1270,
   matchesMax1000,
   matchesMax790,
+  isOnDocumentPage,
 }) => {
   useEffect(() => {
     const getUser = async () => {
@@ -140,9 +141,9 @@ const Sider: React.FC<Record<string, boolean>> = ({
         />
       )}
       <div
-        className={`flex justify-center lg:order-2 fixed bottom-5 ${
+        className={`flex justify-center lg:order-2 fixed ${
           matchesMax790 ? "left-3 flex-col gap-y-2" : "left-6 gap-x-2"
-        }`}
+        } ${isOnDocumentPage && matchesMax790 ? "bottom-[7.5rem]" : "bottom-5"}`}
       >
         {user.currentUser ? (
           <button

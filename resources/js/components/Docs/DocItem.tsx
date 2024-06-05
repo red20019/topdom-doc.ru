@@ -145,7 +145,10 @@ const DocItem: React.FC<{
           matchesMax790={matchesMax790}
         />
       ) : currentUser?.role === "accountant" ? (
-        <Accountant key={item.id} {...item} />
+        <Accountant key={item.id} {...item}
+        matchesMax1270={matchesMax1270}
+        matchesMax1000={matchesMax1000}
+        matchesMax790={matchesMax790} />
       ) : currentUser?.role === "user" ? (
         ""
       ) : (
