@@ -1,21 +1,26 @@
-import {
-  CheckCircleTwoTone,
-  CloseCircleTwoTone
-} from "@ant-design/icons";
+import { CheckCircleTwoTone, CloseCircleTwoTone } from "@ant-design/icons";
 import React, { useRef, useState } from "react";
 
-import { DocsType } from "../../redux/docs/types";
 import CheckUpload from "../CheckUpload";
-import { setCheckError, setCheckLoading, updateStage, uploadChecks } from "../../redux/docs/docsSlice";
+import {
+  setCheckError,
+  setCheckLoading,
+  updateStage,
+  uploadChecks,
+} from "../../redux/docs/docsSlice";
 import { docsAPI } from "../../api/api";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
+import { ItemProps } from "./DocItem";
 
-const Accountant: React.FC<DocsType> = (item) => {
+const Accountant: React.FC<ItemProps> = ({
+  item,
+  matchesMax1270,
+  matchesMax1000,
+  matchesMax790,
+}) => {
   const dispatch = useAppDispatch();
-  const { checkLoading } = useAppSelector(
-    (state: RootState) => state.docs
-  );
+  const { checkLoading } = useAppSelector((state: RootState) => state.docs);
 
   const [checkId, setCheckId] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -57,20 +62,22 @@ const Accountant: React.FC<DocsType> = (item) => {
   };
 
   return (
-    <div className="flex justify-end items-center gap-x-3">
-      <div className="flex gap-x-3">
-        {item.is_check ? (
-          <span className="text-lg">
-            <CheckCircleTwoTone twoToneColor="#52c41a" /> Чек загружен
-          </span>
-        ) : (
-          <span className="text-lg">
-            <CloseCircleTwoTone twoToneColor="red" /> Чек не загружен
-          </span>
-        )}
-      </div>
+    <div
+      className={`flex items-center gap-x-3 ${
+        matchesMax790 ? "justify-center flex-col gap-y-2" : "justify-end"
+      }`}
+    >
+      {item.is_check ? (
+        <span className="text-sm sm:text-lg">
+          <CheckCircleTwoTone twoToneColor="#52c41a" /> Чек загружен
+        </span>
+      ) : (
+        <span className="text-sm sm:text-lg">
+          <CloseCircleTwoTone twoToneColor="red" /> Чек не загружен
+        </span>
+      )}
       {!item.is_check && (
-        <div className="text-right">
+        <div className="">
           <CheckUpload
             id={item.id}
             ref={inputRef}

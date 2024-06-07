@@ -11,12 +11,24 @@ type BossDocProps = {
   handleOk: (id: number, status: string) => Promise<void>;
   handleCancel: (id: number) => void;
   handleStageClick: (id: number, status: string) => void;
+  matchesMax1270: boolean;
+  matchesMax1000: boolean;
+  matchesMax790: boolean;
 };
 
 const Boss: React.FC<BossDocProps> = (props) => {
   return (
     props.stage === 0 && (
-      <div className="fixed bottom-5 left-1/2 -translate-x-1/2 flex justify-end gap-x-3 pt-3">
+      <div
+        className={`fixed left-1/2 flex justify-end gap-x-3 pt-3 ${
+          props.matchesMax790 ? "bottom-[9em]" : "bottom-5 "
+        }`}
+        style={{
+          transform: props.matchesMax790
+            ? "translateX(calc(-50% + 40px))"
+            : "translateX(-50%)",
+        }}
+      >
         <StyleProvider hashPriority="high">
           <Popconfirm
             title="Подтвердите действие"

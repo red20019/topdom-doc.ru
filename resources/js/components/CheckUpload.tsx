@@ -16,7 +16,7 @@ const CheckUpload = forwardRef<HTMLInputElement, CheckUploadProps>(
         <button
           onClick={() => handleUploadClick(id)}
           type="button"
-          className="text-white bg-slate-700 hover:bg-slate-800 focus:ring-4 focus:ring-slate-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-slate-600 dark:hover:bg-slate-700 focus:outline-none dark:focus:ring-slate-800"
+          className="text-white bg-slate-700 hover:bg-slate-800 focus:ring-4 focus:ring-slate-300 font-medium rounded-lg text-xs sm:text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-slate-600 dark:hover:bg-slate-700 focus:outline-none dark:focus:ring-slate-800"
         >
           Выбрать чеки
         </button>

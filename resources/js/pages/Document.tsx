@@ -151,6 +151,9 @@ const Document: React.FC<Record<string, boolean>> = ({
                 handleCancel,
                 confirmLoading,
                 handleStageClick,
+                matchesMax790,
+                matchesMax1000,
+                matchesMax1270
               }}
             />
           ) : ""}

@@ -25,12 +25,14 @@ const cardStyle: React.CSSProperties = {
 
 type NotificationPlacement = NotificationArgsProps["placement"];
 
-const DocItem: React.FC<{
+export type ItemProps = {
   item: DocsType;
   matchesMax1270: boolean;
   matchesMax1000: boolean;
   matchesMax790: boolean;
-}> = ({ item, matchesMax1270, matchesMax1000, matchesMax790 }) => {
+}
+
+const DocItem: React.FC<ItemProps> = ({ item, matchesMax1270, matchesMax1000, matchesMax790 }) => {
   const dispatch = useAppDispatch();
 
   const currentUser = useAppSelector(
@@ -145,7 +147,7 @@ const DocItem: React.FC<{
           matchesMax790={matchesMax790}
         />
       ) : currentUser?.role === "accountant" ? (
-        <Accountant key={item.id} {...item}
+        <Accountant key={item.id} item={item}
         matchesMax1270={matchesMax1270}
         matchesMax1000={matchesMax1000}
         matchesMax790={matchesMax790} />

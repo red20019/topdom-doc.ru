@@ -37,7 +37,9 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider style={{ backgroundColor: "white" }}>
-      <Sider {...{ matchesMax1270, matchesMax1000, matchesMax790, isOnDocumentPage }} />
+      <Sider
+        {...{ matchesMax1270, matchesMax1000, matchesMax790, isOnDocumentPage }}
+      />
       <Layout className="bg-white">
         <Layout.Content
           style={{
@@ -56,7 +58,9 @@ const App: React.FC = () => {
                 ? "20%"
                 : isOnDocumentPage && matchesMax790
                 ? "25%"
-                : isOnDocumentPage ? "15%" : "0",
+                : isOnDocumentPage
+                ? "15%"
+                : "0",
           }}
         >
           <Routes>
@@ -66,7 +70,14 @@ const App: React.FC = () => {
             <Route path="pending" element={<Pending />} />
             <Route element={<PrivateRoute />}>
               <Route path="create-doc" element={<CreateDoc />} />
-              <Route path="documents" element={<Docs {...{ matchesMax1270, matchesMax1000, matchesMax790 }} />} />
+              <Route
+                path="documents"
+                element={
+                  <Docs
+                    {...{ matchesMax1270, matchesMax1000, matchesMax790 }}
+                  />
+                }
+              />
               <Route
                 path="documents/:id"
                 element={

@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 .pg-viewer-wrapper {
-  overflow-y: auto;
+  margin-bottom: 30px;
+  overflow-y: auto !important;
 }
 
 .pg-viewer-wrapper .document-container {
@@ -13,4 +14,10 @@
 .react-grid-HeaderCell-sortable {
   cursor: none !important;
   pointer-events: none !important;
+}
+
+@media (max-width: 790px) {
+  .pg-viewer-wrapper {
+    margin-bottom: 125px;
+  }
 }

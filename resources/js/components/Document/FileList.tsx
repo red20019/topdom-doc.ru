@@ -128,7 +128,7 @@ const FileList: React.FC<FileListProps> = ({
             matchesMax790 ? "pt-2 w-1/2" : "pt-7"
           }`}
         >
-          <h3 className="text-lg font-semibold mb-3 lg:text-2xl sm:text-xs">
+          <h3 className="text-xs font-semibold mb-3 sm:text-lg">
             Документы ({docData.files.length > 0 ? docData.files.length : '-'})
           </h3>
           <div
@@ -176,7 +176,7 @@ const FileList: React.FC<FileListProps> = ({
             matchesMax790 ? "pt-2 w-1/2" : "pt-7"
           }`}
         >
-          <h3 className="text-lg font-semibold mb-3 lg:text-2xl sm:text-xs">
+          <h3 className="text-xs font-semibold mb-3 sm:text-lg">
             Чеки ({docData.check_files.length > 0 ? docData.check_files.length : '-'})
           </h3>
           <div
