@@ -63,6 +63,7 @@ class DocumentCollection extends JsonResource
         'stage_text' => $stage,
         'is_check' => $is_check,
         'count_files'=> $this->resources->count(),
+        "document_tracking" =>  DocumentTrackerCollection::collection($this->tracking),
         'url' => 'documents/'.$this->id
     ];
     }
