@@ -3,7 +3,7 @@ import React, { Suspense, lazy, useEffect, useState } from "react";
 // import FileViewer from "react-file-viewer-extended";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { docsAPI } from "../api/api";
+import { docsAPI } from "../api";
 import Boss from "../components/Document/Boss";
 import FileList from "../components/Document/FileList";
 import {

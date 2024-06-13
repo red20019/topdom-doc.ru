@@ -37,6 +37,7 @@
         "react-file-viewer-extended": "^2.1.0",
         "react-redux": "7.2.9",
         "react-router-dom": "^6.20.1",
+        "recharts": "^2.12.7",
         "redux-persist": "^6.0.0",
         "usehooks-ts": "^3.1.0"
     }

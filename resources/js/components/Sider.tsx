@@ -20,7 +20,7 @@ import {
   signOutStart,
   signOutSuccess,
 } from "../redux/user/userSlice";
-import { authAPI } from "../api/api";
+import { authAPI } from "../api";
 import { emptyDocs } from "../redux/docs/docsSlice";
 
 const siderStyle: React.CSSProperties = {

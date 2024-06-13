@@ -8,7 +8,7 @@ import {
   updateStage,
   uploadChecks,
 } from "../../redux/docs/docsSlice";
-import { docsAPI } from "../../api/api";
+import { docsAPI } from "../../api";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
 import { ItemProps } from "./DocItem";

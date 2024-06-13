@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Alert } from "antd";
 
-import { authAPI } from "../api/api";
+import { authAPI } from "../api";
 import { useNavigate } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
 

@@ -4,7 +4,7 @@ import { Alert, Spin, Upload, notification } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
 
-import { authAPI, docsAPI } from "../api/api";
+import { authAPI, docsAPI } from "../api";
 import { DocsType } from "../redux/user/types";
 import { NotificationType } from "../types/types";
 import { changeMenuItem } from "../redux/sider/siderSlice";

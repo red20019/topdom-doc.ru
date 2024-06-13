@@ -13,6 +13,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Document from "./pages/Document";
 import Sider from "./components/Sider";
 import Docs from "./pages/Docs";
+import DashBoard from "./pages/Dashboard";
 
 const contentStyle: React.CSSProperties = {
   // paddingTop: '40px',
@@ -86,6 +87,7 @@ const App: React.FC = () => {
                   />
                 }
               />
+              <Route path="dashboard" element={<DashBoard />} />
               {/* <Route path="/profile" element={<Profile />} />
               <Route path="/create-listing" element={<CreateListing />} /> */}
               {/* <Route
