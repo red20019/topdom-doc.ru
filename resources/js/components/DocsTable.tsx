@@ -1,5 +1,5 @@
-import React from "react";
-import { Space, Table } from "antd";
+import React, { useState } from "react";
+import { Space, Table, Popconfirm } from "antd";
 import type { TableProps } from "antd";
 
 interface DataType {
@@ -9,34 +9,6 @@ interface DataType {
   date: string;
   status: string;
 }
-
-const columns: TableProps<DataType>["columns"] = [
-  {
-    title: "№",
-    dataIndex: "id",
-    key: "id",
-  },
-  {
-    title: "Название",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Дата",
-    dataIndex: "date",
-    key: "date",
-  },
-  {
-    title: "Действия",
-    key: "action",
-    render: (_, record) => (
-      <Space size="middle">
-        <a className="text-blue-700">Изменить</a>
-        <a className="text-red-500">Удалить</a>
-      </Space>
-    ),
-  },
-];
 
 const data: DataType[] = [
   {
@@ -62,8 +34,78 @@ const data: DataType[] = [
   },
 ];
 
-const DocsTable: React.FC = () => {
-  return <Table columns={columns} dataSource={data} />;
+const DocsTable: React.FC<{ loading: boolean }> = ({ loading }) => {
+  const [open, setOpen] = useState<string | null>(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
+
+  const handleEdit = (index: number) => {
+    setEditingRowIndex(index);
+  };
+
+  const columns: TableProps<DataType>["columns"] = [
+    {
+      title: "№",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Название",
+      dataIndex: "name",
+      key: "name",
+
+    },
+    {
+      title: "Дата",
+      dataIndex: "date",
+      key: "date",
+    },
+    {
+      title: "Действия",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          <a className="text-blue-700">Изменить</a>
+          <Popconfirm
+            title="Удалить этот документ?"
+            open={open === record.id.toString()}
+            onConfirm={handleOk}
+            okButtonProps={{ loading: confirmLoading }}
+            cancelButtonProps={{ disabled: confirmLoading }}
+            onCancel={handleCancel}
+          >
+            <a onClick={() => handleRemove(record)} className="text-red-500">
+              Удалить
+            </a>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+  const handleRemove = (record: DataType) => {
+    if (!confirmLoading) setOpen(record.id.toString());
+  };
+
+  const handleOk = () => {
+    setConfirmLoading(true);
+
+    setTimeout(() => {
+      setOpen(null);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    setOpen(null); // Close the Popconfirm if canceled
+    setConfirmLoading(false);
+  };
+
+  return (
+    <>
+      <Table columns={columns} dataSource={data} loading={loading} />
+    </>
+  );
 };
 
 export default DocsTable;

@@ -7,6 +7,7 @@ import {
   FolderOpenOutlined,
   UserOutlined,
   LoadingOutlined,
+  DashboardOutlined,
 } from "@ant-design/icons";
 import { useMediaQuery } from "usehooks-ts";
 
@@ -22,6 +23,9 @@ import {
 } from "../redux/user/userSlice";
 import { authAPI } from "../api";
 import { emptyDocs } from "../redux/docs/docsSlice";
+import SigninIcon from "./Icons/SigninIcon";
+import SignupIcon from "./Icons/SignupIcon";
+import SignoutIcon from "./Icons/SignoutIcon";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -34,20 +38,6 @@ const siderStyle: React.CSSProperties = {
 };
 
 type MenuItem = Required<MenuProps>["items"][number];
-
-const items: MenuItem[] = [
-  getItem(
-    <Link to="/create-doc">Добавить документ</Link>,
-    "1",
-    <FileAddOutlined />
-  ),
-  getItem(
-    <Link to="/documents">Мои документы</Link>,
-    "2",
-    <FolderOpenOutlined />
-  ),
-  getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
-];
 
 const Sider: React.FC<Record<string, boolean>> = ({
   matchesMax1270,
@@ -77,11 +67,33 @@ const Sider: React.FC<Record<string, boolean>> = ({
   const { selectedKeys } = useAppSelector((state: RootState) => state.sider);
   const { loading } = useAppSelector((state: RootState) => state.user);
 
+  const items: MenuItem[] = [
+    getItem(
+      <Link to="/create-doc">Добавить документ</Link>,
+      "1",
+      <FileAddOutlined />
+    ),
+    getItem(
+      <Link to="/documents">Мои документы</Link>,
+      "2",
+      <FolderOpenOutlined />
+    ),
+    getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
+    ...(user.currentUser?.role === "boss"
+      ? [
+          getItem(
+            <Link to="/dashboard">Панель управления</Link>,
+            "4",
+            <DashboardOutlined />
+          ),
+        ]
+      : []),
+  ];
+  user.currentUser?.role;
   const onSetMain = () => {
     dispatch(changeMenuItem(["0"]));
   };
 
-  // TODO: transform into redux state
   const handleMenuClick: MenuClickEventHandler = (e) => {
     dispatch(changeMenuItem([e.key]));
   };
@@ -143,7 +155,9 @@ const Sider: React.FC<Record<string, boolean>> = ({
       <div
         className={`flex justify-center lg:order-2 fixed ${
           matchesMax790 ? "left-3 flex-col gap-y-2" : "left-6 gap-x-2"
-        } ${isOnDocumentPage && matchesMax790 ? "bottom-[7.5rem]" : "bottom-5"}`}
+        } ${
+          isOnDocumentPage && matchesMax790 ? "bottom-[7.5rem]" : "bottom-5"
+        }`}
       >
         {user.currentUser ? (
           <button
@@ -151,24 +165,7 @@ const Sider: React.FC<Record<string, boolean>> = ({
             title="Выйти"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-            {loading ? (
-              <LoadingOutlined />
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
-                />
-              </svg>
-            )}
+            {loading ? <LoadingOutlined /> : <SignoutIcon />}
           </button>
         ) : (
           <>
@@ -177,92 +174,14 @@ const Sider: React.FC<Record<string, boolean>> = ({
               title="Войти"
               className="bg-white text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25"
-                />
-              </svg>
+              <SigninIcon />
             </Link>
             <Link
               to="/register"
               title="Регистрация"
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
             >
-              <svg
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="#FFF"
-                className="w-6 h-6"
-              >
-                <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                <g
-                  id="SVGRepo_tracerCarrier"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                ></g>
-                <g id="SVGRepo_iconCarrier">
-                  {" "}
-                  <title>i</title>{" "}
-                  <g id="Complete">
-                    {" "}
-                    <g id="user-add">
-                      {" "}
-                      <g>
-                        {" "}
-                        <path
-                          d="M17,21V19a4,4,0,0,0-4-4H5a4,4,0,0,0-4,4v2"
-                          fill="none"
-                          stroke="#FFF"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        ></path>{" "}
-                        <circle
-                          cx="9"
-                          cy="7"
-                          r="4"
-                          fill="none"
-                          stroke="#FFF"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        ></circle>{" "}
-                        <line
-                          x1="17"
-                          y1="11"
-                          x2="23"
-                          y2="11"
-                          fill="none"
-                          stroke="#FFF"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        ></line>{" "}
-                        <line
-                          x1="20"
-                          y1="8"
-                          x2="20"
-                          y2="14"
-                          fill="none"
-                          stroke="#FFF"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                        ></line>{" "}
-                      </g>{" "}
-                    </g>{" "}
-                  </g>{" "}
-                </g>
-              </svg>
+              <SignupIcon />
             </Link>
           </>
         )}

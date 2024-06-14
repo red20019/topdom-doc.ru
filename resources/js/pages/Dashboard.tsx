@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import DocsStats from '../components/DocsPercent';
+import DocsStats from '../components/DocsStats';
 import DocsTable from '../components/DocsTable';
 
 // import './index.less';
@@ -23,10 +23,10 @@ const DashBoard: React.FC = () => {
   }, []);
 
   return (
-    <div>
+    <section className='flex flex-col gap-y-5 px-10 py-4'>
       <DocsStats loading={loading} />
-      <DocsTable />
-    </div>
+      <DocsTable loading={loading} />
+    </section>
   );
 };
 
