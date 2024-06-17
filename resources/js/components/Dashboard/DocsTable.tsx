@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Space, Table, Popconfirm } from "antd";
+import { Space, Table, Popconfirm, Card } from "antd";
 import type { TableProps } from "antd";
 
 interface DataType {
@@ -102,9 +102,9 @@ const DocsTable: React.FC<{ loading: boolean }> = ({ loading }) => {
   };
 
   return (
-    <>
+    <Card title="Документы" loading={loading}>
       <Table columns={columns} dataSource={data} loading={loading} />
-    </>
+    </Card>
   );
 };
 

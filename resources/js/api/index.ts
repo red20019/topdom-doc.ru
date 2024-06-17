@@ -1,7 +1,11 @@
 import axios, { Cancel } from "axios";
 
 import { UserTypeWithMiddleware } from "../redux/user/types";
-import { CheckUploadResponse, DocsResponse, DocumentResponse } from "../redux/docs/types";
+import {
+  CheckUploadResponse,
+  DocsResponse,
+  DocumentResponse,
+} from "../redux/docs/types";
 
 const instance = axios.create({
   withCredentials: true,
@@ -127,7 +131,8 @@ export const docsAPI = {
       console.log(response);
       // return response.data;
     } catch (error) {
-      if (axios.isCancel(error)) return;
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
     }
   },
 
@@ -144,27 +149,25 @@ export const docsAPI = {
   // },
 };
 
-// export const settingsAPI = {
-//   getUserInfo(userId = 2) {
-//     return instance.get(`profile/${userId}`);
-//   },
-//   getUserStatus(userId = 2) {
-//     return instance.get(`profile/status/${userId}`);
-//   },
-//   updateUserStatus(status) {
-//     console.log("put", status);
-//     return instance.put(`profile/status`, { status });
-//   },
-//   savePhoto(file) {
-//     console.log("put", file);
-//     const formData = new FormData();
-//     formData.append("image", file);
-//     return instance.put(`profile/photo`, formData, {
-//       "Content-Type": "multipart/form-data",
-//     });
-//   },
-//   saveProfile(profile) {
-//     console.log("put", profile);
-//     return instance.put(`profile`, profile);
-//   },
-// };
+export const bossAPI = {
+  async changeRole(formData: FormData) {
+    try {
+      const response = await instance.post(`api/change_role`, formData);
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
+    }
+  },
+  async removeDoc(id: number) {
+    try {
+      const response = await instance.post(`api/remove_doc`, { id });
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      if (axios.isCancel(error)) return Promise.reject(error as Cancel);
+      throw error;
+    }
+  },
+};

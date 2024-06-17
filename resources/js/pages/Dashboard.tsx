@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import DocsStats from '../components/DocsStats';
-import DocsTable from '../components/DocsTable';
+import DocsStats from '../components/Dashboard/DocsStats';
+import DocsTable from '../components/Dashboard/DocsTable';
+import RolesTable from '../components/Dashboard/RolesTable';
 
 // import './index.less';
 
@@ -24,6 +25,7 @@ const DashBoard: React.FC = () => {
 
   return (
     <section className='flex flex-col gap-y-5 px-10 py-4'>
+      <RolesTable loading={loading} />
       <DocsStats loading={loading} />
       <DocsTable loading={loading} />
     </section>

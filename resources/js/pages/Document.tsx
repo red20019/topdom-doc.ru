@@ -17,6 +17,7 @@ import { DocumentFilesType, DocumentType } from "../redux/docs/types";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import { processFiles } from "../utils/processFiles";
+import { saveDocument } from "../redux/document/documentSlice";
 
 const FileViewer = lazy(() => import("react-file-viewer-extended"));
 
@@ -32,6 +33,8 @@ const Document: React.FC<Record<string, boolean>> = ({
   const { data, confirmLoading } = useAppSelector(
     (state: RootState) => state.docs
   );
+
+  const doc = useAppSelector((state: RootState) => state.document);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -52,14 +55,22 @@ const Document: React.FC<Record<string, boolean>> = ({
     path: "",
   });
 
-  console.log(file);
-
   useEffect(() => {
     document.title = `Документ №${id} | ТопДомДок`;
 
     if (id) {
       const getDoc = async () => {
         try {
+          if (doc.files.length > 0) {
+            const formData = new FormData();
+            doc.files.forEach((file) => {
+              formData.append(`files[]`, file.path);
+            });
+            doc.check_files.forEach((file) => {
+              formData.append(`files[]`, file.path);
+            });
+            await docsAPI.deleteTempFiles(formData);
+          }
           dispatch(setLoading(true));
           const response = await docsAPI.getDocById(+id);
           if (response?.data) {
@@ -70,6 +81,7 @@ const Document: React.FC<Record<string, boolean>> = ({
             processFiles(checkFiles);
 
             setDocData(copiedResponse.data);
+              dispatch(saveDocument(copiedResponse.data));
 
             const formData = new FormData();
             response.data.files.forEach((file) => {
@@ -153,10 +165,12 @@ const Document: React.FC<Record<string, boolean>> = ({
                 handleStageClick,
                 matchesMax790,
                 matchesMax1000,
-                matchesMax1270
+                matchesMax1270,
               }}
             />
-          ) : ""}
+          ) : (
+            ""
+          )}
         </Layout.Content>
 
         <FileList
