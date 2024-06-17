@@ -2,7 +2,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Layout, Spin } from "antd";
 import React, { useRef } from "react";
 
-import { docsAPI } from "../../api/api";
+import { docsAPI } from "../../api";
 import {
   setCheckError,
   setCheckLoading,

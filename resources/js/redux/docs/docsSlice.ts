@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { DocsResponse, DocsSliceState } from "./types";
-import { docsAPI } from "../../api/api";
+import { docsAPI } from "../../api";
 
 export const updateStage = createAsyncThunk(
   "docs/updateStage",

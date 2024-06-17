@@ -16,6 +16,14 @@
   pointer-events: none !important;
 }
 
+.ant-table-content {
+  overflow: auto;
+}
+
+.ant-btn.css-dev-only-do-not-override-1rqnfsa.ant-btn-primary.ant-btn-sm {
+  background-color: #1677ff;
+}
+
 @media (max-width: 790px) {
   .pg-viewer-wrapper {
     margin-bottom: 125px;

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Alert } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
-import { authAPI } from "../api/api";
+import { authAPI } from "../api";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { RootState } from "../redux/store";
 import {

@@ -12,7 +12,7 @@ import {
   Typography,
 } from "antd";
 
-import { docsAPI } from "../api/api";
+import { docsAPI } from "../api";
 import DocItem from "../components/Docs/DocItem";
 import {
   loadDocsFailure,
