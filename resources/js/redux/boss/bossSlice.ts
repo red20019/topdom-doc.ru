@@ -6,7 +6,18 @@ import { UserType } from "../user/types";
 const initialState: BossSliceState = {
   users: [],
   data: [],
-  form: null,
+  dataSource: [
+    {
+      key: '0',
+      name: 'Документ 1',
+      date: '12:12:1212',
+    },
+    {
+      key: '1',
+      name: 'Документ 2',
+      date: '01:01:1111',
+    },
+  ],
   editingKey: null,
   error: null,
   loading: false,
@@ -24,24 +35,12 @@ const bossSlice = createSlice({
         return user;
       });
     },
-    setForm: (state, action) => {
-      state.form = action.payload;
+    delete: (state, action: PayloadAction<string>) => {
+      state.dataSource = state.dataSource.filter((item) => item.key !== action.payload);
     },
-    removeDoc: (state, action: PayloadAction<number>) => {
-      state.users = state.users.filter((user) => user.id !== action.payload);
-    },
-    setData: (state, action: PayloadAction<Item[]>) => {
-      state.data = action.payload;
-    },
-    startEdit: (state, action: PayloadAction<string>) => {
-      state.editingKey = action.payload;
-    },
-    stopEdit: (state) => {
-      state.editingKey = null;
-    },
-    saveRow: (state, action: PayloadAction<{ index: number; value: Item }>) => {
-      const { index, value } = action.payload;
-      state.data[index] = value;
+    save: (state, action: PayloadAction<{ key: string; data: Partial<Item> }>) => {
+      const index = state.dataSource.findIndex((item) => item.key === action.payload.key);
+      state.dataSource[index] = { ...state.dataSource[index], ...action.payload.data };
     },
     // updateUserStart: (state) => {
     //   state.loading = true;
@@ -71,13 +70,7 @@ const bossSlice = createSlice({
 });
 
 export const {
-  changeRole,
-  setForm,
-  removeDoc,
-  setData,
-  startEdit,
-  stopEdit,
-  saveRow,
+  changeRole, delete: deleteItem, save
 } = bossSlice.actions;
 
 export default bossSlice.reducer;

@@ -1,27 +1,33 @@
-import React, { useEffect, useRef, useState } from "react";
-import type { GetRef, InputRef } from "antd";
-import { Form, Input, Popconfirm, Table } from "antd";
-import { Item } from "../../redux/boss/types";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { setForm } from "../../redux/boss/bossSlice";
+import React, { useRef, useState } from "react";
+import {
+  Button,
+  Table,
+  Popconfirm,
+  Form,
+  Input,
+  FormInstance,
+  InputRef,
+  Card,
+} from "antd";
 
-// Type alias for the form instance
-type FormInstance<T> = GetRef<typeof Form<T>>;
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { deleteItem, save } from "../../redux/boss/bossSlice";
+
+interface Item {
+  key: string;
+  name: string;
+  date: string;
+}
 
 interface EditableRowProps {
   index: number;
 }
 
 const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
-  const dispatch = useAppDispatch();
+  const [form] = Form.useForm();
 
-  const [formInstance] = Form.useForm();
-
-  useEffect(() => {
-    dispatch(setForm(formInstance));
-  }, [formInstance, dispatch]);
   return (
-    <Form form={formInstance} component={false}>
+    <Form form={form} component={false}>
       <tr {...props} />
     </Form>
   );
@@ -44,11 +50,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   handleSave,
   ...restProps
 }) => {
-  const form = useAppSelector((state) => state.boss.form);
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<InputRef>(null);
+  const form = Form.useFormInstance();
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (editing) {
       inputRef.current?.focus();
     }
@@ -56,13 +62,14 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
-    form?.setFieldsValue({ [dataIndex]: record[dataIndex] });
+    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
   };
-
   const save = async () => {
     try {
-      const values = await form?.validateFields();
-
+      const values = await (Array.isArray(form)
+        ? form[0]
+        : form
+      )?.validateFields();
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
@@ -77,12 +84,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       <Form.Item
         style={{ margin: 0 }}
         name={dataIndex}
-        rules={[
-          {
-            required: true,
-            message: `${title} is required.`,
-          },
-        ]}
+        rules={[{ required: true, message: `${title} is required.` }]}
       >
         <Input ref={inputRef} onPressEnter={save} onBlur={save} />
       </Form.Item>
@@ -100,60 +102,37 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-type EditableTableProps = Parameters<typeof Table>[0];
-
-interface DataType {
-  key: React.Key;
-  name: string;
-  date: string;
-}
-
-type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
-
 const DocsTable: React.FC<{ loading: boolean }> = ({ loading }) => {
-  const [dataSource, setDataSource] = useState<DataType[]>([
-    {
-      key: "0",
-      name: "Edward King 0",
-      date: "32",
-    },
-    {
-      key: "1",
-      name: "Edward King 1",
-      date: "32",
-    },
-  ]);
+  const { dataSource } = useAppSelector((state) => state.boss);
+  console.log(dataSource);
+  const dispatch = useAppDispatch();
 
-  const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
+  const handleDelete = (key: string) => {
+    dispatch(deleteItem(key));
   };
 
-  const defaultColumns: (ColumnTypes[number] & {
-    editable?: boolean;
-    dataIndex: string;
-  })[] = [
+  const handleSave = (row: Item) => {
+    dispatch(save({ key: row.key, data: row }));
+  };
+
+  const columns = [
     {
-      title: "name",
+      title: "Название",
       dataIndex: "name",
       width: "30%",
       editable: true,
     },
     {
-      title: "age",
-      dataIndex: "age",
+      title: "Дата",
+      dataIndex: "date",
     },
     {
-      title: "address",
-      dataIndex: "address",
-    },
-    {
-      title: "operation",
+      title: "Действия",
       dataIndex: "operation",
-      render: (_, record) =>
+      render: (_: any, record: any) =>
         dataSource.length >= 1 ? (
           <Popconfirm
-            title="Удалить этот документ?"
+            title="Вы уверены, что хотите удалить этот документ?"
             onConfirm={() => handleDelete(record.key)}
           >
             <a className="text-red-500">Удалить</a>
@@ -162,50 +141,30 @@ const DocsTable: React.FC<{ loading: boolean }> = ({ loading }) => {
     },
   ];
 
-  const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
-  };
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const columns = defaultColumns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: DataType) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave,
-      }),
-    };
-  });
-
   return (
-    <div>
+    <Card title="Документы" loading={loading}>
       <Table
-        components={components}
         rowClassName={() => "editable-row"}
+        components={{
+          body: {
+            row: EditableRow,
+            cell: EditableCell,
+          },
+        }}
         bordered
         dataSource={dataSource}
-        columns={columns as ColumnTypes}
+        columns={columns.map((col) => ({
+          ...col,
+          onCell: (record: Item) => ({
+            record,
+            editable: col.editable,
+            dataIndex: col.dataIndex,
+            title: col.title,
+            handleSave: handleSave,
+          }),
+        }))}
       />
-    </div>
+    </Card>
   );
 };
 
