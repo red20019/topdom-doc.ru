@@ -1,17 +1,9 @@
-import React, { useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import { Layout } from "antd";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-import { authAPI } from "../api";
-import { RootState } from "../redux/store";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import {
-  signOutFailure,
-  signOutStart,
-  signOutSuccess,
-} from "../redux/user/userSlice";
-import { changeMenuItem } from "../redux/sider/siderSlice";
-import { emptyDocs } from "../redux/docs/docsSlice";
+import { RootState } from "../redux/store";
 
 const headerStyle: React.CSSProperties = {
   paddingTop: "1.75rem",

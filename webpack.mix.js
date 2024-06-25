@@ -1,5 +1,5 @@
 const mix = require('laravel-mix');
-const path = require('path');
+// const path = require('path');
 // const TerserPlugin = require("terser-webpack-plugin");
 // const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
@@ -25,7 +25,7 @@ const path = require('path');
 //         splitChunks: {
 //             chunks: 'all',
 //             minSize: 10000,
-//             maxSize: 250000,
+//             maxSize: 25000,
 //         },
 //         minimize: true,
 //         minimizer: [new TerserPlugin()],

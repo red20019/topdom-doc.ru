@@ -1,6 +1,5 @@
 import { Layout, Result } from "antd";
 import React, { Suspense, lazy, useEffect, useState } from "react";
-// import FileViewer from "react-file-viewer-extended";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { docsAPI } from "../api";

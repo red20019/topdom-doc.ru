@@ -1,9 +1,8 @@
-import React, { useState } from "react";
 import type { ColProps } from "antd/es/col";
+import React from "react";
 
-import { Badge, Card, Col, List, Radio, Row } from "antd";
-import { useSelector } from "react-redux";
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { Badge, Card, Col, List, Row } from "antd";
+import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
 
 const data: { name: string; value: number }[] = [
   { name: "Черновик", value: 5 },

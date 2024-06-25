@@ -1,9 +1,5 @@
 
 import { UserType } from "../user/types";
-import { Form } from "antd";
-import type { GetRef } from "antd";
-
-type FormInstance<T> = GetRef<typeof Form<T>>;
 
 export interface BossSliceState {
   users: UserType[];
