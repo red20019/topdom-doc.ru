@@ -1,6 +1,9 @@
 import React from "react";
 import { Card, Select, Table, TableProps } from "antd";
 import { bossAPI } from "../../api";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { changeRole } from "../../redux/boss/bossSlice";
+import { UserTypeWithKey } from "../../redux/user/types";
 
 interface DataType {
   key: string;
@@ -9,29 +12,10 @@ interface DataType {
   role: "boss" | "user" | "accountant";
 }
 
-const data: DataType[] = [
-  {
-    key: '1',
-    id: 1,
-    name: "John Brown",
-    role: "boss",
-  },
-  {
-    key: '2',
-    id: 2,
-    name: "Jim Green",
-    role: "user",
-  },
-  {
-    key: '3',
-    id: 3,
-    name: "Joe Black",
-    role: "accountant",
-  },
-];
-
 const RolesTable: React.FC<{ loading: boolean }> = ({ loading }) => {
-  const columns: TableProps<DataType>["columns"] = [
+  const dispatch = useAppDispatch()
+  const { users } = useAppSelector((state) => state.boss);
+  const columns: TableProps<UserTypeWithKey>["columns"] = [
     {
       title: "Имя",
       dataIndex: "name",
@@ -44,7 +28,7 @@ const RolesTable: React.FC<{ loading: boolean }> = ({ loading }) => {
       render: (text, record) => (
         <Select
         defaultValue={text}
-          onChange={handleChange}
+          onChange={(value) => handleChange(value, +record.key)}
           style={{ width: 132 }}
           options={[
             { value: "user", label: "Пользователь" },
@@ -56,19 +40,20 @@ const RolesTable: React.FC<{ loading: boolean }> = ({ loading }) => {
     },
   ];
 
-  const handleChange = async (value: string) => {
-    console.log(`selected ${value}`);
+  const handleChange = async (role: string, id: number) => {
+    console.log(`selected ${role}`);
 
-    const formData = new FormData();
-    formData.append("id", String(data[0].id));
-    formData.append("role", value);
+    // const formData = new FormData();
+    // formData.append("id", String(data[0].id));
+    // formData.append("role", value);
 
-    const response = await bossAPI.changeRole(formData)
+    // const response = await bossAPI.changeRole(formData)
+    dispatch(changeRole({ id, role }));
   };
 
   return (
     <Card title="Роли" loading={loading}>
-      <Table columns={columns} dataSource={data} loading={loading} />
+      <Table columns={columns} dataSource={users} loading={loading} />
     </Card>
   );
 };

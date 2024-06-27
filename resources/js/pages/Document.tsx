@@ -1,6 +1,7 @@
 import { Layout, Result } from "antd";
-import React, { Suspense, lazy, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import FileViewer from 'react-file-viewer-extended'
 
 import { docsAPI } from "../api";
 import Boss from "../components/Document/Boss";
@@ -18,7 +19,6 @@ import { RootState } from "../redux/store";
 import { processFiles } from "../utils/processFiles";
 import { saveDocument } from "../redux/document/documentSlice";
 
-const FileViewer = lazy(() => import("react-file-viewer-extended"));
 
 const Document: React.FC<Record<string, boolean>> = ({
   matchesMax1270,
@@ -55,38 +55,27 @@ const Document: React.FC<Record<string, boolean>> = ({
   });
 
   useEffect(() => {
-    document.title = `Документ №${id} | ТопДомДок`;
-
     if (id) {
-      const getDoc = async () => {
+      document.title = `Документ №${id} | ТопДомДок`;
+
+      const fetchDoc = async () => {
         try {
-          if (doc.files.length > 0) {
-            const formData = new FormData();
-            doc.files.forEach((file) => {
-              formData.append(`files[]`, file.path);
-            });
-            doc.check_files.forEach((file) => {
-              formData.append(`files[]`, file.path);
-            });
-            await docsAPI.deleteTempFiles(formData);
-          }
           dispatch(setLoading(true));
           const response = await docsAPI.getDocById(+id);
-          if (response?.data) {
+          if (response.data) {
             const copiedResponse = JSON.parse(JSON.stringify(response)); // Deep copy of response object
-            const files = copiedResponse.data.files;
-            const checkFiles = copiedResponse.data.check_files;
-            processFiles(files);
-            processFiles(checkFiles);
+            const { files, check_files } = copiedResponse.data;
+            const processedFiles = await processFiles(files);
+            const processedCheckFiles = await processFiles(check_files);
+
+            copiedResponse.data.files = processedFiles;
+            copiedResponse.data.check_files = processedCheckFiles;
 
             setDocData(copiedResponse.data);
-              dispatch(saveDocument(copiedResponse.data));
+            dispatch(saveDocument(copiedResponse.data));
 
             const formData = new FormData();
-            response.data.files.forEach((file) => {
-              formData.append(`files[]`, file.path);
-            });
-            response.data.check_files.forEach((file) => {
+            [...files, ...check_files].forEach((file) => {
               formData.append(`files[]`, file.path);
             });
             await docsAPI.deleteTempFiles(formData);
@@ -97,7 +86,7 @@ const Document: React.FC<Record<string, boolean>> = ({
         }
       };
 
-      getDoc();
+      fetchDoc();
     }
   }, [id]);
 
@@ -139,12 +128,10 @@ const Document: React.FC<Record<string, boolean>> = ({
             />
           ) : file.path ? (
             <div style={{ height: "100%" }}>
-              <Suspense fallback={<Result title="Загрузка файла..." />}>
-                <FileViewer
-                  filePath={file.path}
-                  fileType={file.filename?.split(".").pop()?.toLowerCase()}
-                />
-              </Suspense>
+              <FileViewer
+                filePath={file.path}
+                fileType={file.filename?.split(".").pop()?.toLowerCase()}
+              />
             </div>
           ) : (
             <Result title="Выберите файл для предпросмотра" />

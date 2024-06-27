@@ -1,8 +1,8 @@
 
-import { UserType } from "../user/types";
+import { UserType, UserTypeWithKey } from "../user/types";
 
 export interface BossSliceState {
-  users: UserType[];
+  users: UserTypeWithKey[];
   data: Item[];
   dataSource:  Item[];
   editingKey: string | null;
