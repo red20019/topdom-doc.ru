@@ -2,17 +2,19 @@ import { DocumentFilesType } from "../redux/docs/types";
 import { mimeTypes } from "./mimeTypes";
 
 export async function processFiles(files: DocumentFilesType[]) {
+  const processedFiles: DocumentFilesType[] = [];
   for (const file of files) {
     try {
       const url = file.path;
       const filename = file.filename;
       const convertedFile = await urlToFile(url, filename);
       const base64Data = await fileToBase64(convertedFile);
-      file.path = base64Data;
+      processedFiles.push({ ...file, path: base64Data });
     } catch (error) {
       console.error(`Error converting file ${file.filename}:`, error);
     }
   }
+  return processedFiles;
 }
 
 async function urlToFile(url: string, fileName: string): Promise<File> {

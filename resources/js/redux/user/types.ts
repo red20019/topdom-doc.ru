@@ -65,3 +65,4 @@ export type Extra = {
 };
 
 export type FullUserTypeWithExtra = FullUserType & Extra;
+export type UserTypeWithKey = UserType & { key: string };

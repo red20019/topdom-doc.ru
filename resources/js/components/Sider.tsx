@@ -1,31 +1,30 @@
-import React, { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Layout, Menu, MenuProps } from "antd";
-import { MenuClickEventHandler } from "rc-menu/lib/interface"; //
 import {
+  DashboardOutlined,
   FileAddOutlined,
   FolderOpenOutlined,
-  UserOutlined,
   LoadingOutlined,
-  DashboardOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { useMediaQuery } from "usehooks-ts";
+import { Layout, Menu, MenuProps } from "antd";
+import { MenuClickEventHandler } from "rc-menu/lib/interface"; //
+import React, { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-import picLogo from "/images/logo-topdom-pic-white.svg";
-import textLogo from "/images/logo-topdom-text-white.svg";
-import { RootState } from "../redux/store";
+import { authAPI } from "../api";
+import { emptyDocs } from "../redux/docs/docsSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { changeMenuItem } from "../redux/sider/siderSlice";
+import { RootState } from "../redux/store";
 import {
   signOutFailure,
   signOutStart,
   signOutSuccess,
 } from "../redux/user/userSlice";
-import { authAPI } from "../api";
-import { emptyDocs } from "../redux/docs/docsSlice";
 import SigninIcon from "./Icons/SigninIcon";
-import SignupIcon from "./Icons/SignupIcon";
 import SignoutIcon from "./Icons/SignoutIcon";
+import SignupIcon from "./Icons/SignupIcon";
+import picLogo from "/images/logo-topdom-pic-white.svg";
+import textLogo from "/images/logo-topdom-text-white.svg";
 
 const siderStyle: React.CSSProperties = {
   textAlign: "left",
@@ -78,7 +77,7 @@ const Sider: React.FC<Record<string, boolean>> = ({
       "2",
       <FolderOpenOutlined />
     ),
-    getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
+    // getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
     ...(user.currentUser?.role === "boss"
       ? [
           getItem(

@@ -1,19 +1,21 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Layout } from "antd";
 import { useMediaQuery } from "usehooks-ts";
 
 import Welcome from "./pages/Welcome";
 import Pending from "./pages/Pending";
-import Login from "./pages/Login";
 import Register from "./pages/SignUp";
 import CreateDoc from "./pages/CreateDoc";
 import NotFound from "./pages/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
-import Document from "./pages/Document";
-import Sider from "./components/Sider";
-import Docs from "./pages/Docs";
 import DashBoard from "./pages/Dashboard";
+import Document from "./pages/Document";
+
+const Login = lazy(() => import("./pages/Login"));
+// const Document = lazy(() => import("./pages/Document"));
+const Docs = lazy(() => import("./pages/Docs"));
+const Sider = lazy(() => import("./components/Sider"));
 
 const contentStyle: React.CSSProperties = {
   // paddingTop: '40px',
@@ -38,9 +40,16 @@ const App: React.FC = () => {
 
   return (
     <Layout hasSider style={{ backgroundColor: "white" }}>
-      <Sider
-        {...{ matchesMax1270, matchesMax1000, matchesMax790, isOnDocumentPage }}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Sider
+          {...{
+            matchesMax1270,
+            matchesMax1000,
+            matchesMax790,
+            isOnDocumentPage,
+          }}
+        />
+      </Suspense>
       <Layout className="bg-white">
         <Layout.Content
           style={{
@@ -67,24 +76,36 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Welcome />} />
             <Route path="register" element={<Register />} />
-            <Route path="login" element={<Login />} />
+
+            <Route
+              path="login"
+              element={
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Login />
+                </Suspense>
+              }
+            />
             <Route path="pending" element={<Pending />} />
             <Route element={<PrivateRoute />}>
               <Route path="create-doc" element={<CreateDoc />} />
               <Route
                 path="documents"
                 element={
-                  <Docs
-                    {...{ matchesMax1270, matchesMax1000, matchesMax790 }}
-                  />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Docs
+                      {...{ matchesMax1270, matchesMax1000, matchesMax790 }}
+                    />
+                  </Suspense>
                 }
               />
               <Route
                 path="documents/:id"
                 element={
-                  <Document
-                    {...{ matchesMax1270, matchesMax1000, matchesMax790 }}
-                  />
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Document
+                      {...{ matchesMax1270, matchesMax1000, matchesMax790 }}
+                    />
+                  </Suspense>
                 }
               />
               <Route path="dashboard" element={<DashBoard />} />
