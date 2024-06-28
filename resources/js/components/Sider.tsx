@@ -77,7 +77,7 @@ const Sider: React.FC<Record<string, boolean>> = ({
       "2",
       <FolderOpenOutlined />
     ),
-    getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
+    // getItem(<Link to="/profile">Профиль</Link>, "3", <UserOutlined />),
     ...(user.currentUser?.role === "boss"
       ? [
           getItem(
